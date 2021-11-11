@@ -219,12 +219,29 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                   getDrawerItem(sh_settings, sh_lbl_settings, callback: () {
                     ShSettingsScreen().launch(context);
                   }),
-                  SizedBox(height: 20),
-                  getDrawerItem(null, sh_lbl_faq, callback: () {
-                    ShFAQScreen().launch(context);
+                  SizedBox(height: 10),
+                  getDrawerItem(null, 'Company', callback: () {
+
                   }),
-                  getDrawerItem(null, sh_lbl_contact_us, callback: () {
-                    ShContactUsScreen().launch(context);
+                  SizedBox(height: 10),
+                  getDrawerItem(null, 'Payment Methods', callback: () {
+
+                  }),
+                  SizedBox(height: 10),
+                  getDrawerItem(null, 'Shipping & Handling', callback: () {
+
+                  }),
+                  SizedBox(height: 10),
+                  getDrawerItem(null, 'Warranty & Returns', callback: () {
+
+                  }),
+                  SizedBox(height: 10),
+                  getDrawerItem(null, 'Wholesale', callback: () {
+
+                  }),
+                  SizedBox(height: 10),
+                  getDrawerItem(null, 'Retail Locations', callback: () {
+
                   }),
                   SizedBox(height: 30),
                   Container(
@@ -232,7 +249,7 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                     padding: EdgeInsets.all(24),
                     child: Column(
                       children: <Widget>[
-                        Image.asset(ic_app_icon, width: 40),
+                        Image.asset(ic_app_icon, width: 60),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[

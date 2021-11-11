@@ -30,6 +30,10 @@ dependencies:
   html: ^0.15.0
   google_maps_flutter: ^2.0.6
 
+  #
+  connectivity:
+  shared_preferences:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

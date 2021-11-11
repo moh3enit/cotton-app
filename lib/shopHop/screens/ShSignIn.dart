@@ -1,4 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
+import 'package:cotton_natural/shopHop/utils/Validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -21,6 +24,69 @@ class ShSignInState extends State<ShSignIn> {
   var emailCont = TextEditingController();
   var passwordCont = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
+
+  bool isInProgress = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserLoginOrNot();
+    isInProgress = false;
+    emailCont = TextEditingController(text: "user@demo.com");
+    passwordCont = TextEditingController(text: "password");
+  }
+
+
+  _handleLogin() async {
+    String email = emailCont.text;
+    String password = passwordCont.text;
+
+
+    if (email.isEmpty) {
+      print( "Please fill email");
+    } else if (Validator.isEmail(email)) {
+      print( "Please fill email proper");
+    } else if (password.isEmpty) {
+      print( "Please fill password");
+    } else {
+
+      if(mounted) {
+        setState(() {
+          isInProgress = true;
+        });
+      }
+
+      MyResponse response =  await AuthController.loginUser(email, password);
+      if(response.success){
+        ShHomeScreen().launch(context);
+      }else {
+        // ApiUtil.checkRedirectNavigation(context, response.responseCode);
+        print(response.errorText);
+      }
+
+      if(mounted) {
+        setState(() {
+          isInProgress = false;
+        });
+      }
+
+    }
+  }
+
+
+  _checkUserLoginOrNot() async {
+    if(await AuthController.isLoginUser()){
+      ShHomeScreen().launch(context);
+    }
+  }
+
+  @override
+  void dispose() {
+    emailCont.dispose();
+    passwordCont.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,8 +177,9 @@ class ShSignInState extends State<ShSignIn> {
                         textColor: sh_white,
                         shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0)),
                         color: sh_colorPrimary,
-                        onPressed: () => {
-                          ShHomeScreen().launch(context),
+                        onPressed: () async{
+                          // ShHomeScreen().launch(context),
+                          await _handleLogin();
                         },
                       ),
                     ),
@@ -139,4 +206,6 @@ class ShSignInState extends State<ShSignIn> {
       ),
     );
   }
+
+
 }
