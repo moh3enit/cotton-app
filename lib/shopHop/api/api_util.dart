@@ -96,7 +96,7 @@ class ApiUtil {
   static const String SUB_CATEGORIES = "categories/";
 
   //PRODUCT
-  static const String SUB_CATEGORY_PRODUCTS = "sub_category_products/";
+  static const String SUB_CATEGORY_PRODUCTS = "products/";
 
 
   //----------------- Redirects ----------------------------------//

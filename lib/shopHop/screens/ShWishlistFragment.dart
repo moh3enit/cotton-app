@@ -63,7 +63,7 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Image.asset(
-                      "images/shophop/img/products" + list[index].images![0].src!,
+                      "images/shophop/img/products" + list[index].images![0],
                       width: width * 0.25,
                       height: width * 0.3,
                       fit: BoxFit.fill,
@@ -79,10 +79,6 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
                           Padding(
                             padding: const EdgeInsets.only(left: 16.0),
                             child: text(list[index].name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
-                            child: text(list[index].regular_price.toString().toCurrencyFormat(), textColor: sh_colorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
                           ),
                           Expanded(
                             child: Padding(

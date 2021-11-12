@@ -65,13 +65,15 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
     // }).catchError((error) {
     //   toasty(context, error);
     // });
+
     List<ShProduct> products = await loadProducts();
     List<ShProduct> featured = [];
     products.forEach((product) {
-      if (product.featured!) {
+      if (product.featured==1) {
         featured.add(product);
       }
     });
+
     List<String> banner = [];
     for (var i = 1; i < 7; i++) {
       banner.add("images/shophop/img/products/banners/b" + i.toString() + ".jpg");

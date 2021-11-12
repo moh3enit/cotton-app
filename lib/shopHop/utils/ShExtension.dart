@@ -49,14 +49,14 @@ Future<List<ShOrder>> loadOrders() async {
 }
 
 Future<List<String>> loadBanners() async {
-  List<ShProduct> products = await loadProducts();
+  // List<ShProduct> products = await loadProducts();
   List<String> banner = [];
 
-  products.forEach((product) {
-    if (product.images!.isNotEmpty) {
-      banner.add("images/shophop/img/products" + product.images![0].src!);
-    }
-  });
+  // products.forEach((product) {
+  //   if (product.images!.isNotEmpty) {
+  //     banner.add("images/shophop/img/products" + product.images![0]);
+  //   }
+  // });
   return banner;
 }
 

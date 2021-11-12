@@ -93,7 +93,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Image.asset(
-                        "images/shophop/img/products" + list[index].images![0].src!,
+                        "images/shophop/img/products" + list[index].images![0],
                         width: width * 0.25,
                         height: width * 0.3,
                         fit: BoxFit.fill,
@@ -159,7 +159,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        text(list[index].on_sale! ? list[index].sale_price.toString().toCurrencyFormat() : list[index].price.toString().toCurrencyFormat(),
+                                        text( list[index].price.toString().toCurrencyFormat(),
                                             textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
 
                                       ],

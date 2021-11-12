@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/controllers/CategoryController.dart';
@@ -18,7 +17,6 @@ import 'package:cotton_natural/shopHop/screens/ShSettingsScreen.dart';
 import 'package:cotton_natural/shopHop/screens/ShWishlistFragment.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
-import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 

@@ -29,6 +29,8 @@ class ShSubCategoryState extends State<ShSubCategory> {
 
   List<ShCategory> list = [];
   Map<String,List<ShProduct>> subCatProducts = {};
+  String subCatSlug = 'all';
+  int limit = 5;
 
   @override
   void initState() {
@@ -48,13 +50,17 @@ class ShSubCategoryState extends State<ShSubCategory> {
     }
 
 
-    MyResponse<Map<String,List<ShProduct>>> myResponse2 = await ProductController.getSubCatProduct(widget.category!.slug);
+    MyResponse<Map<String,List<ShProduct>>> myResponse2 = await ProductController.getSubCatProduct(widget.category!.slug,subCatSlug,limit);
     if (myResponse2.success) {
+
       subCatProducts.clear();
       subCatProducts = myResponse2.data;
     } else {
       toasty(context, myResponse2.errorText);
     }
+    setState(() {
+
+    });
 
   }
 
