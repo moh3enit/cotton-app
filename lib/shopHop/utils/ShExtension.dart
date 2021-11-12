@@ -62,7 +62,8 @@ Future<List<String>> loadBanners() async {
 
 extension StringExtension on String? {
   String? toCurrencyFormat({var format = '\$'}) {
-    return format + this;
+    String? dblPrice = double.tryParse(this??'0')!.toStringAsFixed(2);
+    return format + dblPrice;
   }
 
   String formatDateTime() {

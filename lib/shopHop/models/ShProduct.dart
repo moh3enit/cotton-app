@@ -184,58 +184,74 @@ class ShProduct {
       // ignore: non_constant_identifier_names
       this.default_attributes});
 
-  factory ShProduct.fromJson(Map<String, dynamic> json) {
-    return ShProduct(
-      id: json['id'],
-      name: json['name'],
-      date_created: json['date_created'],
-      date_created_gmt: json['date_created_gmt'],
-      date_modified: json['date_modified'],
-      date_modified_gmt: json['date_modified_gmt'],
-      type: json['type'],
-      status: json['status'],
-      featured: json['featured'],
-      catalog_visibility: json['catalog_visibility'],
-      description: json['description'],
-      short_description: json['short_description'],
-      sku: json['sku'],
-      price: json['price'],
-      regular_price: json['regular_price'],
-      sale_price: json['sale_price'],
-      price_html: json['price_html'],
-      on_sale: json['on_sale'],
-      purchasable: json['purchasable'],
-      total_sales: json['total_sales'],
-      virtual: json['virtual'],
-      downloadable: json['downloadable'],
-      download_limit: json['download_limit'],
-      download_expiry: json['download_expiry'],
-      external_url: json['external_url'],
-      button_text: json['button_text'],
-      tax_status: json['tax_status'],
-      tax_class: json['tax_class'],
-      manage_stock: json['manage_stock'],
-      stock_quantity: json['stock_quantity'],
-      stock_status: json['stock_status'],
-      backorders: json['backorders'],
-      backorders_allowed: json['backorders_allowed'],
-      backordered: json['backordered'],
-      sold_individually: json['sold_individually'],
-      weight: json['weight'],
-      dimensions: json['dimensions'] != null ? Dimensions.fromJson(json['dimensions']) : null,
-      shipping_required: json['shipping_required'],
-      shipping_taxable: json['shipping_taxable'],
-      shipping_class: json['shipping_class'],
-      shipping_class_id: json['shipping_class_id'],
-      reviews_allowed: json['reviews_allowed'],
-      average_rating: json['average_rating'],
-      rating_count: json['rating_count'],
-      parent_id: json['parent_id'],
-      purchase_note: json['purchase_note'],
-      categories: json['categories'] != null ? (json['categories'] as List).map((i) => ShCategory.fromJson(i)).toList() : null,
-      images: json['images'] != null ? (json['images'] as List).map((i) => ShImage.fromJson(i)).toList() : null,
-      attributes: json['attributes'] != null ? (json['attributes'] as List).map((i) => Attribute.fromJson(i)).toList() : null,
-    );
+  ShProduct.fromJson(Map<String, dynamic> json) {
+      id= json['id'];
+      name = json['name'];
+      date_created = json['date_created'];
+      date_created_gmt = json['date_created_gmt'];
+      date_modified = json['date_modified'];
+      date_modified_gmt = json['date_modified_gmt'];
+      type = json['type'];
+      status = json['status'];
+      featured = json['featured'];
+      catalog_visibility = json['catalog_visibility'];
+      description = json['description'];
+      short_description = json['short_description'];
+      sku = json['sku'];
+      price = json['price'];
+      regular_price = json['regular_price'];
+      sale_price = json['sale_price'];
+      price_html = json['price_html'];
+      on_sale = json['on_sale'];
+      purchasable = json['purchasable'];
+      total_sales = json['total_sales'];
+      virtual = json['virtual'];
+      downloadable = json['downloadable'];
+      download_limit = json['download_limit'];
+      download_expiry = json['download_expiry'];
+      external_url = json['external_url'];
+      button_text = json['button_text'];
+      tax_status = json['tax_status'];
+      tax_class = json['tax_class'];
+      manage_stock = json['manage_stock'];
+      stock_quantity = json['stock_quantity'];
+      stock_status = json['stock_status'];
+      backorders = json['backorders'];
+      backorders_allowed = json['backorders_allowed'];
+      backordered = json['backordered'];
+      sold_individually = json['sold_individually'];
+      weight = json['weight'];
+      dimensions = json['dimensions'] != null ? Dimensions.fromJson(json['dimensions'])  : null;
+      shipping_required = json['shipping_required'];
+      shipping_taxable = json['shipping_taxable'];
+      shipping_class = json['shipping_class'];
+      shipping_class_id = json['shipping_class_id'];
+      reviews_allowed = json['reviews_allowed'];
+      average_rating = json['average_rating'];
+      rating_count = json['rating_count'];
+      parent_id = json['parent_id'];
+      purchase_note = json['purchase_note'];
+      categories = json['categories'] != null ? (json['categories'] as List).map((i) => ShCategory.fromJson(i)).toList()  : null;
+      images = json['images'] != null ? (json['images'] as List).map((i) => ShImage.fromJson(i)).toList()  : null;
+      attributes = json['attributes'] != null ? (json['attributes'] as List).map((i) => Attribute.fromJson(i)).toList()  : null;
+
+  }
+
+
+  static Map<String,List<ShProduct>> getSubCatProductsMap(List<dynamic> jsonArray){
+    Map<String,List<ShProduct>> map = {};
+    for (int i = 0; i < jsonArray.length; i++) {
+      map[jsonArray[i][0]]=ShProduct.getListFromJson(jsonArray[i][1]);
+    }
+    return map;
+  }
+
+  static List<ShProduct> getListFromJson(jsonArray) {
+    List<ShProduct> list = [];
+    for (int i = 0; i < jsonArray.length; i++) {
+      list.add(ShProduct.fromJson(jsonArray[i]));
+    }
+    return list;
   }
 }
 
@@ -341,3 +357,4 @@ class Dimensions {
     return data;
   }
 }
+

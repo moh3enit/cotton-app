@@ -20,10 +20,10 @@ import 'ShProductDetail.dart';
 class ShViewAllProductScreen extends StatefulWidget {
   static String tag = '/ViewAllProductScreen';
 
-  List<ShProduct>? prodcuts;
+  List<ShProduct>? products;
   var title;
 
-  ShViewAllProductScreen({this.prodcuts, this.title});
+  ShViewAllProductScreen({this.products, this.title});
 
   @override
   ShViewAllProductScreenState createState() {
@@ -61,7 +61,7 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
     var model = await loadAttributes();
     setState(() {
       mProductAttributeModel = model;
-      mProductModel.addAll(widget.prodcuts!);
+      mProductModel.addAll(widget.products!);
     });
   }
 
@@ -356,16 +356,11 @@ class FilterBottomSheetLayoutState extends State<FilterBottomSheetLayout> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ChoiceChip(
-              label: text(categoryList![index].name, textColor: categoryList[index].isSelected! ? Colors.red : blackColor),
-              selected: categoryList[index].isSelected!,
-              onSelected: (selected) {
-                setState(() {
-                  categoryList[index].isSelected! ? categoryList[index].isSelected = false : categoryList[index].isSelected = true;
-                });
-              },
+              label: text(categoryList![index].name, textColor: blackColor),
               elevation: 2,
               backgroundColor: Colors.white10,
               selectedColor: sh_colorPrimary.withOpacity(0.5),
+              selected: false,
             ),
           );
         });
@@ -408,7 +403,7 @@ class FilterBottomSheetLayoutState extends State<FilterBottomSheetLayout> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ChoiceChip(
-              label: text(sizesList![index].name, textColor: categoryList![index].isSelected! ? Colors.red : blackColor),
+              label: text(sizesList![index].name, textColor: blackColor),
               selected: sizesList[index].isSelected,
               onSelected: (selected) {
                 setState(() {

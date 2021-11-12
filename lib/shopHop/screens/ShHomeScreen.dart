@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/CategoryController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,8 +10,6 @@ import 'package:cotton_natural/main/utils/AppWidget.dart';
 import 'package:cotton_natural/shopHop/models/ShCategory.dart';
 import 'package:cotton_natural/shopHop/screens/ShAccountScreen.dart';
 import 'package:cotton_natural/shopHop/screens/ShCartFragment.dart';
-import 'package:cotton_natural/shopHop/screens/ShContactUsScreen.dart';
-import 'package:cotton_natural/shopHop/screens/ShFAQScreen.dart';
 import 'package:cotton_natural/shopHop/screens/ShHomeFragment.dart';
 import 'package:cotton_natural/shopHop/screens/ShOrderListScreen.dart';
 import 'package:cotton_natural/shopHop/screens/ShProfileFragment.dart';
@@ -48,21 +48,19 @@ class ShHomeScreenState extends State<ShHomeScreen> {
   }
 
   fetchData() async {
-    loadCategory().then((categories) {
-      setState(() {
-        list.clear();
-        list.addAll(categories);
-      });
-    }).catchError((error) {
-      toasty(context, error);
-    });
+
+    MyResponse<List<ShCategory>> myResponse = await CategoryController.getMainCategories();
+
+    if (myResponse.success) {
+      list.clear();
+      list = myResponse.data;
+      setState(() {});
+    } else {
+      toasty(context, myResponse.errorText);
+    }
+
   }
 
-  Future<List<ShCategory>> loadCategory() async {
-    String jsonString = await loadContentAsset('assets/shophop_data/category.json');
-    final jsonResponse = json.decode(jsonString);
-    return (jsonResponse as List).map((i) => ShCategory.fromJson(i)).toList();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,17 +127,6 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                             padding: const EdgeInsets.only(top: 60, right: spacing_large),
                             child: Column(
                               children: <Widget>[
-                                Card(
-                                  semanticContainer: true,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  elevation: spacing_standard,
-                                  margin: EdgeInsets.all(spacing_control),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100.0)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: CircleAvatar(backgroundImage: AssetImage(ic_user), radius: 55),
-                                  ),
-                                ),
                                 SizedBox(height: spacing_middle),
                                 text("Guest User", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeNormal)
                               ],
@@ -196,7 +183,6 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                     physics: ScrollPhysics(),
                     itemBuilder: (context, index) {
                       return getDrawerItem(
-                        list[index].image,
                         list[index].name,
                         callback: () {
                           ShSubCategory(category: list[index]).launch(context);
@@ -207,7 +193,7 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                   SizedBox(height: 30),
                   Divider(color: sh_view_color, height: 1),
                   SizedBox(height: 20),
-                  getDrawerItem(sh_user_placeholder, sh_lbl_account, callback: () {
+                  getDrawerItem( sh_lbl_account, callback: () {
                     ShAccountScreen().launch(context);
 
                     /*bool isWishlist = launchScreen(context, ShAccountScreen.tag) ?? false;
@@ -216,31 +202,31 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                       setState(() {});
                     }*/
                   }),
-                  getDrawerItem(sh_settings, sh_lbl_settings, callback: () {
+                  getDrawerItem( sh_lbl_settings, callback: () {
                     ShSettingsScreen().launch(context);
                   }),
                   SizedBox(height: 10),
-                  getDrawerItem(null, 'Company', callback: () {
+                  getDrawerItem( 'Company', callback: () {
 
                   }),
                   SizedBox(height: 10),
-                  getDrawerItem(null, 'Payment Methods', callback: () {
+                  getDrawerItem('Payment Methods', callback: () {
 
                   }),
                   SizedBox(height: 10),
-                  getDrawerItem(null, 'Shipping & Handling', callback: () {
+                  getDrawerItem( 'Shipping & Handling', callback: () {
 
                   }),
                   SizedBox(height: 10),
-                  getDrawerItem(null, 'Warranty & Returns', callback: () {
+                  getDrawerItem('Warranty & Returns', callback: () {
 
                   }),
                   SizedBox(height: 10),
-                  getDrawerItem(null, 'Wholesale', callback: () {
+                  getDrawerItem( 'Wholesale', callback: () {
 
                   }),
                   SizedBox(height: 10),
-                  getDrawerItem(null, 'Retail Locations', callback: () {
+                  getDrawerItem( 'Retail Locations', callback: () {
 
                   }),
                   SizedBox(height: 30),
@@ -253,8 +239,8 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            text("Shop", textColor: sh_textColorPrimary, fontSize: textSizeMedium, fontFamily: fontBold),
-                            text("hop", textColor: sh_colorPrimary, fontSize: textSizeMedium, fontFamily: fontBold),
+                            text("Cotton", textColor: sh_textColorPrimary, fontSize: textSizeMedium, fontFamily: fontBold),
+                            text("Natural", textColor: sh_colorPrimary, fontSize: textSizeMedium, fontFamily: fontBold),
                           ],
                         ),
                         text("v 1.0", textColor: sh_textColorPrimary, fontSize: textSizeSmall)
@@ -271,7 +257,7 @@ class ShHomeScreenState extends State<ShHomeScreen> {
     );
   }
 
-  Widget getDrawerItem(String? icon, String? name, {VoidCallback? callback}) {
+  Widget getDrawerItem( String? name, {VoidCallback? callback}) {
     return InkWell(
       onTap: callback,
       child: Container(
@@ -279,7 +265,6 @@ class ShHomeScreenState extends State<ShHomeScreen> {
         padding: EdgeInsets.fromLTRB(20, 14, 20, 14),
         child: Row(
           children: <Widget>[
-            icon != null ? Image.asset(icon, width: 20, height: 20) : Container(width: 20),
             SizedBox(width: 20),
             text(name, textColor: sh_textColorPrimary, fontSize: textSizeMedium, fontFamily: fontMedium)
           ],

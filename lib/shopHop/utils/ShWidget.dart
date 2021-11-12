@@ -37,7 +37,7 @@ class ProductHorizontalList extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
 
     return Container(
-      height: 250,
+      height: 255,
       margin: EdgeInsets.only(top: spacing_standard_new),
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -66,10 +66,6 @@ class ProductHorizontalList extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                list[index].regular_price.toString().toCurrencyFormat()!,
-                                style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium, decoration: TextDecoration.lineThrough),
-                              ),
                               SizedBox(width: spacing_control_half),
                               text(
                                 list[index].on_sale! ? list[index].sale_price.toString().toCurrencyFormat() : list[index].price.toString().toCurrencyFormat(),

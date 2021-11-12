@@ -91,6 +91,13 @@ class ApiUtil {
   //Profile
   static const String PROFILE = "profile/";
 
+  //CATEGORY
+  static const String MAIN_CATEGORIES = "categories/";
+  static const String SUB_CATEGORIES = "categories/";
+
+  //PRODUCT
+  static const String SUB_CATEGORY_PRODUCTS = "sub_category_products/";
+
 
   //----------------- Redirects ----------------------------------//
   static checkRedirectNavigation(BuildContext context, int statusCode) async {

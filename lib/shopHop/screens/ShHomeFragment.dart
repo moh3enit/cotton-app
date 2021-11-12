@@ -1,3 +1,5 @@
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/CategoryController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -6,12 +8,9 @@ import 'package:cotton_natural/main/utils/dots_indicator/dots_indicator.dart';
 import 'package:cotton_natural/shopHop/models/ShCategory.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/screens/ShSubCategory.dart';
-import 'package:cotton_natural/shopHop/screens/ShViewAllProducts.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
-import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
-import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 
 class ShHomeFragment extends StatefulWidget {
   static String tag = '/ShHomeFragment';
@@ -28,6 +27,18 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
   var position = 0;
   var colors = [sh_cat_1, sh_cat_2, sh_cat_3, sh_cat_4, sh_cat_5];
 
+  //todo
+  ShCategory menCategory = ShCategory(
+    id: 45,
+    name: 'Men',
+    slug: 'men',
+  );
+  ShCategory womenCategory = ShCategory(
+    id: 18,
+    name: 'Women',
+    slug: 'women',
+  );
+
   @override
   void initState() {
     super.initState();
@@ -35,14 +46,25 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
   }
 
   fetchData() async {
-    loadCategory().then((categories) {
-      setState(() {
-        list.clear();
-        list.addAll(categories);
-      });
-    }).catchError((error) {
-      toasty(context, error);
-    });
+
+
+    MyResponse<List<ShCategory>> myResponse = await CategoryController.getMainCategories();
+
+    if (myResponse.success) {
+      list.clear();
+      list = myResponse.data;
+    } else {
+      toasty(context, myResponse.errorText);
+    }
+
+    // loadCategory().then((categories) {
+    //   setState(() {
+    //     list.clear();
+    //     list.addAll(categories);
+    //   });
+    // }).catchError((error) {
+    //   toasty(context, error);
+    // });
     List<ShProduct> products = await loadProducts();
     List<ShProduct> featured = [];
     products.forEach((product) {
@@ -134,11 +156,11 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
                                 children: <Widget>[
                                   Container(
                                     padding: EdgeInsets.all(spacing_middle),
-                                    decoration: BoxDecoration(shape: BoxShape.circle, color: colors[index % colors.length]),
-                                    child: Image.asset(list[index].image!, width: 15, color: sh_white),
+                                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black87),
+                                    child: Image.asset('images/shophop/cat/${list[index].slug}.png', width: 25, color: sh_white),
                                   ),
                                   SizedBox(height: spacing_control),
-                                  text(list[index].name, textColor: colors[index % colors.length], fontFamily: fontMedium)
+                                  text(list[index].name, textColor: Colors.black87, fontFamily: fontMedium)
                                 ],
                               ),
                             ),
@@ -146,15 +168,34 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
                         },
                       ),
                     ),
-                    horizontalHeading(sh_lbl_newest_product, callback: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ShViewAllProductScreen(prodcuts: newestProducts, title: sh_lbl_newest_product)));
-                    }),
-                    ProductHorizontalList(newestProducts),
-                    SizedBox(height: spacing_standard_new),
-                    horizontalHeading(sh_lbl_Featured, callback: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ShViewAllProductScreen(prodcuts: featuredProducts, title: sh_lbl_Featured)));
-                    }),
-                    ProductHorizontalList(featuredProducts),
+                    Container(
+                      height: 250,
+                      margin: EdgeInsets.only(top: spacing_standard_new),
+                      padding: EdgeInsets.symmetric(vertical: 20,horizontal: 30),
+                      child: InkWell(
+                        onTap: (){
+                          ShSubCategory(category: womenCategory).launch(context);
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(9),
+                          child: Image.asset('images/shophop/for-her.jpg',fit: BoxFit.fitWidth,),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 250,
+                      margin: EdgeInsets.only(top: spacing_standard_new),
+                      padding: EdgeInsets.symmetric(vertical: 20,horizontal: 30),
+                      child: InkWell(
+                        onTap: (){
+                          ShSubCategory(category: menCategory).launch(context);
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(9),
+                          child: Image.asset('images/shophop/for-him.jpg',fit: BoxFit.fitWidth,),
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 60),
                   ],
                 ),
