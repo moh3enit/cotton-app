@@ -93,7 +93,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Image.asset(
-                        "images/shophop/img/products" + list[index].images![0].src!,
+                        "images/shophop/img/products" + list[index].images![0],
                         width: width * 0.25,
                         height: width * 0.3,
                         fit: BoxFit.fill,
@@ -159,18 +159,9 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        text(list[index].on_sale! ? list[index].sale_price.toString().toCurrencyFormat() : list[index].price.toString().toCurrencyFormat(),
+                                        text( list[index].price.toString().toCurrencyFormat(),
                                             textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
-                                        SizedBox(
-                                          width: spacing_control,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(bottom: 3.0),
-                                          child: Text(
-                                            list[index].regular_price.toString().toCurrencyFormat()!,
-                                            style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeSMedium, decoration: TextDecoration.lineThrough),
-                                          ),
-                                        ),
+
                                       ],
                                     ),
                                   ),
@@ -205,19 +196,13 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
             padding: const EdgeInsets.fromLTRB(spacing_standard_new, spacing_middle, spacing_standard_new, spacing_middle),
             child: Column(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    text(sh_lbl_offer),
-                    text(sh_text_offer_not_available, textColor: sh_textColorPrimary, fontFamily: fontMedium),
-                  ],
-                ),
                 SizedBox(
                   height: spacing_standard,
                 ),
                 Row(
                   children: <Widget>[
                     text(sh_lbl_shipping_charge),
-                    text(sh_lbl_free, textColor: Colors.green, fontFamily: fontMedium),
+                    text('?', textColor: Colors.green, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -226,7 +211,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_total_amount),
-                    text("\$70", textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                    text("\$70.00", textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                   ],
                 ),
               ],
@@ -282,7 +267,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                text("\$70", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                text("\$70.00", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                 text(sh_lbl_see_price_detail),
               ],
             ),

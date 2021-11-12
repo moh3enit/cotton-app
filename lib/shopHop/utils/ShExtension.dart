@@ -49,20 +49,21 @@ Future<List<ShOrder>> loadOrders() async {
 }
 
 Future<List<String>> loadBanners() async {
-  List<ShProduct> products = await loadProducts();
+  // List<ShProduct> products = await loadProducts();
   List<String> banner = [];
 
-  products.forEach((product) {
-    if (product.images!.isNotEmpty) {
-      banner.add("images/shophop/img/products" + product.images![0].src!);
-    }
-  });
+  // products.forEach((product) {
+  //   if (product.images!.isNotEmpty) {
+  //     banner.add("images/shophop/img/products" + product.images![0]);
+  //   }
+  // });
   return banner;
 }
 
 extension StringExtension on String? {
   String? toCurrencyFormat({var format = '\$'}) {
-    return format + this;
+    String? dblPrice = double.tryParse(this??'0')!.toStringAsFixed(2);
+    return format + dblPrice;
   }
 
   String formatDateTime() {

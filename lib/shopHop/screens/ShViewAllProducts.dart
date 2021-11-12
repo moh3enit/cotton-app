@@ -1,17 +1,16 @@
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:nb_utils/nb_utils.dart';
-import 'package:cotton_natural/main/utils/flutter_rating_bar.dart';
 import 'package:cotton_natural/shopHop/models/ShAttribute.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
-import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
 
 import 'ShProductDetail.dart';
@@ -20,10 +19,10 @@ import 'ShProductDetail.dart';
 class ShViewAllProductScreen extends StatefulWidget {
   static String tag = '/ViewAllProductScreen';
 
-  List<ShProduct>? prodcuts;
+  List<ShProduct>? products;
   var title;
 
-  ShViewAllProductScreen({this.prodcuts, this.title});
+  ShViewAllProductScreen({this.products, this.title});
 
   @override
   ShViewAllProductScreenState createState() {
@@ -61,7 +60,7 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
     var model = await loadAttributes();
     setState(() {
       mProductAttributeModel = model;
-      mProductModel.addAll(widget.prodcuts!);
+      mProductModel.addAll(widget.products!);
     });
   }
 
@@ -97,7 +96,7 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
                     Container(
                       padding: EdgeInsets.all(1),
                       decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 1)),
-                      child: Image.asset("images/shophop/img/products" + mProductModel[index].images![0].src!, fit: BoxFit.cover, height: width * 0.35, width: width * 0.29),
+                      child: networkImage( mProductModel[index].images![0], fit: BoxFit.cover, aHeight: width * 0.35, aWidth: width * 0.29),
                     ),
                     SizedBox(width: 10),
                     Expanded(
@@ -108,21 +107,17 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
                           SizedBox(height: 4),
                           Row(
                             children: <Widget>[
-                              text(mProductModel[index].on_sale! ? mProductModel[index].sale_price.toString().toCurrencyFormat() : mProductModel[index].price.toString().toCurrencyFormat(),
+                              text(mProductModel[index].price.toString().toCurrencyFormat(),
                                   textColor: sh_colorPrimary, fontFamily: fontMedium, fontSize: textSizeNormal),
                               SizedBox(
                                 width: spacing_control,
-                              ),
-                              Text(
-                                mProductModel[index].regular_price.toString().toCurrencyFormat()!,
-                                style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeSmall, decoration: TextDecoration.lineThrough),
                               ),
                             ],
                           ),
                           SizedBox(
                             height: spacing_standard,
                           ),
-                          Row(children: colorWidget(mProductModel[index].attributes!)),
+                          // Row(children: colorWidget(mProductModel[index].attributes!)),
                           SizedBox(height: 4),
                           Expanded(
                             child: Align(
@@ -130,19 +125,19 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  RatingBar(
-                                    initialRating: double.parse(mProductModel[index].average_rating!),
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    tapOnlyMode: true,
-                                    itemCount: 5,
-                                    itemSize: 16,
-                                    itemBuilder: (context, _) => Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
-                                    ),
-                                    onRatingUpdate: (rating) {},
-                                  ),
+                                  // RatingBar(
+                                  //   initialRating: double.parse(mProductModel[index].average_rating!),
+                                  //   direction: Axis.horizontal,
+                                  //   allowHalfRating: true,
+                                  //   tapOnlyMode: true,
+                                  //   itemCount: 5,
+                                  //   itemSize: 16,
+                                  //   itemBuilder: (context, _) => Icon(
+                                  //     Icons.star,
+                                  //     color: Colors.amber,
+                                  //   ),
+                                  //   onRatingUpdate: (rating) {},
+                                  // ),
                                   Container(
                                     padding: EdgeInsets.all(spacing_control),
                                     margin: EdgeInsets.only(right: spacing_standard),
@@ -195,7 +190,7 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
                             padding: EdgeInsets.all(1),
                             decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 0.5)),
                             child: Image.asset(
-                              "images/shophop/img/products" + mProductModel[index].images![0].src!,
+                              "images/shophop/img/products" + mProductModel[index].images![0],
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: double.infinity,
@@ -217,21 +212,17 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
                     SizedBox(height: 2),
                     Row(
                       children: <Widget>[
-                        text(mProductModel[index].on_sale! ? mProductModel[index].sale_price.toString().toCurrencyFormat() : mProductModel[index].price.toString().toCurrencyFormat(),
+                        text( mProductModel[index].price.toString().toCurrencyFormat(),
                             textColor: sh_colorPrimary, fontFamily: fontMedium, fontSize: textSizeNormal),
                         SizedBox(
                           width: spacing_control,
-                        ),
-                        Text(
-                          mProductModel[index].regular_price.toString().toCurrencyFormat()!,
-                          style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeSMedium, decoration: TextDecoration.lineThrough),
                         ),
                       ],
                     ),
                     SizedBox(height: spacing_middle),
                     Padding(
                       padding: const EdgeInsets.only(left: 2.0, top: spacing_middle),
-                      child: Row(children: colorWidget(mProductModel[index].attributes!)),
+                      // child: Row(children: colorWidget(mProductModel[index].attributes!)),
                     )
                   ],
                 ),
@@ -356,16 +347,11 @@ class FilterBottomSheetLayoutState extends State<FilterBottomSheetLayout> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ChoiceChip(
-              label: text(categoryList![index].name, textColor: categoryList[index].isSelected! ? Colors.red : blackColor),
-              selected: categoryList[index].isSelected!,
-              onSelected: (selected) {
-                setState(() {
-                  categoryList[index].isSelected! ? categoryList[index].isSelected = false : categoryList[index].isSelected = true;
-                });
-              },
+              label: text(categoryList![index].name, textColor: blackColor),
               elevation: 2,
               backgroundColor: Colors.white10,
               selectedColor: sh_colorPrimary.withOpacity(0.5),
+              selected: false,
             ),
           );
         });
@@ -408,7 +394,7 @@ class FilterBottomSheetLayoutState extends State<FilterBottomSheetLayout> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ChoiceChip(
-              label: text(sizesList![index].name, textColor: categoryList![index].isSelected! ? Colors.red : blackColor),
+              label: text(sizesList![index].name, textColor: blackColor),
               selected: sizesList[index].isSelected,
               onSelected: (selected) {
                 setState(() {

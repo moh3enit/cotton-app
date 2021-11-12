@@ -60,8 +60,8 @@ class ShSplashScreenState extends State<ShSplashScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Shop", style: boldTextStyle(color: sh_textColorPrimary, size: 35, fontFamily: 'Bold')),
-                      Text("hop", style: boldTextStyle(color: sh_colorPrimary, size: 35, fontFamily: 'Bold')),
+                      Text("Cotton", style: boldTextStyle(color: sh_textColorPrimary, size: 35, fontFamily: 'Bold')),
+                      Text("Natural", style: boldTextStyle(color: sh_colorPrimary, size: 35, fontFamily: 'Bold')),
                     ],
                   )
                 ],

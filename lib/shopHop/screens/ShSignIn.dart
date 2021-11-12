@@ -121,8 +121,8 @@ class ShSignInState extends State<ShSignIn> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        text("Shop", textColor: sh_textColorPrimary, fontSize: spacing_xlarge, fontFamily: fontBold),
-                        text("hop", textColor: sh_colorPrimary, fontSize: spacing_xlarge, fontFamily: fontBold),
+                        text("Cotton", textColor: sh_textColorPrimary, fontSize: spacing_xlarge, fontFamily: fontBold),
+                        text("Natural", textColor: sh_colorPrimary, fontSize: spacing_xlarge, fontFamily: fontBold),
                       ],
                     ),
                     SizedBox(

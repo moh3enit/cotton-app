@@ -1,15 +1,16 @@
-import 'dart:async';
 
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/CategoryController.dart';
+import 'package:cotton_natural/shopHop/controllers/ProductController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/shopHop/models/ShCategory.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
-import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
-import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import 'ShViewAllProducts.dart';
 
@@ -25,11 +26,11 @@ class ShSubCategory extends StatefulWidget {
 }
 
 class ShSubCategoryState extends State<ShSubCategory> {
-  List<String> images = [];
-  var currentIndex = 0;
-  List<ShProduct> newestProducts = [];
-  List<ShProduct> featuredProducts = [];
-  Timer? timer;
+
+  List<ShCategory> list = [];
+  Map<String,List<ShProduct>> subCatProducts = {};
+  String subCatSlug = 'all';
+  int limit = 5;
 
   @override
   void initState() {
@@ -37,68 +38,34 @@ class ShSubCategoryState extends State<ShSubCategory> {
     fetchData();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    if (timer != null) {
-      timer!.cancel();
-    }
-  }
-
-  void startTimer() {
-    if (timer != null) {
-      return;
-    }
-    timer = new Timer.periodic(new Duration(seconds: 5), (time) {
-      setState(() {
-        if (currentIndex == images.length - 1) {
-          currentIndex = 0;
-        } else {
-          currentIndex = currentIndex + 1;
-        }
-      });
-    });
-  }
-
   fetchData() async {
-    List<ShProduct> products = await loadProducts();
-    List<ShProduct> categoryProducts = [];
-    products.forEach((product) {
-      product.categories!.forEach((category) {
-        if (category.name == widget.category!.name) {
-          categoryProducts.add(product);
-        }
-      });
-    });
-    List<ShProduct> featured = [];
-    List<String> banner = [];
 
-    categoryProducts.forEach((product) {
-      if (product.featured!) {
-        featured.add(product);
-      }
-      if (product.images!.isNotEmpty) {
-        banner.add("images/shophop/img/products" + product.images![0].src!);
-      }
-    });
 
+    MyResponse<List<ShCategory>> myResponse = await CategoryController.getSubCategory(widget.category!.slug);
+    if (myResponse.success) {
+      list.clear();
+      list = myResponse.data;
+    } else {
+      toasty(context, myResponse.errorText);
+    }
+
+
+    MyResponse<Map<String,List<ShProduct>>> myResponse2 = await ProductController.getSubCatProduct(widget.category!.slug,subCatSlug,limit);
+    if (myResponse2.success) {
+
+      subCatProducts.clear();
+      subCatProducts = myResponse2.data;
+    } else {
+      toasty(context, myResponse2.errorText);
+    }
     setState(() {
-      newestProducts.clear();
-      featuredProducts.clear();
-      images.clear();
-      if (banner.isNotEmpty) {
-        images.addAll(banner);
-        currentIndex = 0;
-        startTimer();
-      }
-      newestProducts.addAll(categoryProducts);
-      featuredProducts.addAll(featured);
+
     });
+
   }
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
@@ -110,26 +77,67 @@ class ShSubCategoryState extends State<ShSubCategory> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            images.isNotEmpty
-                ? Container(
-                    decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 0.5)),
-                    margin: const EdgeInsets.all(spacing_standard_new),
-                    child: Image.asset(images[currentIndex], width: double.infinity, height: width * 0.23, fit: BoxFit.cover),
-                  )
-                : Container(),
-            horizontalHeading(sh_lbl_newest_product, callback: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ShViewAllProductScreen(prodcuts: newestProducts, title: sh_lbl_newest_product)));
-            }),
-            ProductHorizontalList(newestProducts),
-            SizedBox(height: spacing_standard_new),
-            horizontalHeading(sh_lbl_Featured, callback: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ShViewAllProductScreen(prodcuts: featuredProducts, title: sh_lbl_Featured)));
-            }),
-            ProductHorizontalList(featuredProducts),
-            SizedBox(height: spacing_large),
+
+            Container(
+              height: 120,
+              margin: EdgeInsets.only(top: spacing_standard_new),
+              padding: EdgeInsets.symmetric(vertical: 15),
+              alignment: Alignment.topLeft,
+              child: ListView.builder(
+                itemCount: list.length,
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(left: spacing_standard, right: spacing_standard),
+                itemBuilder: (BuildContext context, int index) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ShSubCategory(category: list[index])));
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(left: spacing_standard, right: spacing_standard),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.all(spacing_middle),
+                            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black87),
+                            child: Image.asset('images/shophop/sub_cat/${widget.category!.slug}/${list[index].slug}.png', width: 25, color: sh_white),
+                          ),
+                          SizedBox(height: spacing_control),
+                          text(list[index].name, textColor: Colors.black87, fontFamily: fontMedium)
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+
+            for(int i = 0 ; i < list.length ; i++)...{
+              horizontalHeading(
+                list[i].name,
+                callback: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShViewAllProductScreen(
+                        //todo pass all products for sub category
+                        products: subCatProducts[list[i].slug],
+                        title: list[i].name,
+                      ),
+                    ),
+                  );
+                }
+              ),
+              ProductHorizontalList(subCatProducts[list[i].slug]!),
+              SizedBox(height: spacing_standard_new),
+            }
+
+
           ],
         ),
       ),
     );
   }
+
 }

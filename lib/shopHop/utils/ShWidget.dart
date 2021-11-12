@@ -1,3 +1,4 @@
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -37,7 +38,7 @@ class ProductHorizontalList extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
 
     return Container(
-      height: 250,
+      height: 255,
       margin: EdgeInsets.only(top: spacing_standard_new),
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -55,7 +56,7 @@ class ProductHorizontalList extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Image.asset("images/shophop/img/products" + list[index].images![0].src!, width: double.infinity, height: 200, fit: BoxFit.cover),
+                    networkImage(list[index].images![0], aWidth: double.infinity, aHeight: 200, fit: BoxFit.cover),
                     SizedBox(height: spacing_standard),
                     Expanded(
                       child: Row(
@@ -66,13 +67,9 @@ class ProductHorizontalList extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                list[index].regular_price.toString().toCurrencyFormat()!,
-                                style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium, decoration: TextDecoration.lineThrough),
-                              ),
                               SizedBox(width: spacing_control_half),
                               text(
-                                list[index].on_sale! ? list[index].sale_price.toString().toCurrencyFormat() : list[index].price.toString().toCurrencyFormat(),
+                                list[index].price.toString().toCurrencyFormat(),
                                 textColor: sh_colorPrimary,
                                 fontFamily: fontMedium,
                                 fontSize: textSizeMedium,
@@ -91,9 +88,9 @@ class ProductHorizontalList extends StatelessWidget {
   }
 }
 
-Widget networkImage(String image, {double? aWidth, double? aHeight, var fit = BoxFit.fill}) {
-  return Image.asset(image, width: aWidth, height: aHeight, fit: BoxFit.fill);
-}
+// Widget networkImage(String image, {double? aWidth, double? aHeight, var fit = BoxFit.fill,}) {
+//   return Image.asset(image, width: aWidth, height: aHeight, fit: BoxFit.fill);
+// }
 
 Widget checkbox(String title, bool? boolValue) {
   return Row(
@@ -432,38 +429,38 @@ Widget loadingWidgetMaker() {
   );
 }
 
-List<Widget> colorWidget(List<Attribute> attributes) {
-  var maxWidget = 6;
-  var currentIndex = 0;
-  var color;
-  List<Widget> list = [];
-
-  attributes.forEach((attribute) {
-    if (attribute.name == "Color") {
-      color = attribute.options;
-    }
-  });
-  if (color != null) {
-    var totalColors = color.length;
-    var flag = false;
-    color.forEach((color) {
-      if (currentIndex < maxWidget) {
-        list.add(Container(
-          padding: EdgeInsets.all(6),
-          margin: EdgeInsets.only(right: spacing_middle),
-          decoration: BoxDecoration(shape: BoxShape.rectangle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: getColorFromHex(color)),
-        ));
-        currentIndex++;
-      } else {
-        if (!flag) list.add(Text('+ ${totalColors - maxWidget} more'));
-        flag = true;
-        return;
-      }
-    });
-  }
-
-  return list;
-}
+// List<Widget> colorWidget(List<Attribute> attributes) {
+//   var maxWidget = 6;
+//   var currentIndex = 0;
+//   var color;
+//   List<Widget> list = [];
+//
+//   attributes.forEach((attribute) {
+//     if (attribute.name == "Color") {
+//       color = attribute.options;
+//     }
+//   });
+//   if (color != null) {
+//     var totalColors = color.length;
+//     var flag = false;
+//     color.forEach((color) {
+//       if (currentIndex < maxWidget) {
+//         list.add(Container(
+//           padding: EdgeInsets.all(6),
+//           margin: EdgeInsets.only(right: spacing_middle),
+//           decoration: BoxDecoration(shape: BoxShape.rectangle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: getColorFromHex(color)),
+//         ));
+//         currentIndex++;
+//       } else {
+//         if (!flag) list.add(Text('+ ${totalColors - maxWidget} more'));
+//         flag = true;
+//         return;
+//       }
+//     });
+//   }
+//
+//   return list;
+// }
 
 Widget cartIcon(context, cartCount) {
   return InkWell(

@@ -1,3 +1,4 @@
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -28,13 +29,13 @@ class ShOffersScreenState extends State<ShOffersScreen> {
   }
 
   fetchData() async {
-    var products = await loadProducts();
+    // var products = await loadProducts();
     List<ShProduct> offers = [];
-    products.forEach((product) {
-      if (product.on_sale!) {
-        offers.add(product);
-      }
-    });
+    // products.forEach((product) {
+      // if (product.on_sale!) {
+      //   offers.add(product);
+      // }
+    // });
     setState(() {
       mProductModel.clear();
       mProductModel.addAll(offers);
@@ -66,11 +67,11 @@ class ShOffersScreenState extends State<ShOffersScreen> {
                           Container(
                             padding: EdgeInsets.all(1),
                             decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 0.5)),
-                            child: Image.asset(
-                              "images/shophop/img/products" + mProductModel[index].images![0].src!,
+                            child: networkImage(
+                              mProductModel[index].images![0],
                               fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
+                              aWidth: double.infinity,
+                              aHeight: double.infinity,
                             ),
                           ),
                           Container(
@@ -89,14 +90,10 @@ class ShOffersScreenState extends State<ShOffersScreen> {
                     SizedBox(height: 2),
                     Row(
                       children: <Widget>[
-                        text(mProductModel[index].on_sale! ? mProductModel[index].sale_price.toString().toCurrencyFormat() : mProductModel[index].price.toString().toCurrencyFormat(),
+                        text( mProductModel[index].price.toString().toCurrencyFormat(),
                             textColor: sh_colorPrimary, fontFamily: fontMedium, fontSize: textSizeNormal),
                         SizedBox(
                           width: spacing_control,
-                        ),
-                        Text(
-                          mProductModel[index].regular_price.toString().toCurrencyFormat()!,
-                          style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeSMedium, decoration: TextDecoration.lineThrough),
                         ),
                       ],
                     ),

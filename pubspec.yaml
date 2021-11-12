@@ -62,6 +62,15 @@ flutter:
     - images/LikeButton/image/
     - images/shophop/
     - images/shophop/img/
+    - images/shophop/cat/
+    - images/shophop/sub_cat/
+    - images/shophop/sub_cat/women/
+    - images/shophop/sub_cat/men/
+    - images/shophop/sub_cat/kids/
+    - images/shophop/sub_cat/sales/
+    - images/shophop/sub_cat/family/
+    - images/shophop/sub_cat/big-tall/
+    - images/shophop/sub_cat/accessories/
     - images/shophop/img/products/
     - images/shophop/img/products/shoes/
     - images/shophop/img/products/dress/
