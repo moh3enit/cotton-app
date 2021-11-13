@@ -56,6 +56,7 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
     } else {
       toasty(context, myResponse.errorText);
     }
+    setState(() { });
 
     // loadCategory().then((categories) {
     //   setState(() {

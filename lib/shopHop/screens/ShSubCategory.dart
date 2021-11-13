@@ -30,7 +30,7 @@ class ShSubCategoryState extends State<ShSubCategory> {
   List<ShCategory> list = [];
   Map<String,List<ShProduct>> subCatProducts = {};
   String subCatSlug = 'all';
-  int limit = 5;
+  int limit = 10;
 
   @override
   void initState() {
@@ -52,15 +52,12 @@ class ShSubCategoryState extends State<ShSubCategory> {
 
     MyResponse<Map<String,List<ShProduct>>> myResponse2 = await ProductController.getSubCatProduct(widget.category!.slug,subCatSlug,limit);
     if (myResponse2.success) {
-
       subCatProducts.clear();
       subCatProducts = myResponse2.data;
     } else {
       toasty(context, myResponse2.errorText);
     }
-    setState(() {
-
-    });
+    setState(() { });
 
   }
 
@@ -91,7 +88,16 @@ class ShSubCategoryState extends State<ShSubCategory> {
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ShSubCategory(category: list[index])));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShViewAllProductScreen(
+                            mainCat: widget.category!.slug,
+                            subCatSlug: list[index].slug,
+                            subCatName: list[index].name,
+                          ),
+                        ),
+                      );
                     },
                     child: Container(
                       margin: EdgeInsets.only(left: spacing_standard, right: spacing_standard),
@@ -121,9 +127,9 @@ class ShSubCategoryState extends State<ShSubCategory> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ShViewAllProductScreen(
-                        //todo pass all products for sub category
-                        products: subCatProducts[list[i].slug],
-                        title: list[i].name,
+                        mainCat: widget.category!.slug,
+                        subCatSlug: list[i].slug,
+                        subCatName: list[i].name,
                       ),
                     ),
                   );

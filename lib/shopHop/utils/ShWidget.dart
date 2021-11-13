@@ -1,6 +1,7 @@
 import 'package:cotton_natural/main/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
 import 'package:cotton_natural/main/utils/dots_indicator/dots_indicator.dart';
@@ -40,7 +41,9 @@ class ProductHorizontalList extends StatelessWidget {
     return Container(
       height: 255,
       margin: EdgeInsets.only(top: spacing_standard_new),
-      child: ListView.builder(
+      child:
+      (list.length>0)?
+      ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: list.length,
           shrinkWrap: true,
@@ -83,7 +86,23 @@ class ProductHorizontalList extends StatelessWidget {
                 ),
               ),
             );
-          }),
+          }) :
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+            'There is no product for this category',
+            style: TextStyle(color: sh_cat_4, fontFamily: fontSemibold, fontSize: textSizeNormal),
+          ),
+          Container(
+            height: 200,
+            child: Lottie.asset(
+                'assets/lottie/not-found.json',
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

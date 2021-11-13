@@ -33,6 +33,7 @@ dependencies:
   #
   connectivity:
   shared_preferences:
+  lottie: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +54,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/lottie/
     - images/
     - images/widgets/
     - images/widgets/Checkbox/

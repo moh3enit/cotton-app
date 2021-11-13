@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
@@ -10,6 +11,7 @@ import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 // ignore: must_be_immutable
 class ShProductDetail extends StatefulWidget {
@@ -31,11 +33,56 @@ class ShProductDetailState extends State<ShProductDetail> {
   bool autoValidate = false;
   TextEditingController controller = TextEditingController();
 
+
+  Map productFake = {};
+
+
   @override
   void initState() {
     super.initState();
     fetchData();
+    productFake["attributes"] = {
+      [
+        {
+          "id": 1,
+          "name": "Color",
+          "position": 0,
+          "visible": true,
+          "variation": true,
+          "options": [
+            "#0C5A93",
+            "#BDBDBD",
+            "#dd0202"
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Size",
+          "position": 1,
+          "visible": true,
+          "variation": true,
+          "options": [
+            "S",
+            "M",
+            "L",
+            "XL",
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Brand",
+          "position": 1,
+          "visible": true,
+          "variation": true,
+          "options": [
+            "Carter's",
+            "Fendi"
+          ]
+        }
+      ]
+    };
   }
+
 
   fetchData() async {
     var products = await loadProducts();
@@ -72,7 +119,7 @@ class ShProductDetailState extends State<ShProductDetail> {
       child: PageView.builder(
         itemCount: widget.product!.images!.length,
         itemBuilder: (context, index) {
-          return Image.asset("images/shophop/img/products" + widget.product!.images![index], width: width, height: width * 1.05, fit: BoxFit.cover);
+          return networkImage( widget.product!.images![index], aWidth: width, aHeight: width * 1.05, fit: BoxFit.cover);
         },
         onPageChanged: (index) {
           position = index;
@@ -102,66 +149,78 @@ class ShProductDetailState extends State<ShProductDetail> {
       ),
     );
 
-    // var colorList = [];
-    // widget.product!.attributes!.forEach((element) {
-    //   if (element.name == 'Color') colorList.addAll(element.options!);
+    var colorList =  [
+      "#0C5A93",
+      "#BDBDBD",
+      "#dd0202"
+    ];
+    // productFake['attributes'].forEach((element) {
+    //   if (element['name'] == 'Color') colorList.addAll(element['options']!);
     // });
 
-    // var colors = ListView.builder(
-    //   scrollDirection: Axis.horizontal,
-    //   itemCount: colorList.length,
-    //   shrinkWrap: true,
-    //   itemBuilder: (context, index) {
-    //     return GestureDetector(
-    //       onTap: () {
-    //         selectedColor = index;
-    //         setState(() {});
-    //       },
-    //       child: Container(
-    //         padding: EdgeInsets.all(7),
-    //         margin: EdgeInsets.only(right: spacing_xlarge),
-    //         decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: getColorFromHex(colorList[index])),
-    //         child: selectedColor == index ? Icon(Icons.done, color: sh_white, size: 12) : Container(),
-    //       ),
-    //     );
-    //   },
-    // );
+    var colors = ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: colorList.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            selectedColor = index;
+            setState(() {});
+          },
+          child: Container(
+            padding: EdgeInsets.all(7),
+            margin: EdgeInsets.only(right: spacing_xlarge),
+            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: getColorFromHex(colorList[index])),
+            child: selectedColor == index ? Icon(Icons.done, color: sh_white, size: 12) : Container(),
+          ),
+        );
+      },
+    );
 
-    // var sizeList = [];
-    // widget.product!.attributes!.forEach((element) {
-    //   if (element.name == 'Size') sizeList.addAll(element.options!);
+    var sizeList =  [
+      "S",
+      "M",
+      "L",
+      "XL",
+    ];
+    // productFake['attributes'].forEach((element) {
+    //   if (element['name'] == 'Size') sizeList.addAll(element['options']!);
     // });
 
-    // var brandList = [];
-    // widget.product!.attributes!.forEach((element) {
-    //   if (element.name == 'Brand') brandList.addAll(element.options!);
+    var brandList = [
+      "Carter's",
+      "Fendi"
+    ];
+    // productFake['attributes'].forEach((element) {
+    //   if (element['name'] == 'Brand') brandList.addAll(element['options']!);
     // });
 
-    // var bands = "";
-    // brandList.forEach((brand) {
-    //   bands = bands + brand.toString() + ", ";
-    // });
+    var bands = "";
+    brandList.forEach((brand) {
+      bands = bands + brand.toString() + ", ";
+    });
 
-    // var sizes = ListView.builder(
-    //   scrollDirection: Axis.horizontal,
-    //   itemCount: sizeList.length,
-    //   shrinkWrap: true,
-    //   itemBuilder: (context, index) {
-    //     return GestureDetector(
-    //       onTap: () {
-    //         selectedSize = index;
-    //         setState(() {});
-    //       },
-    //       child: Container(
-    //         width: 30,
-    //         height: 30,
-    //         margin: EdgeInsets.only(right: spacing_xlarge),
-    //         decoration: selectedSize == index ? BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: sh_colorPrimary) : BoxDecoration(),
-    //         child: Center(child: text(sizeList[index], textColor: selectedSize == index ? sh_white : sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium)),
-    //       ),
-    //     );
-    //   },
-    // );
+    var sizes = ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: sizeList.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            selectedSize = index;
+            setState(() {});
+          },
+          child: Container(
+            width: 30,
+            height: 30,
+            margin: EdgeInsets.only(right: spacing_xlarge),
+            decoration: selectedSize == index ? BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: sh_colorPrimary) : BoxDecoration(),
+            child: Center(child: text(sizeList[index], textColor: selectedSize == index ? sh_white : sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium)),
+          ),
+        );
+      },
+    );
 
 
     var descriptionTab = SingleChildScrollView(
@@ -230,9 +289,9 @@ class ShProductDetailState extends State<ShProductDetail> {
             ),
             SizedBox(height: spacing_standard_new),
             text(sh_lbl_colors, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-            // Container(height: 50, child: colors),
-            // sizeList.isNotEmpty ? text(sh_lbl_size, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium) : SizedBox(),
-            // Container(height: 50, child: sizes)
+            Container(height: 50, child: colors),
+            sizeList.isNotEmpty ? text(sh_lbl_size, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium) : SizedBox(),
+            Container(height: 50, child: sizes)
           ],
         ),
       ),

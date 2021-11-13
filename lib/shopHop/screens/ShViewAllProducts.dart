@@ -1,4 +1,7 @@
 import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/ProductController.dart';
+import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -10,7 +13,6 @@ import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
-import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
 
 import 'ShProductDetail.dart';
@@ -19,10 +21,11 @@ import 'ShProductDetail.dart';
 class ShViewAllProductScreen extends StatefulWidget {
   static String tag = '/ViewAllProductScreen';
 
-  List<ShProduct>? products;
-  var title;
+  String? mainCat;
+  String? subCatName;
+  String? subCatSlug;
 
-  ShViewAllProductScreen({this.products, this.title});
+  ShViewAllProductScreen({required this.mainCat, required this.subCatName,required this.subCatSlug});
 
   @override
   ShViewAllProductScreenState createState() {
@@ -57,11 +60,25 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
   }
 
   fetchData() async {
-    var model = await loadAttributes();
-    setState(() {
-      mProductAttributeModel = model;
-      mProductModel.addAll(widget.products!);
-    });
+
+    print('*******************************************');
+    print(widget.mainCat);
+    print(widget.subCatName);
+    MyResponse<Map<String,List<ShProduct>>> myResponse2 = await ProductController.getSubCatProduct(widget.mainCat,widget.subCatSlug,0);
+    if (myResponse2.success) {
+      mProductModel.clear();
+      mProductModel = myResponse2.data[widget.subCatSlug] ?? [];
+      mProductModel.forEach((element) {print(element.name); });
+    } else {
+      toasty(context, myResponse2.errorText);
+    }
+    setState(() { });
+
+    // var model = await loadAttributes();
+    // setState(() {
+    //   mProductAttributeModel = model;
+    //   mProductModel.addAll(widget.products!);
+    // });
   }
 
   void onListClick(which) {
@@ -189,11 +206,11 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
                           Container(
                             padding: EdgeInsets.all(1),
                             decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 0.5)),
-                            child: Image.asset(
-                              "images/shophop/img/products" + mProductModel[index].images![0],
+                            child: networkImage(
+                              mProductModel[index].images![0],
                               fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
+                              aWidth: double.infinity,
+                              aHeight: double.infinity,
                             ),
                           ),
                           Container(
@@ -234,11 +251,11 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: whiteColor,
-        title: text(widget.title, textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
+        title: text(widget.subCatName, textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
         iconTheme: IconThemeData(color: sh_textColorPrimary),
         actionsIconTheme: IconThemeData(color: sh_textColorPrimary),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.filter_list), onPressed: () => showMyBottomSheet(context)),
+          // IconButton(icon: Icon(Icons.filter_list), onPressed: () => showMyBottomSheet(context)),
           IconButton(
               icon: Icon(
                 isListViewSelected ? Icons.view_list : Icons.border_all,
@@ -268,27 +285,27 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
     );
   }
 
-  void showMyBottomSheet(context) {
-    if (mProductModel.isEmpty) return;
-    void onSave(List<int> category, List<String> size, List<String> color, List<String> brand) {
-      Map request = {
-        'category': category.toSet().toList(),
-        'size': size.toSet().toList(),
-        'color': color.toSet().toList(),
-        'brand': brand.toSet().toList(),
-      };
-      if (category.length < 1) request.remove('category');
-      if (size.length < 1) request.remove('size');
-      if (color.length < 1) request.remove('color');
-      if (brand.length < 1) request.remove('brand');
-    }
-
-    Navigator.of(context).push(new MaterialPageRoute<Null>(
-        builder: (BuildContext context) {
-          return FilterBottomSheetLayout(mProductAttributeModel: mProductAttributeModel, onSave: onSave);
-        },
-        fullscreenDialog: true));
-  }
+  // void showMyBottomSheet(context) {
+  //   if (mProductModel.isEmpty) return;
+  //   void onSave(List<int> category, List<String> size, List<String> color, List<String> brand) {
+  //     Map request = {
+  //       'category': category.toSet().toList(),
+  //       'size': size.toSet().toList(),
+  //       'color': color.toSet().toList(),
+  //       'brand': brand.toSet().toList(),
+  //     };
+  //     if (category.length < 1) request.remove('category');
+  //     if (size.length < 1) request.remove('size');
+  //     if (color.length < 1) request.remove('color');
+  //     if (brand.length < 1) request.remove('brand');
+  //   }
+  //
+  //   Navigator.of(context).push(new MaterialPageRoute<Null>(
+  //       builder: (BuildContext context) {
+  //         return FilterBottomSheetLayout(mProductAttributeModel: mProductAttributeModel, onSave: onSave);
+  //       },
+  //       fullscreenDialog: true));
+  // }
 
   List<Widget> sizeWidget(List<String> size) {
     var maxWidget = 5;
@@ -312,171 +329,172 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
     });
     return list;
   }
+
 }
 
-// ignore: must_be_immutable
-class FilterBottomSheetLayout extends StatefulWidget {
-  ShAttributes? mProductAttributeModel;
-  var onSave;
-
-  FilterBottomSheetLayout({Key? key, this.mProductAttributeModel, this.onSave}) : super(key: key);
-
-  @override
-  FilterBottomSheetLayoutState createState() {
-    return FilterBottomSheetLayoutState();
-  }
-}
-
-class FilterBottomSheetLayoutState extends State<FilterBottomSheetLayout> {
-  List<int> selectedCategories = [];
-  List<String> selectedColors = [];
-  List<String> selectedSizes = [];
-  List<String> selectedBrands = [];
-
-  @override
-  Widget build(BuildContext context) {
-    var categoryList = widget.mProductAttributeModel!.categories;
-    var colorsList = widget.mProductAttributeModel!.color;
-    var sizesList = widget.mProductAttributeModel!.size;
-    var brandsList = widget.mProductAttributeModel!.brand;
-    final productCategoryListView = ListView.builder(
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: categoryList?.length,
-        itemBuilder: (_, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ChoiceChip(
-              label: text(categoryList![index].name, textColor: blackColor),
-              elevation: 2,
-              backgroundColor: Colors.white10,
-              selectedColor: sh_colorPrimary.withOpacity(0.5),
-              selected: false,
-            ),
-          );
-        });
-
-    final productColorsListView = ListView.builder(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemCount: colorsList?.length,
-        padding: EdgeInsets.only(left: spacing_standard_new),
-        itemBuilder: (_, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  colorsList![index].isSelected ? colorsList[index].isSelected = false : colorsList[index].isSelected = true;
-                });
-              },
-              child: Container(
-                padding: EdgeInsets.all(7),
-                margin: EdgeInsets.only(right: spacing_standard_new),
-                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: getColorFromHex(colorsList![index].name!)),
-                child: colorsList[index].isSelected
-                    ? Icon(
-                        Icons.done,
-                        color: sh_white,
-                        size: 12,
-                      )
-                    : Container(),
-              ),
-            ),
-          );
-        });
-
-    final productSizeListView = ListView.builder(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemCount: sizesList?.length,
-        itemBuilder: (_, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ChoiceChip(
-              label: text(sizesList![index].name, textColor: blackColor),
-              selected: sizesList[index].isSelected,
-              onSelected: (selected) {
-                setState(() {
-                  sizesList[index].isSelected ? sizesList[index].isSelected = false : sizesList[index].isSelected = true;
-                });
-              },
-              elevation: 2,
-              backgroundColor: Colors.white10,
-              selectedColor: sh_colorPrimary.withOpacity(0.5),
-            ),
-          );
-        });
-
-    final productBrandsListView = ListView.builder(
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: brandsList?.length,
-        itemBuilder: (_, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ChoiceChip(
-              label: text(brandsList![index].name, textColor: brandsList[index].isSelected ? Colors.red : blackColor),
-              selected: brandsList[index].isSelected,
-              onSelected: (selected) {
-                setState(() {
-                  brandsList[index].isSelected ? brandsList[index].isSelected = false : brandsList[index].isSelected = true;
-                });
-              },
-              elevation: 2,
-              backgroundColor: Colors.white10,
-              selectedColor: sh_colorPrimary.withOpacity(0.5),
-            ),
-          );
-        });
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: sh_colorPrimary,
-        title: text(sh_lbl_filter, textColor: sh_white, fontSize: textSizeNormal, fontFamily: fontMedium),
-        iconTheme: IconThemeData(color: sh_white),
-        actions: <Widget>[
-          InkWell(
-              child: Container(
-                  alignment: Alignment.centerRight,
-                  padding: EdgeInsets.only(right: spacing_middle),
-                  child: text(sh_lbl_apply, textColor: sh_white, fontFamily: fontMedium, fontSize: textSizeLargeMedium)),
-              onTap: () {
-                finish(context);
-              })
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_standard_new),
-              child: text(sh_lbl_categories, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-            ),
-            SizedBox(height: 10),
-            Container(child: productCategoryListView, height: 50),
-            Padding(
-              padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_standard_new),
-              child: text(sh_lbl_colors, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-            ),
-            SizedBox(height: 10),
-            Container(child: productColorsListView, height: 50),
-            Padding(
-              padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_standard_new),
-              child: text(sh_lbl_size, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-            ),
-            SizedBox(height: 10),
-            Container(child: productSizeListView, height: 50),
-            Padding(
-              padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_standard_new),
-              child: text(sh_lbl_brands, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-            ),
-            SizedBox(height: 10),
-            Container(child: productBrandsListView, height: 50)
-          ],
-        ),
-      ),
-    );
-  }
-}
+// // ignore: must_be_immutable
+// class FilterBottomSheetLayout extends StatefulWidget {
+//   ShAttributes? mProductAttributeModel;
+//   var onSave;
+//
+//   FilterBottomSheetLayout({Key? key, this.mProductAttributeModel, this.onSave}) : super(key: key);
+//
+//   @override
+//   FilterBottomSheetLayoutState createState() {
+//     return FilterBottomSheetLayoutState();
+//   }
+// }
+//
+// class FilterBottomSheetLayoutState extends State<FilterBottomSheetLayout> {
+//   List<int> selectedCategories = [];
+//   List<String> selectedColors = [];
+//   List<String> selectedSizes = [];
+//   List<String> selectedBrands = [];
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     var categoryList = widget.mProductAttributeModel!.categories;
+//     var colorsList = widget.mProductAttributeModel!.color;
+//     var sizesList = widget.mProductAttributeModel!.size;
+//     var brandsList = widget.mProductAttributeModel!.brand;
+//     final productCategoryListView = ListView.builder(
+//         scrollDirection: Axis.horizontal,
+//         shrinkWrap: true,
+//         itemCount: categoryList?.length,
+//         itemBuilder: (_, index) {
+//           return Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: ChoiceChip(
+//               label: text(categoryList![index].name, textColor: blackColor),
+//               elevation: 2,
+//               backgroundColor: Colors.white10,
+//               selectedColor: sh_colorPrimary.withOpacity(0.5),
+//               selected: false,
+//             ),
+//           );
+//         });
+//
+//     final productColorsListView = ListView.builder(
+//         shrinkWrap: true,
+//         scrollDirection: Axis.horizontal,
+//         itemCount: colorsList?.length,
+//         padding: EdgeInsets.only(left: spacing_standard_new),
+//         itemBuilder: (_, index) {
+//           return Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: InkWell(
+//               onTap: () {
+//                 setState(() {
+//                   colorsList![index].isSelected ? colorsList[index].isSelected = false : colorsList[index].isSelected = true;
+//                 });
+//               },
+//               child: Container(
+//                 padding: EdgeInsets.all(7),
+//                 margin: EdgeInsets.only(right: spacing_standard_new),
+//                 decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: getColorFromHex(colorsList![index].name!)),
+//                 child: colorsList[index].isSelected
+//                     ? Icon(
+//                         Icons.done,
+//                         color: sh_white,
+//                         size: 12,
+//                       )
+//                     : Container(),
+//               ),
+//             ),
+//           );
+//         });
+//
+//     final productSizeListView = ListView.builder(
+//         shrinkWrap: true,
+//         scrollDirection: Axis.horizontal,
+//         itemCount: sizesList?.length,
+//         itemBuilder: (_, index) {
+//           return Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: ChoiceChip(
+//               label: text(sizesList![index].name, textColor: blackColor),
+//               selected: sizesList[index].isSelected,
+//               onSelected: (selected) {
+//                 setState(() {
+//                   sizesList[index].isSelected ? sizesList[index].isSelected = false : sizesList[index].isSelected = true;
+//                 });
+//               },
+//               elevation: 2,
+//               backgroundColor: Colors.white10,
+//               selectedColor: sh_colorPrimary.withOpacity(0.5),
+//             ),
+//           );
+//         });
+//
+//     final productBrandsListView = ListView.builder(
+//         scrollDirection: Axis.horizontal,
+//         shrinkWrap: true,
+//         itemCount: brandsList?.length,
+//         itemBuilder: (_, index) {
+//           return Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: ChoiceChip(
+//               label: text(brandsList![index].name, textColor: brandsList[index].isSelected ? Colors.red : blackColor),
+//               selected: brandsList[index].isSelected,
+//               onSelected: (selected) {
+//                 setState(() {
+//                   brandsList[index].isSelected ? brandsList[index].isSelected = false : brandsList[index].isSelected = true;
+//                 });
+//               },
+//               elevation: 2,
+//               backgroundColor: Colors.white10,
+//               selectedColor: sh_colorPrimary.withOpacity(0.5),
+//             ),
+//           );
+//         });
+//
+//     return Scaffold(
+//       appBar: AppBar(
+//         backgroundColor: sh_colorPrimary,
+//         title: text(sh_lbl_filter, textColor: sh_white, fontSize: textSizeNormal, fontFamily: fontMedium),
+//         iconTheme: IconThemeData(color: sh_white),
+//         actions: <Widget>[
+//           InkWell(
+//               child: Container(
+//                   alignment: Alignment.centerRight,
+//                   padding: EdgeInsets.only(right: spacing_middle),
+//                   child: text(sh_lbl_apply, textColor: sh_white, fontFamily: fontMedium, fontSize: textSizeLargeMedium)),
+//               onTap: () {
+//                 finish(context);
+//               })
+//         ],
+//       ),
+//       body: SingleChildScrollView(
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: <Widget>[
+//             Padding(
+//               padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_standard_new),
+//               child: text(sh_lbl_categories, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
+//             ),
+//             SizedBox(height: 10),
+//             Container(child: productCategoryListView, height: 50),
+//             Padding(
+//               padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_standard_new),
+//               child: text(sh_lbl_colors, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
+//             ),
+//             SizedBox(height: 10),
+//             Container(child: productColorsListView, height: 50),
+//             Padding(
+//               padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_standard_new),
+//               child: text(sh_lbl_size, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
+//             ),
+//             SizedBox(height: 10),
+//             Container(child: productSizeListView, height: 50),
+//             Padding(
+//               padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_standard_new),
+//               child: text(sh_lbl_brands, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
+//             ),
+//             SizedBox(height: 10),
+//             Container(child: productBrandsListView, height: 50)
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

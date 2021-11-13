@@ -16,7 +16,7 @@ String intToHex(int i) {
   }
 }
 
-Widget networkImage(String? image, {String aPlaceholder = "images/integrations/img/placeholder.png", double? aWidth, double? aHeight, var fit = BoxFit.fill}) {
+Widget networkImage(String? image, {String aPlaceholder = "assets/app-icon.png", double? aWidth, double? aHeight, var fit = BoxFit.fill}) {
   return image != null && image.isNotEmpty
       ? FadeInImage(
           placeholder: AssetImage(aPlaceholder),
