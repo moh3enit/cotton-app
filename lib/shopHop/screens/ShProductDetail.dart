@@ -1,6 +1,7 @@
-import 'dart:convert';
 
 import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/WishController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
@@ -32,71 +33,66 @@ class ShProductDetailState extends State<ShProductDetail> {
   List<ShReview> list = [];
   bool autoValidate = false;
   TextEditingController controller = TextEditingController();
-
-
-  Map productFake = {};
+  bool isWished = false;
 
 
   @override
   void initState() {
     super.initState();
     fetchData();
-    productFake["attributes"] = {
-      [
-        {
-          "id": 1,
-          "name": "Color",
-          "position": 0,
-          "visible": true,
-          "variation": true,
-          "options": [
-            "#0C5A93",
-            "#BDBDBD",
-            "#dd0202"
-          ]
-        },
-        {
-          "id": 2,
-          "name": "Size",
-          "position": 1,
-          "visible": true,
-          "variation": true,
-          "options": [
-            "S",
-            "M",
-            "L",
-            "XL",
-          ]
-        },
-        {
-          "id": 2,
-          "name": "Brand",
-          "position": 1,
-          "visible": true,
-          "variation": true,
-          "options": [
-            "Carter's",
-            "Fendi"
-          ]
-        }
-      ]
-    };
   }
 
 
   fetchData() async {
-    var products = await loadProducts();
-    setState(() {
-      list.clear();
-      list.addAll(products);
-    });
+
+    MyResponse myResponse = await WishController.initIsWished(widget.product!.id);
+
+    if (myResponse.success) {
+      print('initial responseeeeeeee : ${myResponse.data}');
+      if(myResponse.data == 'set'){
+        isWished = true;
+        setState(() { });
+      }
+    } else {
+      toasty(context, myResponse.errorText);
+    }
+
+
+
+    // var products = await loadProducts();
+    // setState(() {
+    //   list.clear();
+    //   list.addAll(products);
+    // });
+
   }
 
-  Future<List<ShReview>> loadProducts() async {
-    String jsonString = await loadContentAsset('assets/shophop_data/reviews.json');
-    final jsonResponse = json.decode(jsonString);
-    return (jsonResponse as List).map((i) => ShReview.fromJson(i)).toList();
+  void _toggleWishList(int? productId) async{
+
+    MyResponse myResponse = await WishController.toggleWish(productId);
+
+    if (myResponse.success) {
+      print('responseeeeeeee : ${myResponse.data}');
+      if(myResponse.data == 'set'){
+        isWished = true;
+      }else{
+        isWished = false;
+      }
+    } else {
+      toasty(context, myResponse.errorText);
+    }
+    setState(() { });
+
   }
+
+
+  // Future<List<ShReview>> loadProducts() async {
+  //   String jsonString = await loadContentAsset('assets/shophop_data/reviews.json');
+  //   final jsonResponse = json.decode(jsonString);
+  //   return (jsonResponse as List).map((i) => ShReview.fromJson(i)).toList();
+  // }
+
+
 
   @override
   void dispose() {
@@ -119,7 +115,7 @@ class ShProductDetailState extends State<ShProductDetail> {
       child: PageView.builder(
         itemCount: widget.product!.images!.length,
         itemBuilder: (context, index) {
-          return networkImage( widget.product!.images![index], aWidth: width, aHeight: width * 1.05, fit: BoxFit.cover);
+          return networkCachedImage( widget.product!.images![index], aWidth: width, aHeight: width * 1.05, fit: BoxFit.cover);
         },
         onPageChanged: (index) {
           position = index;
@@ -344,7 +340,14 @@ class ShProductDetailState extends State<ShProductDetail> {
                         padding: EdgeInsets.all(spacing_standard),
                         margin: EdgeInsets.only(right: spacing_standard_new),
                         decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(0.1)),
-                        child: Icon(Icons.favorite_border, color: sh_textColorPrimary, size: 18),
+                        child: IconButton(
+                          onPressed: (){
+                            _toggleWishList(widget.product!.id);
+                          },
+                          icon: isWished ?
+                          Icon(Icons.favorite, color: sh_red, size: 18):
+                          Icon(Icons.favorite_border, color: sh_textColorPrimary, size: 18),
+                        ),
                       ),
                       cartIcon(context, 1)
                     ],
@@ -386,6 +389,7 @@ class ShProductDetailState extends State<ShProductDetail> {
       ),
     );
   }
+
 
 }
 

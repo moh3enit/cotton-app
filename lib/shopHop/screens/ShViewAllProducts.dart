@@ -113,7 +113,7 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
                     Container(
                       padding: EdgeInsets.all(1),
                       decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 1)),
-                      child: networkImage( mProductModel[index].images![0], fit: BoxFit.cover, aHeight: width * 0.35, aWidth: width * 0.29),
+                      child: networkCachedImage( mProductModel[index].images![0], fit: BoxFit.cover, aHeight: width * 0.35, aWidth: width * 0.29),
                     ),
                     SizedBox(width: 10),
                     Expanded(
@@ -206,7 +206,7 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
                           Container(
                             padding: EdgeInsets.all(1),
                             decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 0.5)),
-                            child: networkImage(
+                            child: networkCachedImage(
                               mProductModel[index].images![0],
                               fit: BoxFit.cover,
                               aWidth: double.infinity,

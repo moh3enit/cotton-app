@@ -59,7 +59,7 @@ class ProductHorizontalList extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    networkImage(list[index].images![0], aWidth: double.infinity, aHeight: 200, fit: BoxFit.cover),
+                    networkCachedImage(list[index].images![0], aWidth: double.infinity, aHeight: 200, fit: BoxFit.cover),
                     SizedBox(height: spacing_standard),
                     Expanded(
                       child: Row(

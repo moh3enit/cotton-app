@@ -67,7 +67,7 @@ class ShOffersScreenState extends State<ShOffersScreen> {
                           Container(
                             padding: EdgeInsets.all(1),
                             decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 0.5)),
-                            child: networkImage(
+                            child: networkCachedImage(
                               mProductModel[index].images![0],
                               fit: BoxFit.cover,
                               aWidth: double.infinity,

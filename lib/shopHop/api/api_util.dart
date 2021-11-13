@@ -98,6 +98,10 @@ class ApiUtil {
   //PRODUCT
   static const String SUB_CATEGORY_PRODUCTS = "products/";
 
+  //WISH
+  static const String TOGGLE_WISH = "toggle_wish/";
+  static const String INIT_IS_WISHED = "init_is_wished/";
+
 
   //----------------- Redirects ----------------------------------//
   static checkRedirectNavigation(BuildContext context, int statusCode) async {
