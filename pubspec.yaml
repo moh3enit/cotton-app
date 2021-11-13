@@ -78,11 +78,28 @@ flutter:
     - images/shophop/img/products/dress/
     - images/shophop/img/products/banners/
     - images/shophop/img/products/decor/
-
     - assets/shophop_data/
     - images/defaultTheme/
     - images/defaultTheme/banner/
     - images/defaultTheme/category/
 
+  fonts:
+    - family: Andina
+      fonts:
+        - asset: fonts/andina.ttf
 
+    - family: Regular
+      fonts:
+        - asset: fonts/googlesansregular.ttf
 
+    - family: Medium
+      fonts:
+        - asset: fonts/googlesansmedium.ttf
+
+    - family: Semibold
+      fonts:
+        - asset: fonts/googlesansmedium.ttf
+
+    - family: Bold
+      fonts:
+        - asset: fonts/googlesansebold.ttf
