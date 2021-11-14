@@ -122,7 +122,6 @@ class ShPaymentsScreenState extends State<ShPaymentsScreen> {
                     ),
                   ),
                   divider(),
-                  divider(),
                   paymentDetail
                 ],
               ),

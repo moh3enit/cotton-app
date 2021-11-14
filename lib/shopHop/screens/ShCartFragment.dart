@@ -1,3 +1,4 @@
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -32,6 +33,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
       list.clear();
       list.addAll(products);
     });
+    print("${list[0].images![0]}");
   }
 
   @override
@@ -57,10 +59,10 @@ class ShCartFragmentState extends State<ShCartFragment> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Image.network(
+                  networkCachedImage(
                     list[index].images![0],
-                    width: width * 0.32,
-                    height: width * 0.37,
+                    aWidth: width * 0.32,
+                    aHeight: width * 0.37,
                     fit: BoxFit.fill,
                   ),
                   Expanded(
@@ -124,9 +126,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: <Widget>[
-                                    text(list[index].price.toString().toCurrencyFormat(),
-                                        textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
-
+                                    text(list[index].price.toString().toCurrencyFormat(),textColor: sh_colorPrimary,fontSize: textSizeNormal,fontFamily: fontMedium),
                                   ],
                                 ),
                               ),
@@ -182,6 +182,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
           );
           // return Chats(mListings[index], index);
         });
+
     var paymentDetail = Container(
       margin: EdgeInsets.fromLTRB(spacing_standard_new, spacing_standard_new, spacing_standard_new, 80),
       decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 1.0)),
@@ -256,6 +257,8 @@ class ShCartFragmentState extends State<ShCartFragment> {
         ],
       ),
     );
+
+
     return Scaffold(
       body: Container(
         height: height,

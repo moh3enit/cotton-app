@@ -27,7 +27,7 @@ Future<List<ShProduct>> loadProducts() async {
 Future<List<ShProduct>> loadCartProducts() async {
   String jsonString = await loadContentAsset('assets/shophop_data/cart_products.json');
   final jsonResponse = json.decode(jsonString);
-  return (jsonResponse as List).map((i) => ShProduct.fromJson(i)).toList();
+  return  ShProduct.getListFromJson(jsonResponse);
 }
 
 Future<ShAttributes> loadAttributes() async {

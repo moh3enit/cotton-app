@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/shopHop/models/ShAddress.dart';
@@ -92,10 +93,10 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      Image.asset(
-                        "images/shophop/img/products" + list[index].images![0],
-                        width: width * 0.25,
-                        height: width * 0.3,
+                      networkCachedImage(
+                        list[index].images![0],
+                        aWidth: width * 0.25,
+                        aHeight: width * 0.3,
                         fit: BoxFit.fill,
                       ),
                       Expanded(
