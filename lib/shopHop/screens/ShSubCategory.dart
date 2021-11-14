@@ -2,6 +2,7 @@
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/controllers/CategoryController.dart';
 import 'package:cotton_natural/shopHop/controllers/ProductController.dart';
+import 'package:cotton_natural/shopHop/screens/ShSearchScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/shopHop/models/ShCategory.dart';
@@ -68,7 +69,12 @@ class ShSubCategoryState extends State<ShSubCategory> {
       appBar: AppBar(
         backgroundColor: sh_white,
         iconTheme: IconThemeData(color: sh_textColorPrimary),
-        actions: <Widget>[Icon(Icons.search)],
+        actions: <Widget>[IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            ShSearchScreen().launch(context);
+          },
+        )],
         title: text(widget.category!.name, textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeNormal),
       ),
       body: SingleChildScrollView(

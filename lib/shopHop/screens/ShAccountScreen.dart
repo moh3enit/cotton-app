@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/models/Account.dart';
 import 'package:cotton_natural/shopHop/screens/ShSignIn.dart';
@@ -21,7 +23,7 @@ class ShAccountScreen extends StatefulWidget {
 
 class ShAccountScreenState extends State<ShAccountScreen> {
 
-  late Account userAccount ;
+  Account userAccount = Account(null, '', '', '') ;
   late bool isInProgress;
 
   @override
@@ -63,11 +65,11 @@ class ShAccountScreenState extends State<ShAccountScreen> {
             SizedBox(
               height: 30,
             ),
-            text("${userAccount.name??''}", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLarge),
+            text("${userAccount.name}", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLarge),
             SizedBox(
               height: 30,
             ),
-            text("${userAccount.email??''}", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLarge),
+            text("${userAccount.email}", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLarge),
             SizedBox(
               height: 30,
             ),

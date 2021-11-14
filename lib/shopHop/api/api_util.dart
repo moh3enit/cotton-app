@@ -8,7 +8,7 @@ enum RequestType { Post, Get, PostWithAuth, GetWithAuth }
 class ApiUtil {
 
   /*----------------- Fpr development server -----------------*/
-  static const String IP_ADDRESS = "10.0.2.2/cotton/public";/*192.168.1.105 10.0.2.2*/
+  static const String IP_ADDRESS = "192.168.1.105/cotton/public";/*192.168.1.105 10.0.2.2*/
 
   static const String PORT = "80";
   static const String API_VERSION = "v1";
@@ -104,6 +104,8 @@ class ApiUtil {
   static const String GET_WISH_PRODUCTS = "get_wish_products/";
   static const String REMOVE_FROM_WISH = "remove_wish/";
 
+  //SEARCH
+  static const String SEARCH = 'search';
 
   //----------------- Redirects ----------------------------------//
   static checkRedirectNavigation(BuildContext context, int statusCode) async {

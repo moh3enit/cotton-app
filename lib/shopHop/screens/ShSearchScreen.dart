@@ -1,11 +1,15 @@
+import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/api/api_util.dart';
+import 'package:cotton_natural/shopHop/controllers/ProductController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
-import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import 'ShProductDetail.dart';
 
@@ -29,17 +33,25 @@ class ShSearchScreenState extends State<ShSearchScreen> {
   }
 
   fetchData() async {
-    // List<ShProduct> products = await loadProducts();
+
     List<ShProduct> filteredList = [];
-    // products.forEach((product) {
-    //   if (product.name!.contains(searchText)) {
-    //     filteredList.add(product);
-    //   }
-    // });
-    setState(() {
+
+    MyResponse<List<ShProduct>> myResponseProduct = await ProductController.getSearchProduct(searchText);
+    if (myResponseProduct.success) {
+      filteredList = myResponseProduct.data;
       list.clear();
       list.addAll(filteredList);
+    } else {
+      if(mounted) {
+        ApiUtil.checkRedirectNavigation(
+            context, myResponseProduct.responseCode);
+        toasty(context, myResponseProduct.errorText);
+      }
+    }
+
+    setState(() {
       isEmpty = list.isEmpty;
+      isLoadingMoreData=false;
     });
   }
 
@@ -64,7 +76,7 @@ class ShSearchScreenState extends State<ShSearchScreen> {
                   Container(
                     padding: EdgeInsets.all(1),
                     decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 1)),
-                    child: Image.asset("images/shophop/img/products" + list[index].images![0], fit: BoxFit.cover, height: width * 0.35, width: width * 0.29),
+                    child: networkCachedImage(list[index].images![0], fit: BoxFit.cover, aHeight: width * 0.35, aWidth: width * 0.29),
                   ),
                   SizedBox(width: 10),
                   Expanded(
