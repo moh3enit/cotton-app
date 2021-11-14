@@ -48,7 +48,6 @@ class ShProductDetailState extends State<ShProductDetail> {
     MyResponse myResponse = await WishController.initIsWished(widget.product!.id);
 
     if (myResponse.success) {
-      print('initial responseeeeeeee : ${myResponse.data}');
       if(myResponse.data == 'set'){
         isWished = true;
         setState(() { });
@@ -72,7 +71,6 @@ class ShProductDetailState extends State<ShProductDetail> {
     MyResponse myResponse = await WishController.toggleWish(productId);
 
     if (myResponse.success) {
-      print('responseeeeeeee : ${myResponse.data}');
       if(myResponse.data == 'set'){
         isWished = true;
       }else{

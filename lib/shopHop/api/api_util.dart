@@ -101,6 +101,8 @@ class ApiUtil {
   //WISH
   static const String TOGGLE_WISH = "toggle_wish/";
   static const String INIT_IS_WISHED = "init_is_wished/";
+  static const String GET_WISH_PRODUCTS = "get_wish_products/";
+  static const String REMOVE_FROM_WISH = "remove_wish/";
 
 
   //----------------- Redirects ----------------------------------//

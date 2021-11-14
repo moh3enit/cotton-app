@@ -147,9 +147,10 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                             },
                             child: Column(
                               children: <Widget>[
-                                text("08", textColor: sh_colorPrimary, fontFamily: fontMedium),
+                                // text("08", textColor: sh_colorPrimary, fontFamily: fontMedium),
                                 SizedBox(height: spacing_control),
                                 text("My Order", textColor: sh_textColorPrimary, fontFamily: fontMedium),
+                                SizedBox(height: spacing_control),
                               ],
                             ),
                           ),
@@ -164,9 +165,10 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                             },
                             child: Column(
                               children: <Widget>[
-                                text("07", textColor: sh_colorPrimary, fontFamily: fontMedium),
+                                // text("07", textColor: sh_colorPrimary, fontFamily: fontMedium),
                                 SizedBox(height: spacing_control),
                                 text("Wishlist", textColor: sh_textColorPrimary, fontFamily: fontMedium),
+                                SizedBox(height: spacing_control),
                               ],
                             ),
                           ),

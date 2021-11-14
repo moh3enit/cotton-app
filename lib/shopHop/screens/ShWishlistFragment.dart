@@ -1,5 +1,7 @@
-import 'dart:convert';
 
+import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/WishController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,8 +9,11 @@ import 'package:cotton_natural/main/utils/AppWidget.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
-import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
+import 'package:lottie/lottie.dart';
+import 'package:nb_utils/nb_utils.dart';
+
+import 'ShProductDetail.dart';
 
 class ShWishlistFragment extends StatefulWidget {
   static String tag = '/ShProfileFragment';
@@ -27,18 +32,45 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
   }
 
   fetchData() async {
-    var products = await loadProducts();
+    // var products = await loadProducts();
+
+    List<ShProduct>? products;
+    MyResponse<List<ShProduct>> myResponse = await WishController.getWishProducts();
+
+    if (myResponse.success) {
+      products = myResponse.data;
+    } else {
+      toasty(context, myResponse.errorText);
+    }
+
     setState(() {
       list.clear();
-      list.addAll(products);
+      list.addAll(products!);
+    });
+  }
+  
+  _removeFromWish(int? productId) async{
+
+    MyResponse myResponse = await WishController.removeWish(productId);
+
+    if (myResponse.success) {
+      toasty(context, myResponse.data);
+    } else {
+      toasty(context, myResponse.errorText);
+    }
+
+    setState(() {
+      list.removeWhere((element) {
+        return element.id == productId;
+      });
     });
   }
 
-  Future<List<ShProduct>> loadProducts() async {
-    String jsonString = await loadContentAsset('assets/shophop_data/wishlist_products.json');
-    final jsonResponse = json.decode(jsonString);
-    return (jsonResponse as List).map((i) => ShProduct.fromJson(i)).toList();
-  }
+  // Future<List<ShProduct>> loadProducts() async {
+  //   String jsonString = await loadContentAsset('assets/shophop_data/wishlist_products.json');
+  //   final jsonResponse = json.decode(jsonString);
+  //   return (jsonResponse as List).map((i) => ShProduct.fromJson(i)).toList();
+  // }
 
   @override
   void setState(fn) {
@@ -49,7 +81,9 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: ListView.builder(
+      body:
+      (list.length>0) ?
+      ListView.builder(
           scrollDirection: Axis.vertical,
           itemCount: list.length,
           shrinkWrap: true,
@@ -62,11 +96,16 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Image.asset(
-                      "images/shophop/img/products" + list[index].images![0],
-                      width: width * 0.25,
-                      height: width * 0.3,
-                      fit: BoxFit.fill,
+                    InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ShProductDetail(product: list[index])));
+                      },
+                      child: networkCachedImage(
+                        list[index].images![0],
+                        aWidth: width * 0.25,
+                        aHeight: width * 0.3,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                     Expanded(
                       child: Column(
@@ -101,16 +140,21 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.delete_outline,
-                                          color: sh_textColorPrimary,
-                                          size: 16,
-                                        ),
-                                        text(sh_lbl_remove, textColor: sh_textColorPrimary, fontSize: textSizeSMedium)
-                                      ],
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                    child: InkWell(
+                                      onTap: (){
+                                        _removeFromWish(list[index].id);
+                                      },
+                                      child: Row(
+                                        children: <Widget>[
+                                         Icon(
+                                            Icons.delete_outline,
+                                            color: sh_textColorPrimary,
+                                            size: 16,
+                                          ),
+                                          text(sh_lbl_remove, textColor: sh_textColorPrimary, fontSize: textSizeSMedium)
+                                        ],
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                      ),
                                     ),
                                   )
                                 ],
@@ -125,7 +169,24 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
               ),
             );
             // return Chats(mListings[index], index);
-          }),
+          }):
+      Center(
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 25),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                'There is no product in wish list',
+                style: TextStyle(color: sh_cat_4, fontFamily: fontSemibold, fontSize: textSizeNormal),
+              ),
+              Lottie.asset('assets/lottie/not-found.json',fit: BoxFit.fitWidth),
+              SizedBox(height: 80,),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

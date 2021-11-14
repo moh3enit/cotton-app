@@ -1,14 +1,17 @@
 
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class Network {
 
-  static Future<NetworkResponse> post(String url, {Map<String, String> headers=const {}, Object body=const {}}) async {
+  static Future<NetworkResponse> post(String url, {Map<String, String> headers=const {}, Object? body,Encoding? encoding}) async {
 
     http.Response response = await http.post(
         Uri.parse(changeUrl(url)),
         headers: headers,
         body: body,
+        encoding: encoding
     );
     return NetworkResponse(response.body, response.statusCode);
   }
@@ -21,7 +24,7 @@ class Network {
     return NetworkResponse(response.body, response.statusCode);
   }
 
-  static Future<NetworkResponse> delete(String url, {Map<String, String> headers=const {}, Object body=const {}}) async {
+  static Future<NetworkResponse> delete(String url, {Map<String, String> headers=const {}, Object? body, Encoding? encoding}) async {
     http.Response response = await http.delete(
         Uri.parse(changeUrl(url)),
         headers: headers
