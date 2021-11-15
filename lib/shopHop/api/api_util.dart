@@ -88,9 +88,6 @@ class ApiUtil {
   //Forgot password
   static const String FORGOT_PASSWORD = "password/email";
 
-  //Profile
-  static const String PROFILE = "profile/";
-
   //CATEGORY
   static const String MAIN_CATEGORIES = "categories/";
   static const String SUB_CATEGORIES = "categories/";
@@ -106,6 +103,10 @@ class ApiUtil {
 
   //SEARCH
   static const String SEARCH = 'search';
+
+  //Order
+  static const String ORDER = "orders/";
+  static const String ORDER_DETAIL = "order/";
 
   //----------------- Redirects ----------------------------------//
   static checkRedirectNavigation(BuildContext context, int statusCode) async {

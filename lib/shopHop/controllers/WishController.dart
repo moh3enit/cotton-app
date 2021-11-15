@@ -13,10 +13,7 @@ class WishController{
   //--------------------- toggle wish ---------------------------------------------//
   static Future<MyResponse> toggleWish(int? productId) async {
 
-    Account userAccount = await AuthController.getAccount();
-    int? userId = userAccount.id;
-
-    String url = ApiUtil.MAIN_API_URL + ApiUtil.TOGGLE_WISH + productId.toString() + '/' + userId.toString();
+    String url = ApiUtil.MAIN_API_URL + ApiUtil.TOGGLE_WISH + productId.toString() ;
     String token = await AuthController.getApiToken() ?? '';
     Map<String, String> headers = ApiUtil.getHeader(requestType: RequestType.PostWithAuth,token: token);
 
@@ -40,8 +37,6 @@ class WishController{
       }
       return myResponse;
     }catch(e){
-      //If any server error...
-      print('errrrrrr: ${e.toString()}');
       return MyResponse.makeServerProblemError();
     }
   }
@@ -49,10 +44,7 @@ class WishController{
   //--------------------- init Is Wished  ---------------------------------------------//
   static Future<MyResponse> initIsWished(int? productId) async {
 
-    Account userAccount = await AuthController.getAccount();
-    int? userId = userAccount.id;
-
-    String url = ApiUtil.MAIN_API_URL + ApiUtil.INIT_IS_WISHED + productId.toString() + '/' + userId.toString();
+    String url = ApiUtil.MAIN_API_URL + ApiUtil.INIT_IS_WISHED + productId.toString() ;
     String token = await AuthController.getApiToken() ?? '';
     Map<String, String> headers = ApiUtil.getHeader(requestType: RequestType.PostWithAuth,token: token);
 
@@ -75,20 +67,14 @@ class WishController{
       }
       return myResponse;
     }catch(e){
-      //If any server error...
-      print('errrrrrr: ${e.toString()}');
       return MyResponse.makeServerProblemError();
     }
   }
 
-
   //--------------------- get wish product ---------------------------------------------//
   static Future<MyResponse<List<ShProduct>>> getWishProducts() async {
 
-    Account userAccount = await AuthController.getAccount();
-    int? userId = userAccount.id;
-
-    String url = ApiUtil.MAIN_API_URL + ApiUtil.GET_WISH_PRODUCTS + userId.toString();
+    String url = ApiUtil.MAIN_API_URL + ApiUtil.GET_WISH_PRODUCTS ;
     String token = await AuthController.getApiToken() ?? '';
     Map<String, String> headers = ApiUtil.getHeader(requestType: RequestType.GetWithAuth,token: token);
 
@@ -112,8 +98,6 @@ class WishController{
       }
       return myResponse;
     }catch(e){
-      //If any server error...
-      print('errrrrrr: ${e.toString()}');
       return MyResponse.makeServerProblemError<List<ShProduct>>();
     }
   }
@@ -121,10 +105,7 @@ class WishController{
   //--------------------- remove from wish  ---------------------------------------------//
   static Future<MyResponse> removeWish(int? productId) async {
 
-    Account userAccount = await AuthController.getAccount();
-    int? userId = userAccount.id;
-
-    String url = ApiUtil.MAIN_API_URL + ApiUtil.REMOVE_FROM_WISH + productId.toString() + '/' + userId.toString();
+    String url = ApiUtil.MAIN_API_URL + ApiUtil.REMOVE_FROM_WISH + productId.toString() ;
     String token = await AuthController.getApiToken() ?? '';
     Map<String, String> headers = ApiUtil.getHeader(requestType: RequestType.GetWithAuth,token: token);
 
@@ -148,8 +129,6 @@ class WishController{
       }
       return myResponse;
     }catch(e){
-      //If any server error...
-      print('errrrrrr: ${e.toString()}');
       return MyResponse.makeServerProblemError();
     }
   }
