@@ -15,7 +15,9 @@ import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 import 'ShConstant.dart';
 import 'ShStrings.dart';
 
-var textFiledBorderStyle = OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(width: 0, color: sh_editText_background));
+var textFiledBorderStyle = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(32.0),
+    borderSide: BorderSide(width: 0, color: sh_editText_background));
 
 InputDecoration formFieldDecoration(String hintText) {
   return InputDecoration(
@@ -41,68 +43,85 @@ class ProductHorizontalList extends StatelessWidget {
     return Container(
       height: 255,
       margin: EdgeInsets.only(top: spacing_standard_new),
-      child:
-      (list.length>0)?
-      ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: list.length,
-          shrinkWrap: true,
-          padding: EdgeInsets.only(right: spacing_standard_new),
-          itemBuilder: (context, index) {
-            return Container(
-              margin: EdgeInsets.only(left: spacing_standard_new),
-              width: width * 0.4,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ShProductDetail(product: list[index])));
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    networkCachedImage(list[index].images![0], aWidth: double.infinity, aHeight: 200, fit: BoxFit.cover),
-                    SizedBox(height: spacing_standard),
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(child: text(list[index].name, maxLine: 2, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeMedium)),
-                          Row(
+      child: (list.length > 0)
+          ? ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: list.length,
+              shrinkWrap: true,
+              padding: EdgeInsets.only(right: spacing_standard_new),
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.only(left: spacing_standard_new),
+                  width: width * 0.4,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ShProductDetail(product: list[index])));
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        networkCachedImage(list[index].images![0],
+                            aWidth: double.infinity,
+                            aHeight: 200,
+                            fit: BoxFit.cover),
+                        SizedBox(height: spacing_standard),
+                        Expanded(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              SizedBox(width: spacing_control_half),
-                              text(
-                                list[index].price.toString().toCurrencyFormat(),
-                                textColor: sh_colorPrimary,
-                                fontFamily: fontMedium,
-                                fontSize: textSizeMedium,
-                              ),
+                              Expanded(
+                                  child: text(list[index].name,
+                                      maxLine: 2,
+                                      textColor: sh_textColorPrimary,
+                                      fontFamily: fontMedium,
+                                      fontSize: textSizeMedium)),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(width: spacing_control_half),
+                                  text(
+                                    list[index]
+                                        .price
+                                        .toString()
+                                        .toCurrencyFormat(),
+                                    textColor: sh_colorPrimary,
+                                    fontFamily: fontMedium,
+                                    fontSize: textSizeMedium,
+                                  ),
+                                ],
+                              )
                             ],
-                          )
-                        ],
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                );
+              })
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  'There is no product for this category',
+                  style: TextStyle(
+                      color: sh_cat_4,
+                      fontFamily: fontSemibold,
+                      fontSize: textSizeNormal),
                 ),
-              ),
-            );
-          }) :
-      Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            'There is no product for this category',
-            style: TextStyle(color: sh_cat_4, fontFamily: fontSemibold, fontSize: textSizeNormal),
-          ),
-          Container(
-            height: 200,
-            child: Lottie.asset(
-                'assets/lottie/not-found.json',
-              fit: BoxFit.fitHeight,
+                Container(
+                  height: 200,
+                  child: Lottie.asset(
+                    'assets/lottie/not-found.json',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -153,7 +172,11 @@ class TopBarState extends State<TopBar> {
                 finish(context);
               },
             ),
-            Center(child: text(widget.titleName, textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontBold))
+            Center(
+                child: text(widget.titleName,
+                    textColor: sh_textColorPrimary,
+                    fontSize: textSizeNormal,
+                    fontFamily: fontBold))
           ],
         ),
       ),
@@ -232,7 +255,12 @@ Widget ring(String description) {
         ),
       ),
       SizedBox(height: 16),
-      text(description, textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontSemibold, isCentered: true, maxLine: 2)
+      text(description,
+          textColor: sh_textColorPrimary,
+          fontSize: textSizeNormal,
+          fontFamily: fontSemibold,
+          isCentered: true,
+          maxLine: 2)
     ],
   );
 }
@@ -276,7 +304,15 @@ class PinEntryTextField extends StatefulWidget {
   final isTextObscure;
   final showFieldAsBox;
 
-  PinEntryTextField({this.lastPin, this.fields: 4, this.onSubmit, this.fieldWidth: 40.0, this.fontSize: 20.0, this.isTextObscure: false, this.showFieldAsBox: false}) : assert(fields > 0);
+  PinEntryTextField(
+      {this.lastPin,
+      this.fields: 4,
+      this.onSubmit,
+      this.fieldWidth: 40.0,
+      this.fontSize: 20.0,
+      this.isTextObscure: false,
+      this.showFieldAsBox: false})
+      : assert(fields > 0);
 
   @override
   State createState() {
@@ -296,7 +332,8 @@ class PinEntryTextFieldState extends State<PinEntryTextField> {
     super.initState();
     _pin = List<String?>.filled(widget.fields, null, growable: false);
     _focusNodes = List<FocusNode?>.filled(widget.fields, null, growable: false);
-    _textControllers = List<TextEditingController?>.filled(widget.fields, null, growable: false);
+    _textControllers = List<TextEditingController?>.filled(widget.fields, null,
+        growable: false);
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       setState(() {
         if (widget.lastPin != null) {
@@ -324,11 +361,15 @@ class PinEntryTextFieldState extends State<PinEntryTextField> {
       FocusScope.of(context).requestFocus(_focusNodes[0]);
     }
 
-    return Row(mainAxisAlignment: MainAxisAlignment.center, verticalDirection: VerticalDirection.down, children: textFields);
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        verticalDirection: VerticalDirection.down,
+        children: textFields);
   }
 
   void clearTextFields() {
-    _textControllers.forEach((TextEditingController? tEditController) => tEditController!.clear());
+    _textControllers.forEach(
+        (TextEditingController? tEditController) => tEditController!.clear());
     _pin.clear();
   }
 
@@ -355,10 +396,18 @@ class PinEntryTextFieldState extends State<PinEntryTextField> {
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         maxLength: 1,
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontFamily: fontMedium, fontSize: widget.fontSize),
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontFamily: fontMedium,
+            fontSize: widget.fontSize),
         focusNode: _focusNodes[i],
         obscureText: widget.isTextObscure,
-        decoration: InputDecoration(counterText: "", border: widget.showFieldAsBox ? OutlineInputBorder(borderSide: BorderSide(width: 2.0)) : null),
+        decoration: InputDecoration(
+            counterText: "",
+            border: widget.showFieldAsBox
+                ? OutlineInputBorder(borderSide: BorderSide(width: 2.0))
+                : null),
         onChanged: (String str) {
           setState(() {
             _pin[i] = str;
@@ -411,13 +460,20 @@ Widget horizontalHeading(var title, {bool showViewAll = true, var callback}) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        text(title, fontSize: textSizeLargeMedium, textColor: sh_textColorPrimary, fontFamily: fontMedium),
+        text(title,
+            fontSize: textSizeLargeMedium,
+            textColor: sh_textColorPrimary,
+            fontFamily: fontMedium),
         showViewAll
             ? GestureDetector(
                 onTap: callback,
                 child: Container(
-                  padding: EdgeInsets.only(left: spacing_standard_new, top: spacing_control, bottom: spacing_control),
-                  child: text(sh_lbl_view_all, textColor: sh_textColorSecondary, fontFamily: fontMedium),
+                  padding: EdgeInsets.only(
+                      left: spacing_standard_new,
+                      top: spacing_control,
+                      bottom: spacing_control),
+                  child: text(sh_lbl_view_all,
+                      textColor: sh_textColorSecondary, fontFamily: fontMedium),
                 ),
               )
             : Container()
@@ -501,8 +557,10 @@ Widget cartIcon(context, cartCount) {
                 child: Container(
                   margin: EdgeInsets.only(top: spacing_control),
                   padding: EdgeInsets.all(6),
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red),
-                  child: text(cartCount.toString(), textColor: sh_white, fontSize: textSizeSmall),
+                  decoration:
+                      BoxDecoration(shape: BoxShape.circle, color: Colors.red),
+                  child: text(cartCount.toString(),
+                      textColor: sh_white, fontSize: textSizeSmall),
                 ),
               )
             : Container()
@@ -516,5 +574,8 @@ Widget cartIcon(context, cartCount) {
 }
 
 Widget headingText(String content) {
-  return text(content, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium);
+  return text(content,
+      textColor: sh_textColorPrimary,
+      fontFamily: fontMedium,
+      fontSize: textSizeLargeMedium);
 }

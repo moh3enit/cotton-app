@@ -60,10 +60,6 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
   }
 
   fetchData() async {
-
-    print('*******************************************');
-    print(widget.mainCat);
-    print(widget.subCatName);
     MyResponse<Map<String,List<ShProduct>>> myResponse2 = await ProductController.getSubCatProduct(widget.mainCat,widget.subCatSlug,0);
     if (myResponse2.success) {
       mProductModel.clear();
