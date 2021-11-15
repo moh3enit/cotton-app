@@ -15,6 +15,9 @@ import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart';
+
 // ignore: must_be_immutable
 class ShProductDetail extends StatefulWidget {
   static String tag = '/ShProductDetail';
@@ -166,12 +169,15 @@ class ShProductDetailState extends State<ShProductDetail> {
       },
     );
 
-    var sizeList =  [
-      "S",
-      "M",
-      "L",
-      "XL",
-    ];
+    // var sizeList =  [
+    //   for(var i=0;i<widget.product!.sizes!.length-1;i++){
+    //     widget.product!.sizes![i].name
+    //   },
+    //   "S",
+    //   "M",
+    //   "L",
+    //   "XL",
+    // ];
     // productFake['attributes'].forEach((element) {
     //   if (element['name'] == 'Size') sizeList.addAll(element['options']!);
     // });
@@ -191,7 +197,7 @@ class ShProductDetailState extends State<ShProductDetail> {
 
     var sizes = ListView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: sizeList.length,
+      itemCount: widget.product!.sizes!.length,
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -200,11 +206,12 @@ class ShProductDetailState extends State<ShProductDetail> {
             setState(() {});
           },
           child: Container(
-            width: 30,
-            height: 30,
-            margin: EdgeInsets.only(right: spacing_xlarge),
+            // width: 30,
+            // height: 30,
+            margin: EdgeInsets.only(right: spacing_standard_new),
+            padding: EdgeInsets.all(spacing_standard),
             decoration: selectedSize == index ? BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: sh_colorPrimary) : BoxDecoration(),
-            child: Center(child: text(sizeList[index], textColor: selectedSize == index ? sh_white : sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium)),
+            child: Center(child: text(ShProduct.getSizeTypeText(widget.product!.sizes![index].name!), textColor: selectedSize == index ? sh_white : sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium)),
           ),
         );
       },
@@ -220,7 +227,7 @@ class ShProductDetailState extends State<ShProductDetail> {
             Stack(
               alignment: Alignment.bottomRight,
               children: <Widget>[
-                text(widget.product!.description, maxLine: 3, isLongText: isExpanded, fontSize: 16.0),
+                text(parseHtmlString(widget.product!.description), maxLine: 15, isLongText: isExpanded, fontSize: 16.0),
                 InkWell(
                   child: Container(
                     padding: EdgeInsets.all(spacing_control_half),
@@ -234,51 +241,51 @@ class ShProductDetailState extends State<ShProductDetail> {
                 )
               ],
             ),
-            SizedBox(height: spacing_standard_new),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(border: Border.all(color: sh_view_color)),
-                    padding: EdgeInsets.only(left: spacing_middle, right: spacing_middle),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                          child: TextField(
-                            style: TextStyle(fontSize: textSizeMedium, color: sh_textColorPrimary),
-                            decoration: InputDecoration(border: InputBorder.none, hintText: "Pincode"),
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 25,
-                          color: sh_view_color,
-                          margin: EdgeInsets.only(left: spacing_middle, right: spacing_middle),
-                        ),
-                        text("Check Availability", textColor: sh_textColorPrimary, fontSize: textSizeSmall)
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: spacing_standard_new,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[text(sh_lbl_delivered_by, fontSize: textSizeSMedium), text("25 June, Monday", textColor: sh_textColorPrimary, fontSize: textSizeMedium, fontFamily: fontMedium)],
-                )
-              ],
-            ),
-            SizedBox(height: spacing_standard_new),
-            text(sh_lbl_colors, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-            Container(height: 50, child: colors),
-            sizeList.isNotEmpty ? text(sh_lbl_size, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium) : SizedBox(),
+            SizedBox(height: spacing_large),
+            // Row(
+            //   children: <Widget>[
+            //     Expanded(
+            //       child: Container(
+            //         height: 40,
+            //         decoration: BoxDecoration(border: Border.all(color: sh_view_color)),
+            //         padding: EdgeInsets.only(left: spacing_middle, right: spacing_middle),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           crossAxisAlignment: CrossAxisAlignment.center,
+            //           children: <Widget>[
+            //             Expanded(
+            //               child: TextField(
+            //                 style: TextStyle(fontSize: textSizeMedium, color: sh_textColorPrimary),
+            //                 decoration: InputDecoration(border: InputBorder.none, hintText: "Pincode"),
+            //                 keyboardType: TextInputType.number,
+            //                 textAlign: TextAlign.start,
+            //               ),
+            //             ),
+            //             Container(
+            //               width: 1,
+            //               height: 25,
+            //               color: sh_view_color,
+            //               margin: EdgeInsets.only(left: spacing_middle, right: spacing_middle),
+            //             ),
+            //             text("Check Availability", textColor: sh_textColorPrimary, fontSize: textSizeSmall)
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //     SizedBox(
+            //       width: spacing_standard_new,
+            //     ),
+            //     Column(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: <Widget>[text(sh_lbl_delivered_by, fontSize: textSizeSMedium), text("25 June, Monday", textColor: sh_textColorPrimary, fontSize: textSizeMedium, fontFamily: fontMedium)],
+            //     )
+            //   ],
+            // ),
+            // SizedBox(height: spacing_standard_new),
+            // text(sh_lbl_colors, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
+            // Container(height: 50, child: colors),
+            widget.product!.sizes!.isNotEmpty ? text(sh_lbl_size, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium) : SizedBox(),
             Container(height: 50, child: sizes)
           ],
         ),

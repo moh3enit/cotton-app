@@ -22,6 +22,7 @@ class ShProduct {
   String? attribute_1_name;
   String? attribute_1_value;
   String? slug;
+  List<Sizes>? sizes;
 
   ShProduct({
         this.id,
@@ -46,6 +47,7 @@ class ShProduct {
         this.attribute_1_name,
         this.attribute_1_value,
         this.slug,
+        this.sizes,
   });
 
   ShProduct.fromJson(Map<String, dynamic> json) {
@@ -72,6 +74,12 @@ class ShProduct {
     attribute_1_name = json['attribute_1_name']??'';
     attribute_1_value = json['attribute_1_value']??'';
     slug = json['slug']??'';
+    if (json['sizes'] != null) {
+      sizes = [];
+      json['sizes'].forEach((v) {
+        sizes?.add(Sizes.fromJson(v));
+      });
+    }
   }
 
 
@@ -92,6 +100,28 @@ class ShProduct {
     }
     return list;
   }
+
+  static String getSizeTypeText(String sizeType) {
+    switch (sizeType) {
+      case 'small':
+        return 'S';
+      case 'medium':
+        return 'M';
+      case 'large':
+        return 'L';
+      case 'X-Large':
+        return 'XL';
+      case 'XX-Large':
+        return 'XXL';
+      case '3x-Large':
+        return '3XL';
+      case '4x-Large':
+        return '4XL';
+      case '5x-Large':
+        return '5XL';
+    }
+    return sizeType;
+  }
 }
 
 class Dimensions {
@@ -102,3 +132,41 @@ class Dimensions {
   Dimensions({this.length, this.width, this.height});
 }
 
+class Sizes {
+  Sizes({
+    int? id,
+    String? name,
+    String? createdAt,
+    String? updatedAt,}){
+    _id = id;
+    _name = name;
+    _createdAt = createdAt;
+    _updatedAt = updatedAt;
+  }
+
+  Sizes.fromJson(dynamic json) {
+    _id = json['id'];
+    _name = json['name'];
+    _createdAt = json['created_at'];
+    _updatedAt = json['updated_at'];
+  }
+  int? _id;
+  String? _name;
+  String? _createdAt;
+  String? _updatedAt;
+
+  int? get id => _id;
+  String? get name => _name;
+  String? get createdAt => _createdAt;
+  String? get updatedAt => _updatedAt;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['id'] = _id;
+    map['name'] = _name;
+    map['created_at'] = _createdAt;
+    map['updated_at'] = _updatedAt;
+    return map;
+  }
+
+}
