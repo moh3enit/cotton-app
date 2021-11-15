@@ -1,9 +1,14 @@
+import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
+import 'package:cotton_natural/shopHop/models/Account.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
+import 'package:nb_utils/src/extensions/widget_extensions.dart';
+
+import 'ShSignIn.dart';
 
 class ShProfileFragment extends StatefulWidget {
   static String tag = '/ShProfileFragment';
@@ -13,16 +18,50 @@ class ShProfileFragment extends StatefulWidget {
 }
 
 class ShProfileFragmentState extends State<ShProfileFragment> {
+  var nameCont = TextEditingController();
   var emailCont = TextEditingController();
+  var phoneCont = TextEditingController();
   var passwordCont = TextEditingController();
   var confirmPasswordCont = TextEditingController();
-  var firstNameCont = TextEditingController();
-  var lastNameCont = TextEditingController();
-  String? selectedValue = "Male";
+
+  Account userAccount = Account(null, '', '', '') ;
+  late bool isInProgress;
+
+  @override
+  void initState() {
+    super.initState();
+    isInProgress = false;
+    _getUserAccount();
+  }
+
+  _getUserAccount()async{
+
+    if(mounted) {
+      setState(() {
+        isInProgress = true;
+      });
+    }
+
+    userAccount =  await AuthController.getAccount();
+    nameCont = TextEditingController(text: userAccount.name);
+    emailCont = TextEditingController(text: userAccount.email);
+
+    if(mounted) {
+      setState(() {
+        isInProgress = false;
+      });
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: sh_white,
+        title: text(sh_lbl_account, textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
+        iconTheme: IconThemeData(color: sh_textColorPrimary),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(spacing_standard_new),
@@ -53,88 +92,24 @@ class ShProfileFragmentState extends State<ShProfileFragment> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.all(spacing_control),
-                      margin: EdgeInsets.only(bottom: 30, right: 20),
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: sh_white, border: Border.all(color: sh_colorPrimary, width: 1)),
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: sh_colorPrimary,
-                        size: 16,
-                      ),
-                    )
                   ],
                 ),
               ),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Expanded(
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        autofocus: false,
-                        controller: firstNameCont,
-                        textCapitalization: TextCapitalization.words,
-                        style: TextStyle(color: sh_textColorPrimary, fontFamily: fontRegular, fontSize: textSizeMedium),
-                        decoration: InputDecoration(
-                            filled: false,
-                            hintText: sh_hint_first_name,
-                            hintStyle: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium),
-                            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5)),
-                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0))),
-                      ),
-                    ),
-                    SizedBox(
-                      width: spacing_standard_new,
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        autofocus: false,
-                        controller: lastNameCont,
-                        textCapitalization: TextCapitalization.words,
-                        style: TextStyle(color: sh_textColorPrimary, fontFamily: fontRegular, fontSize: textSizeMedium),
-                        decoration: InputDecoration(
-                            filled: false,
-                            hintText: sh_hint_last_name,
-                            hintStyle: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium),
-                            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5)),
-                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0))),
-                      ),
-                    ),
-                  ],
-                ),
+              TextFormField(
+                keyboardType: TextInputType.text,
+                autofocus: false,
+                controller: nameCont,
+                textCapitalization: TextCapitalization.words,
+                style: TextStyle(color: sh_textColorPrimary, fontFamily: fontRegular, fontSize: textSizeMedium),
+                decoration: InputDecoration(
+                    filled: false,
+                    hintText: sh_hint_first_name,
+                    hintStyle: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium),
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0))),
               ),
-              SizedBox(height: spacing_standard_new),
-              SizedBox(
-                width: double.infinity,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1), borderRadius: BorderRadius.all(Radius.circular(32.0))),
-                  child: DropdownButton<String>(
-                    underline: SizedBox(),
-                    isExpanded: true,
-                    items: <String>["Male", "Female", "Other"].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: text(value, textColor: sh_textColorPrimary, fontSize: textSizeMedium, fontFamily: fontRegular),
-                      );
-                    }).toList(),
-                    //hint:Text(selectedValue),
-                    value: selectedValue,
-                    onChanged: (newVal) {
-                      setState(() {
-                        selectedValue = newVal;
-                      });
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: spacing_standard_new),
+              SizedBox(height: spacing_standard_new,),
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 autofocus: false,
@@ -144,6 +119,21 @@ class ShProfileFragmentState extends State<ShProfileFragment> {
                 decoration: InputDecoration(
                     filled: false,
                     hintText: sh_hint_Email,
+                    hintStyle: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium),
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0))),
+              ),
+              SizedBox(height: spacing_standard_new),
+              TextFormField(
+                keyboardType: TextInputType.text,
+                autofocus: false,
+                controller: phoneCont,
+                textCapitalization: TextCapitalization.words,
+                style: TextStyle(color: sh_textColorPrimary, fontFamily: fontRegular, fontSize: textSizeMedium),
+                decoration: InputDecoration(
+                    filled: false,
+                    hintText: sh_hint_phone,
                     hintStyle: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium),
                     contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5)),

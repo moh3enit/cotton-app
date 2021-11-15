@@ -1,6 +1,7 @@
 
 import 'package:cotton_natural/main/utils/common.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/controllers/WishController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,6 @@ class ShProductDetailState extends State<ShProductDetail> {
 
 
   fetchData() async {
-
     MyResponse myResponse = await WishController.initIsWished(widget.product!.id);
 
     if (myResponse.success) {
@@ -55,29 +55,23 @@ class ShProductDetailState extends State<ShProductDetail> {
     } else {
       toasty(context, myResponse.errorText);
     }
-
-
-
-    // var products = await loadProducts();
-    // setState(() {
-    //   list.clear();
-    //   list.addAll(products);
-    // });
-
   }
 
   void _toggleWishList(int? productId) async{
+    if(await AuthController.isLoginUser()){
+      MyResponse myResponse = await WishController.toggleWish(productId);
 
-    MyResponse myResponse = await WishController.toggleWish(productId);
-
-    if (myResponse.success) {
-      if(myResponse.data == 'set'){
-        isWished = true;
-      }else{
-        isWished = false;
+      if (myResponse.success) {
+        if(myResponse.data == 'set'){
+          isWished = true;
+        }else{
+          isWished = false;
+        }
+      } else {
+        toasty(context, myResponse.errorText);
       }
-    } else {
-      toasty(context, myResponse.errorText);
+    }else{
+      toasty(context, 'Login to your account');
     }
     setState(() { });
 
