@@ -101,7 +101,7 @@ class ShSignUpState extends State<ShSignUp> {
                                   filled: true,
                                   fillColor: sh_editText_background,
                                   focusColor: sh_editText_background_active,
-                                  hintText: sh_hint_last_name,
+                                  hintText: sh_hint_phone,
                                   hintStyle: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium),
                                   contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: sh_colorPrimary, width: 0.5)),

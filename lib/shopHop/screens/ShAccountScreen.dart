@@ -2,7 +2,9 @@ import 'dart:ffi';
 
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/models/Account.dart';
+import 'package:cotton_natural/shopHop/screens/ShHomeScreen.dart';
 import 'package:cotton_natural/shopHop/screens/ShSignIn.dart';
+import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
@@ -54,20 +56,41 @@ class ShAccountScreenState extends State<ShAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: sh_white,
-        title: text(sh_lbl_account, textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
-        iconTheme: IconThemeData(color: sh_textColorPrimary),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            Center(
+              child: Stack(
+                alignment: Alignment.bottomRight,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(spacing_standard_new),
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: spacing_standard,
+                      margin: EdgeInsets.all(spacing_control),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage(ic_user),
+                          radius: 55,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(
-              height: 30,
+              height: 5,
             ),
             text("${userAccount.name}", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLarge),
             SizedBox(
-              height: 30,
+              height: 5,
             ),
             text("${userAccount.email}", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLarge),
             SizedBox(
@@ -86,7 +109,7 @@ class ShAccountScreenState extends State<ShAccountScreen> {
                   }),
                   SizedBox(height: spacing_standard_new),
                   getRowItem(sh_lbl_wish_list, callback: () {
-                    Navigator.of(context).pop(true);
+                    //
                   }),
                   SizedBox(height: 30,),
                   SizedBox(
@@ -101,7 +124,7 @@ class ShAccountScreenState extends State<ShAccountScreen> {
                       color: sh_white,
                       onPressed: () async {
                         await AuthController.logoutUser();
-                        ShSignIn().launch(context);
+                        ShHomeScreen().launch(context);
                       },
                     ),
                   )

@@ -124,7 +124,7 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       onFieldSubmitted: (term) {
         FocusScope.of(context).nextFocus();
       },
-      decoration: formFieldDecoration(sh_hint_last_name),
+      decoration: formFieldDecoration(sh_hint_phone),
     );
 
     final pinCode = TextFormField(

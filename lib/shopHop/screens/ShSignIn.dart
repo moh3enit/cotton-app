@@ -33,8 +33,8 @@ class ShSignInState extends State<ShSignIn> {
     super.initState();
     _checkUserLoginOrNot();
     isInProgress = false;
-    emailCont = TextEditingController(text: "user@demo.com");
-    passwordCont = TextEditingController(text: "password");
+    emailCont = TextEditingController(text: "billing@divstrong.com");
+    passwordCont = TextEditingController(text: "andreab1");
   }
 
 
