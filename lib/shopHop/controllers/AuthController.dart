@@ -29,8 +29,6 @@ class AuthController {
     try {
       NetworkResponse response = await Network.post(loginUrl, headers: header, body: body );
       MyResponse myResponse = MyResponse(response.statusCode);
-      print('rrrrrrrr : ${response.statusCode}');
-      print('bbbbbbbbbbbbbb : ${response.body}');
       if (response.statusCode == 200) {
 
         SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

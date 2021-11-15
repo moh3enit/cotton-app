@@ -64,7 +64,7 @@ class ShViewAllProductScreenState extends State<ShViewAllProductScreen> {
     if (myResponse2.success) {
       mProductModel.clear();
       mProductModel = myResponse2.data[widget.subCatSlug] ?? [];
-      mProductModel.forEach((element) {print(element.name); });
+      // mProductModel.forEach((element) {print(element.name); });
     } else {
       toasty(context, myResponse2.errorText);
     }

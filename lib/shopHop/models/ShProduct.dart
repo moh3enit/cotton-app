@@ -51,27 +51,27 @@ class ShProduct {
   ShProduct.fromJson(Map<String, dynamic> json) {
 
     id = json['id'];
-    sku = json['sku'];
-    name = json['name'];
-    active = json['active'];
-    featured = json['featured'];
-    short_description = json['short_description'];
-    description = json['description'];
-    sale_start_date = json['sale_start_date'];
-    sale_end_date = json['sale_end_date'];
-    in_stock = json['in_stock'];
-    weight = json['weight'];
-    dimensions =  Dimensions(length: json['length'],width: json['width'],height: json['height'])  ;
-    sale_price = json['sale_price'];
+    sku = json['sku']??'';
+    name = json['name']??'';
+    active = json['active']??1;
+    featured = json['featured']??false;
+    short_description = json['short_description']??'';
+    description = json['description']??'';
+    sale_start_date = json['sale_start_date']??'';
+    sale_end_date = json['sale_end_date']??'';
+    in_stock = json['in_stock']??0;
+    weight = json['weight']??[''];
+    dimensions =  Dimensions(length: json['length']??'',width: json['width']??'',height: json['height']??'')  ;
+    sale_price = json['sale_price']??0;
     price = json['price'];
-    categories = json['category'];
-    tags = json['tag'] ;
-    images = json['image'];
-    parent = json['parent'];
-    up_sell = json['up_sell'];
-    attribute_1_name = json['attribute_1_name'];
-    attribute_1_value = json['attribute_1_value'];
-    slug = json['slug'];
+    categories = json['category']??[''];
+    tags = json['tag']??[''] ;
+    images = json['image']??[''];
+    parent = json['parent']??0;
+    up_sell = json['up_sell']??'';
+    attribute_1_name = json['attribute_1_name']??'';
+    attribute_1_value = json['attribute_1_value']??'';
+    slug = json['slug']??'';
   }
 
 

@@ -29,7 +29,6 @@ class ProductController{
       if (ApiUtil.isResponseSuccess(response.statusCode)) {
         myResponse.success = true;
         myResponse.data = ShProduct.getSubCatProductsMap(json.decode(response.body));
-        myResponse.data.forEach((key, value) {print(key);print(value[0].name);});
       } else {
         myResponse.success = false;
         myResponse.setError(json.decode(response.body));
