@@ -1,3 +1,5 @@
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
+import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -10,6 +12,7 @@ import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:cotton_natural/shopHop/utils/widgets/ShSliderWidget.dart';
+import 'package:provider/provider.dart';
 
 class ShPaymentsScreen extends StatefulWidget {
   static String tag = '/ShPaymentsScreen';
@@ -58,7 +61,7 @@ class ShPaymentsScreenState extends State<ShPaymentsScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_shipping_charge),
-                    text('?', textColor: Colors.green, fontFamily: fontMedium),
+                    text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod()!.price!.toCurrencyFormat(), textColor: Colors.green, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -67,7 +70,7 @@ class ShPaymentsScreenState extends State<ShPaymentsScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_total_amount),
-                    text("\$70.00", textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                    text(Provider.of<OrdersProvider>(context, listen: false).getTotalPrice(), textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                   ],
                 ),
               ],

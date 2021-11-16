@@ -1,9 +1,8 @@
-import 'dart:ffi';
 
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/models/Account.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:cotton_natural/shopHop/screens/ShHomeScreen.dart';
-import 'package:cotton_natural/shopHop/screens/ShSignIn.dart';
 import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:cotton_natural/shopHop/screens/ShAdressManagerScreen.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
+import 'package:provider/provider.dart';
 
 import 'ShOrderListScreen.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -109,7 +109,7 @@ class ShAccountScreenState extends State<ShAccountScreen> {
                   }),
                   SizedBox(height: spacing_standard_new),
                   getRowItem(sh_lbl_wish_list, callback: () {
-                    //
+                    ShHomeScreen(goToTabIndex: 1,).launch(context);
                   }),
                   SizedBox(height: 30,),
                   SizedBox(
@@ -124,6 +124,7 @@ class ShAccountScreenState extends State<ShAccountScreen> {
                       color: sh_white,
                       onPressed: () async {
                         await AuthController.logoutUser();
+                        Provider.of<OrdersProvider>(context,listen:false).resetOrdersProvider();
                         ShHomeScreen().launch(context);
                       },
                     ),

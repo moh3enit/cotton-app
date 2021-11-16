@@ -6,6 +6,7 @@ import 'package:cotton_natural/shopHop/controllers/WishController.dart';
 import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:cotton_natural/shopHop/screens/ShCartFragment.dart';
 import 'package:cotton_natural/shopHop/screens/ShCartScreen.dart';
+import 'package:cotton_natural/shopHop/screens/ShHomeScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
@@ -37,7 +38,7 @@ class ShProductDetailState extends State<ShProductDetail> {
   var position = 0;
   bool isExpanded = false;
   var selectedColor = -1;
-  var selectedSize = -1;
+  int selectedSize = -1;
   List<ShReview> list = [];
   bool autoValidate = false;
   TextEditingController controller = TextEditingController();
@@ -83,15 +84,6 @@ class ShProductDetailState extends State<ShProductDetail> {
     setState(() { });
 
   }
-
-
-  // Future<List<ShReview>> loadProducts() async {
-  //   String jsonString = await loadContentAsset('assets/shophop_data/reviews.json');
-  //   final jsonResponse = json.decode(jsonString);
-  //   return (jsonResponse as List).map((i) => ShReview.fromJson(i)).toList();
-  // }
-
-
 
   @override
   void dispose() {
@@ -295,6 +287,7 @@ class ShProductDetailState extends State<ShProductDetail> {
         ),
       ),
     );
+
     var bottomButtons = Container(
       height: 50,
       decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.7), blurRadius: 16, spreadRadius: 2, offset: Offset(3, 1))], color: sh_white),
@@ -303,7 +296,13 @@ class ShProductDetailState extends State<ShProductDetail> {
           Expanded(
             child: InkWell(
               onTap: (){
-                Provider.of<OrdersProvider>(context, listen: false).addItemToBasket(product: widget.product);
+                if(selectedSize<0){
+                  toasty(context, 'Please Select A Size');
+                }else{
+                  String? size =  widget.product!.sizes![selectedSize].name;
+                  Provider.of<OrdersProvider>(context, listen: false).addItemToBasket(product: widget.product,size: size);
+                  toasty(context, 'Product Added To Cart');
+                }
               },
               child: Container(
                 child: text(sh_lbl_add_to_cart, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
@@ -316,7 +315,11 @@ class ShProductDetailState extends State<ShProductDetail> {
           Expanded(
             child: InkWell(
               onTap: (){
-                ShCartScreen().launch(context);
+                if(Provider.of<OrdersProvider>(context, listen: false).getOrderCount() > 0){
+                  ShHomeScreen(goToTabIndex: 2,).launch(context);
+                }else{
+                  toasty(context, 'Your Cart Is Empty');
+                }
               },
               child: Container(
                 child: text(sh_lbl_buy_now, textColor: sh_white, fontSize: textSizeLargeMedium, fontFamily: fontMedium),

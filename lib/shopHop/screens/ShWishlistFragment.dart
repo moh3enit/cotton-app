@@ -26,6 +26,7 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
   List<ShProduct> list = [];
   bool isLoadingMoreData = false;
 
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +36,8 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
   fetchData() async {
     // var products = await loadProducts();
 
+
+    isLoadingMoreData = true;
     List<ShProduct>? products;
     MyResponse<List<ShProduct>> myResponse = await WishController.getWishProducts();
 
@@ -77,7 +80,7 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: (list.length > 0)
+      body: (isLoadingMoreData)?Container():(list.length > 0)
           ? ListView.builder(
               scrollDirection: Axis.vertical,
               physics:BouncingScrollPhysics(),

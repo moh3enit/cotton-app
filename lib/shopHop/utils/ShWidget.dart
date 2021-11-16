@@ -1,4 +1,5 @@
 import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
@@ -11,6 +12,7 @@ import 'package:cotton_natural/shopHop/screens/ShProductDetail.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShImages.dart';
+import 'package:provider/provider.dart';
 
 import 'ShConstant.dart';
 import 'ShStrings.dart';
@@ -567,7 +569,11 @@ Widget cartIcon(context, cartCount) {
       ],
     ),
     onTap: () {
-      ShCartScreen().launch(context);
+      if(Provider.of<OrdersProvider>(context, listen: false).getOrderCount() > 0){
+        ShCartScreen().launch(context);
+      }else{
+        toasty(context, 'Your Cart Is Empty');
+      }
     },
     radius: spacing_standard_new,
   );

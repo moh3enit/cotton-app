@@ -26,7 +26,8 @@ import 'ShSubCategory.dart';
 
 class ShHomeScreen extends StatefulWidget {
   static String tag = '/ShHomeScreen';
-
+  final int? goToTabIndex;
+  ShHomeScreen({this.goToTabIndex});
   @override
   ShHomeScreenState createState() => ShHomeScreenState();
 }
@@ -47,6 +48,7 @@ class ShHomeScreenState extends State<ShHomeScreen> {
   @override
   void initState() {
     super.initState();
+    selectedTab = ((widget.goToTabIndex != null) ? widget.goToTabIndex : 0)!;
     fragments = [
       homeFragment,
       wishlistFragment,

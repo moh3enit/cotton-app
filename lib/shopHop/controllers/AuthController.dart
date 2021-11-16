@@ -148,7 +148,6 @@ class AuthController {
   //------------------------ Logout -----------------------------------------//
   static Future<bool> logoutUser() async {
 
-
     //Clear all Data
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
