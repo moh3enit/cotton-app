@@ -35,7 +35,7 @@ class Order {
     _shippingZip = shippingZip;
     _paymentMethod = paymentMethod;
     _shippingMethod = shippingMethod;
-    _orderData = orderData;
+    // _orderData = orderData;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
   }
@@ -57,7 +57,7 @@ class Order {
     _shippingZip = json['shipping_zip'];
     _paymentMethod = json['payment_method'];
     _shippingMethod = json['shipping_method'];
-    _orderData = json['order_data'] != null ? Order_data.fromJson(json['orderData']) : null;
+    // _orderData = json['order_data'] != null ? Order_data.fromJson(json['orderData']) : null;
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
   }
@@ -77,7 +77,7 @@ class Order {
   String? _shippingZip;
   String? _paymentMethod;
   String? _shippingMethod;
-  Order_data? _orderData;
+  // Order_data? _orderData;
   String? _createdAt;
   String? _updatedAt;
 
@@ -97,7 +97,7 @@ class Order {
   String? get shippingZip => _shippingZip;
   String? get paymentMethod => _paymentMethod;
   String? get shippingMethod => _shippingMethod;
-  Order_data? get orderData => _orderData;
+  // Order_data? get orderData => _orderData;
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
 
@@ -119,9 +119,9 @@ class Order {
     map['shipping_zip'] = _shippingZip;
     map['payment_method'] = _paymentMethod;
     map['shipping_method'] = _shippingMethod;
-    if (_orderData != null) {
-      map['order_data'] = _orderData?.toJson();
-    }
+    // if (_orderData != null) {
+    //   map['order_data'] = _orderData?.toJson();
+    // }
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;
     return map;

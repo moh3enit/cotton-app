@@ -5,7 +5,6 @@ import 'package:cotton_natural/shopHop/models/Order.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:cotton_natural/shopHop/models/ShOrder.dart';
 import 'package:cotton_natural/shopHop/screens/ShOrderDetailScreen.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
@@ -33,6 +32,7 @@ class ShOrderListScreenState extends State<ShOrderListScreen> {
   fetchData() async {
     List<Order> OrderList = [];
     MyResponse<List<Order>> myResponse = await OrderController.getOrderList();
+    print(myResponse.success);
 
     if (myResponse.success) {
       OrderList = myResponse.data;
@@ -56,7 +56,7 @@ class ShOrderListScreenState extends State<ShOrderListScreen> {
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ShOrderDetailScreen(order: list[index])));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ShOrderDetailScreen(order: list[index].id)));
           },
           child: Container(
             padding: EdgeInsets.all(10.0),

@@ -1,3 +1,4 @@
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/api/api_util.dart';
 import 'package:cotton_natural/shopHop/controllers/OrderController.dart';
@@ -10,12 +11,13 @@ import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 // ignore: must_be_immutable
 class ShOrderDetailScreen extends StatefulWidget {
   static String tag = '/ShOrderDetailScreen';
-  Order? order;
+  int? order;
 
   ShOrderDetailScreen({this.order});
 
@@ -25,6 +27,7 @@ class ShOrderDetailScreen extends StatefulWidget {
 
 class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
   Order? orders;
+  bool isLoadingMoreData = true;
 
   @override
   void initState() {
@@ -33,16 +36,21 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
   }
 
   _getOrderData() async {
+    setState(() {
+      isLoadingMoreData=true;
+    });
 
-    MyResponse<Order> myResponse = await OrderController.getSingleOrder(widget.order!.id);
-
+    MyResponse<Order> myResponse = await OrderController.getSingleOrder(widget.order);
     if (myResponse.success) {
       orders = myResponse.data;
+      print(orders!.createdAt);
     } else {
       ApiUtil.checkRedirectNavigation(context, myResponse.responseCode);
       toasty(context, myResponse.errorText);
     }
-
+    setState(() {
+      isLoadingMoreData=false;
+    });
   }
 
   @override
@@ -55,12 +63,12 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Image.network(
-              orders!.orderData!.items!.numberItem!.imageUrl.toString(),
-              width: width * 0.3,
-              height: width * 0.35,
-              fit: BoxFit.fill,
-            ),
+            // Image.network(
+            //   orders!.orderData!.items!.numberItem!.imageUrl.toString(),
+            //   width: width * 0.3,
+            //   height: width * 0.35,
+            //   fit: BoxFit.fill,
+            // ),
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -76,7 +84,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 16.0),
-                          child: text(orders!.orderData!.items!.numberItem!.name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
+                          // child: text(orders!.orderData!.items!.numberItem!.name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 16.0, top: spacing_control),
@@ -107,7 +115,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              text(orders!.orderData!.items!.numberItem!.price.toString().toCurrencyFormat(), textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
+                              // text(orders!.orderData!.items!.numberItem!.price.toString().toCurrencyFormat(), textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
                               SizedBox(
                                 width: spacing_control,
                               ),
@@ -170,61 +178,13 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  text(orders!.createdAt! + "\n Order Placed", maxLine: 2, fontSize: textSizeMedium, textColor: sh_textColorPrimary),
-                  text("Order Pending", fontSize: textSizeMedium, textColor: sh_textColorPrimary),
+                  text(orders!.createdAt!.substring(0,10) + "\n Order Placed", maxLine: 2, fontSize: textSizeMedium, textColor: sh_textColorPrimary),
+                  text(orders!.status!.toUpperCase(), fontSize: textSizeMedium, textColor: sh_textColorPrimary),
                 ],
               ),
             )
           ],
         ),
-      ),
-    );
-    var paymentDetail = Container(
-      margin: EdgeInsets.only(left: spacing_standard_new, right: spacing_standard_new, top: spacing_standard_new),
-      decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 1.0)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(spacing_standard_new, spacing_middle, spacing_standard_new, spacing_middle),
-            child: text(sh_lbl_payment_details, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
-          ),
-          Divider(
-            height: 1,
-            color: sh_view_color,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(spacing_standard_new, spacing_middle, spacing_standard_new, spacing_middle),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    text(sh_lbl_offer),
-                    text(sh_text_offer_not_available, textColor: sh_textColorPrimary, fontFamily: fontMedium),
-                  ],
-                ),
-                SizedBox(
-                  height: spacing_standard,
-                ),
-                Row(
-                  children: <Widget>[
-                    text(sh_lbl_shipping_charge),
-                    text(sh_lbl_free, textColor: Colors.green, fontFamily: fontMedium),
-                  ],
-                ),
-                SizedBox(
-                  height: spacing_standard,
-                ),
-                Row(
-                  children: <Widget>[
-                    text(sh_lbl_total_amount),
-                    text("\$70", textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
       ),
     );
     var shippingDetail = Container(
@@ -248,7 +208,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_order_id),
-                    text(orders!.orderData!.totalQty.toString(), textColor: sh_textColorPrimary, fontFamily: fontMedium),
+                    text('#'+orders!.id.toString(), textColor: sh_textColorPrimary, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -257,7 +217,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_order_date),
-                    text(orders!.createdAt!, textColor: sh_textColorPrimary, fontFamily: fontMedium),
+                    text(orders!.createdAt!.substring(0,10), textColor: sh_textColorPrimary, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -266,7 +226,55 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_total_amount),
-                    text("\$70", textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                    text("\$"+orders!.shipping!, textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+    var paymentDetail = Container(
+      margin: EdgeInsets.only(left: spacing_standard_new, right: spacing_standard_new, top: spacing_standard_new),
+      decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 1.0)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(spacing_standard_new, spacing_middle, spacing_standard_new, spacing_middle),
+            child: text(sh_lbl_payment_details, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
+          ),
+          Divider(
+            height: 1,
+            color: sh_view_color,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(spacing_standard_new, spacing_middle, spacing_standard_new, spacing_middle),
+            child: Column(
+              children: <Widget>[
+                // Row(
+                //   children: <Widget>[
+                //     text(sh_lbl_offer),
+                //     text(sh_text_offer_not_available, textColor: sh_textColorPrimary, fontFamily: fontMedium),
+                //   ],
+                // ),
+                // SizedBox(
+                //   height: spacing_standard,
+                // ),
+                Row(
+                  children: <Widget>[
+                    text(sh_lbl_shipping_charge),
+                    text(orders!.shippingMethod!, textColor: Colors.green, fontFamily: fontMedium),
+                  ],
+                ),
+                SizedBox(
+                  height: spacing_standard,
+                ),
+                Row(
+                  children: <Widget>[
+                    text(sh_lbl_total_amount),
+                    text("\$"+orders!.total!, textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                   ],
                 ),
               ],
@@ -283,6 +291,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
         iconTheme: IconThemeData(color: sh_textColorPrimary),
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           children: <Widget>[
             item,
