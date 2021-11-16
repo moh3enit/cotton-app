@@ -20,7 +20,6 @@ class AuthController {
 
     //Check Internet
     bool isConnected = await InternetUtils.checkConnection();
-
     if (!isConnected) {
       return MyResponse.makeInternetConnectionError();
     }
@@ -30,7 +29,6 @@ class AuthController {
       NetworkResponse response = await Network.post(loginUrl, headers: header, body: body );
       MyResponse myResponse = MyResponse(response.statusCode);
       if (response.statusCode == 200) {
-
         SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
         Map<String, dynamic> data = json.decode(response.body);
         Map<String, dynamic> user = data['user'];
