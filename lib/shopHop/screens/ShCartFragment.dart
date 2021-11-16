@@ -1,15 +1,17 @@
 import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/models/ShOrder.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
-import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/screens/ShOrderSummaryScreen.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
+import 'package:provider/provider.dart';
 
 class ShCartFragment extends StatefulWidget {
   static String tag = '/ShProfileFragment';
@@ -19,7 +21,8 @@ class ShCartFragment extends StatefulWidget {
 }
 
 class ShCartFragmentState extends State<ShCartFragment> {
-  List<ShProduct> list = [];
+  List<Item?> list = [];
+  List<ShOrder> orderList=[];
 
   @override
   void initState() {
@@ -27,13 +30,20 @@ class ShCartFragmentState extends State<ShCartFragment> {
     fetchData();
   }
 
-  fetchData() async {
-    var products = await loadCartProducts();
-    setState(() {
-      list.clear();
-      list.addAll(products);
-    });
-    print("${list[0].images![0]}");
+  fetchData()  {
+    orderList = Provider.of<OrdersProvider>(context,listen: false).getOrderList();
+
+    list.clear();
+    orderList.forEach((element) {list.add(element.item);});
+    setState(() { });
+
+    // var products = await loadCartProducts();
+    // setState(() {
+    //   list.clear();
+    //   list.addAll(products);
+    // });
+    // list.forEach((element) {print(element!.name);});
+    // print("${list[0]!.image![0]}");
   }
 
   @override
@@ -60,7 +70,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   networkCachedImage(
-                    list[index].images![0],
+                    list[index]!.image!,
                     aWidth: width * 0.32,
                     aHeight: width * 0.37,
                     fit: BoxFit.fill,
@@ -80,7 +90,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 16.0),
-                                child: text(list[index].name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
+                                child: text(list[index]!.name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 16.0, top: spacing_control),
@@ -109,12 +119,29 @@ class ShCartFragmentState extends State<ShCartFragment> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: <Widget>[
-                                          text("Qty: 5", textColor: sh_textColorPrimary, fontSize: textSizeSMedium),
-                                          Icon(
-                                            Icons.arrow_drop_down,
-                                            color: sh_textColorPrimary,
-                                            size: 16,
-                                          )
+                                          IconButton(
+                                            onPressed: (){
+                                              Provider.of<OrdersProvider>(context, listen: false).increaseProductCount(list[index]!.id);
+                                            },
+                                            icon: Icon(
+                                              Icons.add,
+                                              color: sh_textColorPrimary,
+                                              size: 16,
+                                            ),
+                                          ),
+                                          text("Qty: ${Provider.of<OrdersProvider>(context, listen: true).getItemQty(list[index]!.id)}", textColor: sh_textColorPrimary, fontSize: textSizeSMedium),
+                                          IconButton(
+                                            onPressed: (){
+                                              Provider.of<OrdersProvider>(context, listen: false).decreaseProductCount(list[index]!.id);
+                                                fetchData();
+
+                                            },
+                                            icon: Icon(
+                                              Icons.remove,
+                                              color: sh_textColorPrimary,
+                                              size: 16,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     )
@@ -126,7 +153,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: <Widget>[
-                                    text(list[index].price.toString().toCurrencyFormat(),textColor: sh_colorPrimary,fontSize: textSizeNormal,fontFamily: fontMedium),
+                                    text(list[index]!.price.toString().toCurrencyFormat(),textColor: sh_colorPrimary,fontSize: textSizeNormal,fontFamily: fontMedium),
                                   ],
                                 ),
                               ),
@@ -143,12 +170,6 @@ class ShCartFragmentState extends State<ShCartFragment> {
                             Expanded(
                               child: Row(
                                 children: <Widget>[
-                                  // Icon(
-                                  //   Icons.bookmark_border,
-                                  //   color: sh_textColorPrimary,
-                                  //   size: 16,
-                                  // ),
-                                  // text("Next time buy", textColor: sh_textColorPrimary, fontSize: textSizeSmall)
                                 ],
                                 mainAxisAlignment: MainAxisAlignment.center,
                               ),
@@ -159,16 +180,22 @@ class ShCartFragmentState extends State<ShCartFragment> {
                               height: 35,
                             ),
                             Expanded(
-                              child: Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.delete_outline,
-                                    color: sh_textColorPrimary,
-                                    size: 16,
-                                  ),
-                                  text(sh_lbl_remove, textColor: sh_textColorPrimary, fontSize: textSizeSmall)
-                                ],
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: InkWell(
+                                onTap: (){
+                                  Provider.of<OrdersProvider>(context,listen: false).removeItemFromBasket(productId: list[index]!.id);
+                                  fetchData();
+                                },
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.delete_outline,
+                                      color: sh_textColorPrimary,
+                                      size: 16,
+                                    ),
+                                    text(sh_lbl_remove, textColor: sh_textColorPrimary, fontSize: textSizeSmall)
+                                  ],
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                ),
                               ),
                             )
                           ],
@@ -216,7 +243,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_total_amount),
-                    text("\$70.00", textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                    text(Provider.of<OrdersProvider>(context,listen: true).getTotalPrice(), textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                   ],
                 ),
               ],
@@ -236,7 +263,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                text("\$70.00", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                text(Provider.of<OrdersProvider>(context,listen: true).getTotalPrice(), textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                 text('Order Total', fontSize: 14.0),
               ],
             ),

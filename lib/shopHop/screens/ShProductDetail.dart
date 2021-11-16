@@ -3,6 +3,9 @@ import 'package:cotton_natural/main/utils/common.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/controllers/WishController.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
+import 'package:cotton_natural/shopHop/screens/ShCartFragment.dart';
+import 'package:cotton_natural/shopHop/screens/ShCartScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
@@ -14,6 +17,7 @@ import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class ShProductDetail extends StatefulWidget {
@@ -290,19 +294,29 @@ class ShProductDetailState extends State<ShProductDetail> {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: Container(
-              child: text(sh_lbl_add_to_cart, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
-              color: sh_white,
-              alignment: Alignment.center,
-              height: double.infinity,
+            child: InkWell(
+              onTap: (){
+                Provider.of<OrdersProvider>(context, listen: false).addItemToBasket(product: widget.product);
+              },
+              child: Container(
+                child: text(sh_lbl_add_to_cart, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
+                color: sh_white,
+                alignment: Alignment.center,
+                height: double.infinity,
+              ),
             ),
           ),
           Expanded(
-            child: Container(
-              child: text(sh_lbl_buy_now, textColor: sh_white, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
-              color: sh_colorPrimary,
-              alignment: Alignment.center,
-              height: double.infinity,
+            child: InkWell(
+              onTap: (){
+                ShCartScreen().launch(context);
+              },
+              child: Container(
+                child: text(sh_lbl_buy_now, textColor: sh_white, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
+                color: sh_colorPrimary,
+                alignment: Alignment.center,
+                height: double.infinity,
+              ),
             ),
           )
         ],
@@ -341,7 +355,7 @@ class ShProductDetailState extends State<ShProductDetail> {
                           Icon(Icons.favorite_border, color: sh_textColorPrimary, size: 18),
                         ),
                       ),
-                      cartIcon(context, 1)
+                      cartIcon(context, Provider.of<OrdersProvider>(context,listen: true).getOrderCount())
                     ],
                     title: text(innerBoxIsScrolled ? widget.product!.name : "", textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
                     flexibleSpace: FlexibleSpaceBar(

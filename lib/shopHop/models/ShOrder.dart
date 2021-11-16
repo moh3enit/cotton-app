@@ -36,8 +36,9 @@ class Item {
   String? name;
   String? price;
   String? image;
+  int? count;
 
-  Item({this.id, this.name, this.price, this.image});
+  Item({this.id, this.name, this.price, this.image,this.count});
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
@@ -45,6 +46,7 @@ class Item {
       name: json['name'],
       price: json['price'],
       image: json['image'],
+      count: json['count'],
     );
   }
 
@@ -54,6 +56,7 @@ class Item {
     data['name'] = this.name;
     data['price'] = this.price;
     data['image'] = this.image;
+    data['count'] = this.count;
     return data;
   }
 }
