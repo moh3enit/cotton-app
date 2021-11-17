@@ -34,6 +34,8 @@ dependencies:
   connectivity:
   shared_preferences:
   lottie: ^1.2.1
+  provider: ^6.0.1
+
 
 dev_dependencies:
   flutter_test:

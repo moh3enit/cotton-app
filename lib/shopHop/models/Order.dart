@@ -137,74 +137,45 @@ class Order {
 }
 
 class Order_data {
-  Order_data({
-    Items? items,
-    String? subTotalPrice,
-    String? totalPrice,
-    int? totalQty,
-    String? originalPrice,
-    bool? hasOrder,
-    bool? couponApplied,
-    String? discountAmount,
-    int? frameAmount,}){
-    _items = items;
-    _subTotalPrice = subTotalPrice;
-    _totalPrice = totalPrice;
-    _totalQty = totalQty;
-    _originalPrice = originalPrice;
-    _hasOrder = hasOrder;
-    _couponApplied = couponApplied;
-    _discountAmount = discountAmount;
-    _frameAmount = frameAmount;
-  }
+  Items? items;
+  String? subTotalPrice;
+  String? totalPrice;
+  int? totalQty;
+  String? originalPrice;
+  bool? hasOrder;
+  bool? couponApplied;
+  int? discountAmount;
+  int? frameAmount;
 
-  Order_data.fromJson(dynamic json) {
-    _items = json['items'] != null ? Items.fromJson(json['items']) : null;
-    _subTotalPrice = json['subTotalPrice'];
-    _totalPrice = json['totalPrice'];
-    _totalQty = json['totalQty'];
-    _originalPrice = json['originalPrice'];
-    _hasOrder = json['hasOrder'];
-    _couponApplied = json['couponApplied'];
-    _discountAmount = json['discountAmount'];
-    _frameAmount = json['frameAmount'];
-  }
-  Items? _items;
-  String? _subTotalPrice;
-  String? _totalPrice;
-  int? _totalQty;
-  String? _originalPrice;
-  bool? _hasOrder;
-  bool? _couponApplied;
-  String? _discountAmount;
-  int? _frameAmount;
+  Order_data({this.items, this.subTotalPrice, this.totalPrice, this.totalQty, this.originalPrice, this.hasOrder, this.couponApplied, this.discountAmount, this.frameAmount});
 
-  Items? get items => _items;
-  String? get subTotalPrice => _subTotalPrice;
-  String? get totalPrice => _totalPrice;
-  int? get totalQty => _totalQty;
-  String? get originalPrice => _originalPrice;
-  bool? get hasOrder => _hasOrder;
-  bool? get couponApplied => _couponApplied;
-  String? get discountAmount => _discountAmount;
-  int? get frameAmount => _frameAmount;
+  Order_data.fromJson(Map<String, dynamic> json) {
+    items = json['items'] != null ? new Items.fromJson(json['items']) : null;
+    subTotalPrice = json['subTotalPrice'];
+    totalPrice = json['totalPrice'];
+    totalQty = json['totalQty'];
+    originalPrice = json['originalPrice'];
+    hasOrder = json['hasOrder'];
+    couponApplied = json['couponApplied'];
+    discountAmount = json['discountAmount'];
+    frameAmount = json['frameAmount'];
+  }
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (_items != null) {
-      map['items'] = _items?.toJson();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.items != null) {
+      data['items'] = this.items!.toJson();
     }
-    map['subTotalPrice'] = _subTotalPrice;
-    map['totalPrice'] = _totalPrice;
-    map['totalQty'] = _totalQty;
-    map['originalPrice'] = _originalPrice;
-    map['hasOrder'] = _hasOrder;
-    map['couponApplied'] = _couponApplied;
-    map['discountAmount'] = _discountAmount;
-    map['frameAmount'] = _frameAmount;
-    return map;
+    data['subTotalPrice'] = this.subTotalPrice;
+    data['totalPrice'] = this.totalPrice;
+    data['totalQty'] = this.totalQty;
+    data['originalPrice'] = this.originalPrice;
+    data['hasOrder'] = this.hasOrder;
+    data['couponApplied'] = this.couponApplied;
+    data['discountAmount'] = this.discountAmount;
+    data['frameAmount'] = this.frameAmount;
+    return data;
   }
-
 }
 
 class Items {

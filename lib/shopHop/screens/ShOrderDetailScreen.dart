@@ -41,6 +41,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
     });
 
     MyResponse<Order_data> myResponse = await OrderController.getSingleOrder(widget.order!.id);
+    print(myResponse.success);
     if (myResponse.success) {
       orders = myResponse.data;
       print(orders!.items);

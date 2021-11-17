@@ -1,6 +1,7 @@
-import 'dart:async';
 
 import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/models/ShOrder.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/shopHop/models/ShAddress.dart';
@@ -13,6 +14,7 @@ import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:provider/provider.dart';
 
 class ShOrderSummaryScreen extends StatefulWidget {
   static String tag = '/ShOrderSummaryScreen';
@@ -22,13 +24,13 @@ class ShOrderSummaryScreen extends StatefulWidget {
 }
 
 class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
-  List<ShProduct> list = [];
+  List<Item?> list = [];
   List<ShAddressModel> addressList = [];
   var selectedPosition = 0;
   List<String> images = [];
   var currentIndex = 0;
-  Timer? timer;
   var isLoaded = false;
+  List<ShOrder> orderList=[];
 
   @override
   void initState() {
@@ -37,16 +39,16 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
   }
 
   fetchData() async {
-    var products = await loadCartProducts();
+    orderList = Provider.of<OrdersProvider>(context,listen: false).getOrderList();
+
+    list.clear();
+    orderList.forEach((element) {list.add(element.item);});
+    setState(() { });
+
     var addresses = await loadAddresses();
-    var banner = await loadBanners();
     setState(() {
-      list.clear();
-      list.addAll(products);
       addressList.clear();
       addressList.addAll(addresses);
-      images.clear();
-      images.addAll(banner);
       isLoaded = true;
     });
   }
@@ -54,25 +56,8 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
   @override
   void dispose() {
     super.dispose();
-    if (timer != null) {
-      timer!.cancel();
-    }
   }
 
-  void startTimer() {
-    if (timer != null) {
-      return;
-    }
-    timer = new Timer.periodic(new Duration(seconds: 5), (time) {
-      setState(() {
-        if (currentIndex == images.length - 1) {
-          currentIndex = 0;
-        } else {
-          currentIndex = currentIndex + 1;
-        }
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +79,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       networkCachedImage(
-                        list[index].images![0],
+                        list[index]!.image!,
                         aWidth: width * 0.25,
                         aHeight: width * 0.3,
                         fit: BoxFit.fill,
@@ -114,7 +99,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 16.0),
-                                    child: text(list[index].name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
+                                    child: text(list[index]!.name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 16.0, top: spacing_control),
@@ -132,7 +117,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                                         SizedBox(
                                           width: spacing_standard,
                                         ),
-                                        text("M", textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+                                        text(ShProduct.getSizeTypeText(list[index]!.size!), textColor: sh_textColorPrimary, fontSize: textSizeMedium),
                                         SizedBox(
                                           width: spacing_standard,
                                         ),
@@ -143,12 +128,12 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: <Widget>[
-                                              text("Qty: 5", textColor: sh_textColorPrimary, fontSize: textSizeSMedium),
-                                              Icon(
-                                                Icons.arrow_drop_down,
-                                                color: sh_textColorPrimary,
-                                                size: 16,
-                                              )
+                                              text("Qty: ${Provider.of<OrdersProvider>(context, listen: true).getItemQty(list[index]!.id,list[index]!.size)}", textColor: sh_textColorPrimary, fontSize: textSizeSMedium),
+                                              // Icon(
+                                              //   Icons.arrow_drop_down,
+                                              //   color: sh_textColorPrimary,
+                                              //   size: 16,
+                                              // )
                                             ],
                                           ),
                                         )
@@ -160,7 +145,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: <Widget>[
-                                        text( list[index].price.toString().toCurrencyFormat(),
+                                        text( list[index]!.price.toString().toCurrencyFormat(),
                                             textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
 
                                       ],
@@ -203,7 +188,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_shipping_charge),
-                    text('?', textColor: Colors.green, fontFamily: fontMedium),
+                    text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod()!.price.toCurrencyFormat(), textColor: Colors.green, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -212,7 +197,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_total_amount),
-                    text("\$70.00", textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                    text(Provider.of<OrdersProvider>(context,listen: true).getTotalPrice(), textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                   ],
                 ),
               ],
@@ -268,8 +253,8 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                text("\$70.00", textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
-                text(sh_lbl_see_price_detail),
+                text(Provider.of<OrdersProvider>(context,listen: true).getTotalPrice(), textColor: sh_textColorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                text('Order Total'),
               ],
             ),
           ),

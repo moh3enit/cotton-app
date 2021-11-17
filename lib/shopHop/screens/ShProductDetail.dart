@@ -1,8 +1,11 @@
-
 import 'package:cotton_natural/main/utils/common.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/controllers/WishController.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
+import 'package:cotton_natural/shopHop/screens/ShCartFragment.dart';
+import 'package:cotton_natural/shopHop/screens/ShCartScreen.dart';
+import 'package:cotton_natural/shopHop/screens/ShHomeScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
@@ -14,6 +17,7 @@ import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:provider/provider.dart';
 
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
@@ -33,12 +37,11 @@ class ShProductDetailState extends State<ShProductDetail> {
   var position = 0;
   bool isExpanded = false;
   var selectedColor = -1;
-  var selectedSize = -1;
+  int selectedSize = -1;
   List<ShReview> list = [];
   bool autoValidate = false;
   TextEditingController controller = TextEditingController();
   bool isWished = false;
-
 
   @override
   void initState() {
@@ -46,48 +49,40 @@ class ShProductDetailState extends State<ShProductDetail> {
     fetchData();
   }
 
-
   fetchData() async {
-    MyResponse myResponse = await WishController.initIsWished(widget.product!.id);
+    if (await AuthController.isLoginUser()) {
+      MyResponse myResponse =
+          await WishController.initIsWished(widget.product!.id);
 
-    if (myResponse.success) {
-      if(myResponse.data == 'set'){
-        isWished = true;
-        setState(() { });
+      if (myResponse.success) {
+        if (myResponse.data == 'set') {
+          isWished = true;
+          setState(() {});
+        }
+      } else {
+        toasty(context, myResponse.errorText);
       }
-    } else {
-      toasty(context, myResponse.errorText);
     }
   }
 
-  void _toggleWishList(int? productId) async{
-    if(await AuthController.isLoginUser()){
+  void _toggleWishList(int? productId) async {
+    if (await AuthController.isLoginUser()) {
       MyResponse myResponse = await WishController.toggleWish(productId);
 
       if (myResponse.success) {
-        if(myResponse.data == 'set'){
+        if (myResponse.data == 'set') {
           isWished = true;
-        }else{
+        } else {
           isWished = false;
         }
       } else {
         toasty(context, myResponse.errorText);
       }
-    }else{
+    } else {
       toasty(context, 'Login to your account');
     }
-    setState(() { });
-
+    setState(() {});
   }
-
-
-  // Future<List<ShReview>> loadProducts() async {
-  //   String jsonString = await loadContentAsset('assets/shophop_data/reviews.json');
-  //   final jsonResponse = json.decode(jsonString);
-  //   return (jsonResponse as List).map((i) => ShReview.fromJson(i)).toList();
-  // }
-
-
 
   @override
   void dispose() {
@@ -110,7 +105,8 @@ class ShProductDetailState extends State<ShProductDetail> {
       child: PageView.builder(
         itemCount: widget.product!.images!.length,
         itemBuilder: (context, index) {
-          return networkCachedImage( widget.product!.images![index], aWidth: width, aHeight: width * 1.05, fit: BoxFit.cover);
+          return networkCachedImage(widget.product!.images![index],
+              aWidth: width, aHeight: width * 1.05, fit: BoxFit.cover);
         },
         onPageChanged: (index) {
           position = index;
@@ -126,7 +122,10 @@ class ShProductDetailState extends State<ShProductDetail> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              text(widget.product!.name, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeXNormal),
+              text(widget.product!.name,
+                  textColor: sh_textColorPrimary,
+                  fontFamily: fontMedium,
+                  fontSize: textSizeXNormal),
               text(
                 widget.product!.price.toCurrencyFormat(),
                 textColor: sh_colorPrimary,
@@ -139,61 +138,6 @@ class ShProductDetailState extends State<ShProductDetail> {
         ],
       ),
     );
-
-    var colorList =  [
-      "#0C5A93",
-      "#BDBDBD",
-      "#dd0202"
-    ];
-    // productFake['attributes'].forEach((element) {
-    //   if (element['name'] == 'Color') colorList.addAll(element['options']!);
-    // });
-
-    var colors = ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: colorList.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            selectedColor = index;
-            setState(() {});
-          },
-          child: Container(
-            padding: EdgeInsets.all(7),
-            margin: EdgeInsets.only(right: spacing_xlarge),
-            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: getColorFromHex(colorList[index])),
-            child: selectedColor == index ? Icon(Icons.done, color: sh_white, size: 12) : Container(),
-          ),
-        );
-      },
-    );
-
-    // var sizeList =  [
-    //   for(var i=0;i<widget.product!.sizes!.length-1;i++){
-    //     widget.product!.sizes![i].name
-    //   },
-    //   "S",
-    //   "M",
-    //   "L",
-    //   "XL",
-    // ];
-    // productFake['attributes'].forEach((element) {
-    //   if (element['name'] == 'Size') sizeList.addAll(element['options']!);
-    // });
-
-    var brandList = [
-      "Carter's",
-      "Fendi"
-    ];
-    // productFake['attributes'].forEach((element) {
-    //   if (element['name'] == 'Brand') brandList.addAll(element['options']!);
-    // });
-
-    var bands = "";
-    brandList.forEach((brand) {
-      bands = bands + brand.toString() + ", ";
-    });
 
     var sizes = ListView.builder(
       scrollDirection: Axis.horizontal,
@@ -210,13 +154,24 @@ class ShProductDetailState extends State<ShProductDetail> {
             // height: 30,
             margin: EdgeInsets.only(right: spacing_standard_new),
             padding: EdgeInsets.all(spacing_standard),
-            decoration: selectedSize == index ? BoxDecoration(shape: BoxShape.circle, border: Border.all(color: sh_textColorPrimary, width: 0.5), color: sh_colorPrimary) : BoxDecoration(),
-            child: Center(child: text(ShProduct.getSizeTypeText(widget.product!.sizes![index].name!), textColor: selectedSize == index ? sh_white : sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium)),
+            decoration: selectedSize == index
+                ? BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: sh_textColorPrimary, width: 0.5),
+                    color: sh_colorPrimary)
+                : BoxDecoration(),
+            child: Center(
+                child: text(
+                    ShProduct.getSizeTypeText(
+                        widget.product!.sizes![index].name!),
+                    textColor:
+                        selectedSize == index ? sh_white : sh_textColorPrimary,
+                    fontSize: textSizeLargeMedium,
+                    fontFamily: fontMedium)),
           ),
         );
       },
     );
-
 
     var descriptionTab = SingleChildScrollView(
       child: Container(
@@ -227,12 +182,15 @@ class ShProductDetailState extends State<ShProductDetail> {
             Stack(
               alignment: Alignment.bottomRight,
               children: <Widget>[
-                text(parseHtmlString(widget.product!.description), maxLine: 15, isLongText: isExpanded, fontSize: 16.0),
+                text(parseHtmlString(widget.product!.description),
+                    maxLine: 15, isLongText: isExpanded, fontSize: 16.0),
                 InkWell(
                   child: Container(
                     padding: EdgeInsets.all(spacing_control_half),
                     color: sh_white,
-                    child: text(isExpanded ? "Read Less" : "Read More", textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+                    child: text(isExpanded ? "Read Less" : "Read More",
+                        textColor: sh_textColorPrimary,
+                        fontSize: textSizeMedium),
                   ),
                   onTap: () {
                     isExpanded = !isExpanded;
@@ -285,31 +243,74 @@ class ShProductDetailState extends State<ShProductDetail> {
             // SizedBox(height: spacing_standard_new),
             // text(sh_lbl_colors, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
             // Container(height: 50, child: colors),
-            widget.product!.sizes!.isNotEmpty ? text(sh_lbl_size, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium) : SizedBox(),
+            widget.product!.sizes!.isNotEmpty
+                ? text(sh_lbl_size,
+                    textColor: sh_textColorPrimary,
+                    fontFamily: fontMedium,
+                    fontSize: textSizeLargeMedium)
+                : SizedBox(),
             Container(height: 50, child: sizes)
           ],
         ),
       ),
     );
+
     var bottomButtons = Container(
       height: 50,
-      decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.7), blurRadius: 16, spreadRadius: 2, offset: Offset(3, 1))], color: sh_white),
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+            color: Colors.grey.withOpacity(0.7),
+            blurRadius: 16,
+            spreadRadius: 2,
+            offset: Offset(3, 1))
+      ], color: sh_white),
       child: Row(
         children: <Widget>[
           Expanded(
-            child: Container(
-              child: text(sh_lbl_add_to_cart, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
-              color: sh_white,
-              alignment: Alignment.center,
-              height: double.infinity,
+            child: InkWell(
+              onTap: () {
+                if (selectedSize < 0) {
+                  toasty(context, 'Please Select A Size');
+                } else {
+                  String? size = widget.product!.sizes![selectedSize].name;
+                  Provider.of<OrdersProvider>(context, listen: false)
+                      .addItemToBasket(product: widget.product, size: size);
+                  toasty(context, 'Product Added To Cart');
+                }
+              },
+              child: Container(
+                child: text(sh_lbl_add_to_cart,
+                    textColor: sh_textColorPrimary,
+                    fontSize: textSizeLargeMedium,
+                    fontFamily: fontMedium),
+                color: sh_white,
+                alignment: Alignment.center,
+                height: double.infinity,
+              ),
             ),
           ),
           Expanded(
-            child: Container(
-              child: text(sh_lbl_buy_now, textColor: sh_white, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
-              color: sh_colorPrimary,
-              alignment: Alignment.center,
-              height: double.infinity,
+            child: InkWell(
+              onTap: () {
+                if (Provider.of<OrdersProvider>(context, listen: false)
+                        .getOrderCount() >
+                    0) {
+                  ShHomeScreen(
+                    goToTabIndex: 2,
+                  ).launch(context);
+                } else {
+                  toasty(context, 'Your Cart Is Empty');
+                }
+              },
+              child: Container(
+                child: text(sh_lbl_buy_now,
+                    textColor: sh_white,
+                    fontSize: textSizeLargeMedium,
+                    fontFamily: fontMedium),
+                color: sh_colorPrimary,
+                alignment: Alignment.center,
+                height: double.infinity,
+              ),
             ),
           )
         ],
@@ -323,8 +324,10 @@ class ShProductDetailState extends State<ShProductDetail> {
           DefaultTabController(
             length: 1,
             child: NestedScrollView(
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                changeStatusColor(innerBoxIsScrolled ? Colors.white : Colors.transparent);
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                changeStatusColor(
+                    innerBoxIsScrolled ? Colors.white : Colors.transparent);
                 return <Widget>[
                   SliverAppBar(
                     expandedHeight: 630,
@@ -338,19 +341,28 @@ class ShProductDetailState extends State<ShProductDetail> {
                       Container(
                         padding: EdgeInsets.all(spacing_standard),
                         margin: EdgeInsets.only(right: spacing_standard_new),
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(0.1)),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey.withOpacity(0.1)),
                         child: IconButton(
-                          onPressed: (){
+                          onPressed: () {
                             _toggleWishList(widget.product!.id);
                           },
-                          icon: isWished ?
-                          Icon(Icons.favorite, color: sh_red, size: 18):
-                          Icon(Icons.favorite_border, color: sh_textColorPrimary, size: 18),
+                          icon: isWished
+                              ? Icon(Icons.favorite, color: sh_red, size: 18)
+                              : Icon(Icons.favorite_border,
+                                  color: sh_textColorPrimary, size: 18),
                         ),
                       ),
-                      cartIcon(context, 1)
+                      cartIcon(
+                          context,
+                          Provider.of<OrdersProvider>(context, listen: true)
+                              .getOrderCount())
                     ],
-                    title: text(innerBoxIsScrolled ? widget.product!.name : "", textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
+                    title: text(innerBoxIsScrolled ? widget.product!.name : "",
+                        textColor: sh_textColorPrimary,
+                        fontSize: textSizeNormal,
+                        fontFamily: fontMedium),
                     flexibleSpace: FlexibleSpaceBar(
                       background: Column(
                         children: <Widget>[
@@ -367,9 +379,7 @@ class ShProductDetailState extends State<ShProductDetail> {
                         labelColor: sh_colorPrimary,
                         indicatorColor: sh_colorPrimary,
                         unselectedLabelColor: sh_textColorPrimary,
-                        tabs: [
-                          Tab(text: sh_lbl_description)
-                        ],
+                        tabs: [Tab(text: sh_lbl_description)],
                       ),
                     ),
                     pinned: true,
@@ -388,8 +398,6 @@ class ShProductDetailState extends State<ShProductDetail> {
       ),
     );
   }
-
-
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
@@ -404,7 +412,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       color: sh_white,
