@@ -56,7 +56,7 @@ class ShOrderListScreenState extends State<ShOrderListScreen> {
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ShOrderDetailScreen(order: list[index].id)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ShOrderDetailScreen(order: list[index])));
           },
           child: Container(
             padding: EdgeInsets.all(10.0),

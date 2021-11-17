@@ -164,7 +164,7 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                       Center(
                         child: Padding(
                             padding: const EdgeInsets.only(
-                                top: 60, right: spacing_large),
+                                top: 70, right: spacing_large),
                             child: Column(
                               children: <Widget>[
                                 SizedBox(height: spacing_middle),
@@ -183,54 +183,58 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                               child: Icon(Icons.clear)))
                     ],
                   ),
-                  SizedBox(height: 30),
-                  Container(
-                    color: sh_editText_background,
-                    padding: EdgeInsets.fromLTRB(
-                        0, spacing_standard, 0, spacing_standard),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              ShOrderListScreen().launch(context);
-                            },
-                            child: Column(
-                              children: <Widget>[
-                                // text("08", textColor: sh_colorPrimary, fontFamily: fontMedium),
-                                SizedBox(height: spacing_control),
-                                text("My Order",
-                                    textColor: sh_textColorPrimary,
-                                    fontFamily: fontMedium),
-                                SizedBox(height: spacing_control),
-                              ],
-                            ),
+                  login
+                      ? SizedBox(height: 30)
+                      : SizedBox(),
+                  login
+                      ? Container(
+                          color: sh_editText_background,
+                          padding: EdgeInsets.fromLTRB(
+                              0, spacing_standard, 0, spacing_standard),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    ShOrderListScreen().launch(context);
+                                  },
+                                  child: Column(
+                                    children: <Widget>[
+                                      // text("08", textColor: sh_colorPrimary, fontFamily: fontMedium),
+                                      SizedBox(height: spacing_control),
+                                      text("My Order",
+                                          textColor: sh_textColorPrimary,
+                                          fontFamily: fontMedium),
+                                      SizedBox(height: spacing_control),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    setState(() {
+                                      selectedTab = 1;
+                                    });
+                                  },
+                                  child: Column(
+                                    children: <Widget>[
+                                      // text("07", textColor: sh_colorPrimary, fontFamily: fontMedium),
+                                      SizedBox(height: spacing_control),
+                                      text("Wishlist",
+                                          textColor: sh_textColorPrimary,
+                                          fontFamily: fontMedium),
+                                      SizedBox(height: spacing_control),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                selectedTab = 1;
-                              });
-                            },
-                            child: Column(
-                              children: <Widget>[
-                                // text("07", textColor: sh_colorPrimary, fontFamily: fontMedium),
-                                SizedBox(height: spacing_control),
-                                text("Wishlist",
-                                    textColor: sh_textColorPrimary,
-                                    fontFamily: fontMedium),
-                                SizedBox(height: spacing_control),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                        )
+                      : SizedBox(),
                   ListView.builder(
                     scrollDirection: Axis.vertical,
                     itemCount: list.length,
