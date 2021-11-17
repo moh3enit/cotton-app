@@ -1,6 +1,7 @@
 
 import 'package:cotton_natural/main/utils/common.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/controllers/WishController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,22 +34,23 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
   }
 
   fetchData() async {
-    // var products = await loadProducts();
+    if(await AuthController.isLoginUser()) {
+      List<ShProduct>? products;
+      MyResponse<List<ShProduct>> myResponse = await WishController
+          .getWishProducts();
 
-    List<ShProduct>? products;
-    MyResponse<List<ShProduct>> myResponse = await WishController.getWishProducts();
+      if (myResponse.success) {
+        products = myResponse.data;
+      } else {
+        toasty(context, myResponse.errorText);
+      }
 
-    if (myResponse.success) {
-      products = myResponse.data;
-    } else {
-      toasty(context, myResponse.errorText);
+      setState(() {
+        list.clear();
+        list.addAll(products!);
+        isLoadingMoreData = false;
+      });
     }
-
-    setState(() {
-      list.clear();
-      list.addAll(products!);
-      isLoadingMoreData=false;
-    });
   }
   
   _removeFromWish(int? productId) async{

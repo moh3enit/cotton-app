@@ -42,7 +42,7 @@ class OrderController {
   }
 
   //------------------------ Get single order -----------------------------------------//
-  static Future<MyResponse<Order>> getSingleOrder(int? id) async {
+  static Future<MyResponse<Order_data>> getSingleOrder(int? id) async {
     //Getting User Api Token
     String token = await AuthController.getApiToken() ?? '';
     String url = ApiUtil.MAIN_API_URL + ApiUtil.ORDER_DETAIL + id!.toString();
@@ -57,10 +57,10 @@ class OrderController {
 
     try {
       NetworkResponse response = await Network.get(url, headers: headers);
-      MyResponse<Order> myResponse = MyResponse(response.statusCode);
+      MyResponse<Order_data> myResponse = MyResponse(response.statusCode);
       if (ApiUtil.isResponseSuccess(response.statusCode)) {
         myResponse.success = true;
-        myResponse.data = Order.fromJson(json.decode(response.body));
+        myResponse.data = Order_data.fromJson(json.decode(response.body));
       } else {
         Map<String, dynamic> data = json.decode(response.body);
         myResponse.success = false;

@@ -17,7 +17,7 @@ import 'package:nb_utils/nb_utils.dart';
 // ignore: must_be_immutable
 class ShOrderDetailScreen extends StatefulWidget {
   static String tag = '/ShOrderDetailScreen';
-  int? order;
+  Order? order;
 
   ShOrderDetailScreen({this.order});
 
@@ -26,7 +26,7 @@ class ShOrderDetailScreen extends StatefulWidget {
 }
 
 class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
-  Order? orders;
+  Order_data? orders;
   bool isLoadingMoreData = true;
 
   @override
@@ -40,10 +40,10 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
       isLoadingMoreData=true;
     });
 
-    MyResponse<Order> myResponse = await OrderController.getSingleOrder(widget.order);
+    MyResponse<Order_data> myResponse = await OrderController.getSingleOrder(widget.order!.id);
     if (myResponse.success) {
       orders = myResponse.data;
-      print(orders!.createdAt);
+      print(orders!.items);
     } else {
       ApiUtil.checkRedirectNavigation(context, myResponse.responseCode);
       toasty(context, myResponse.errorText);
@@ -178,8 +178,8 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  text(orders!.createdAt!.substring(0,10) + "\n Order Placed", maxLine: 2, fontSize: textSizeMedium, textColor: sh_textColorPrimary),
-                  text(orders!.status!.toUpperCase(), fontSize: textSizeMedium, textColor: sh_textColorPrimary),
+                  text(widget.order!.createdAt!.substring(0,10) + "\n Order Placed", maxLine: 2, fontSize: textSizeMedium, textColor: sh_textColorPrimary),
+                  text(widget.order!.status!.toUpperCase(), fontSize: textSizeMedium, textColor: sh_textColorPrimary),
                 ],
               ),
             )
@@ -208,7 +208,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_order_id),
-                    text('#'+orders!.id.toString(), textColor: sh_textColorPrimary, fontFamily: fontMedium),
+                    text('#'+widget.order!.id.toString(), textColor: sh_textColorPrimary, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -217,7 +217,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_order_date),
-                    text(orders!.createdAt!.substring(0,10), textColor: sh_textColorPrimary, fontFamily: fontMedium),
+                    text(widget.order!.createdAt!.substring(0,10), textColor: sh_textColorPrimary, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -226,7 +226,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_total_amount),
-                    text("\$"+orders!.shipping!, textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                    text("\$"+widget.order!.shipping!, textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                   ],
                 ),
               ],
@@ -265,7 +265,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_shipping_charge),
-                    text(orders!.shippingMethod!, textColor: Colors.green, fontFamily: fontMedium),
+                    text(widget.order!.shippingMethod!, textColor: Colors.green, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -274,7 +274,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_total_amount),
-                    text("\$"+orders!.total!, textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
+                    text("\$"+widget.order!.total!, textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                   ],
                 ),
               ],
