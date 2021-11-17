@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:cotton_natural/shopHop/utils/Validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
+import 'package:provider/provider.dart';
 
 class ShSignIn extends StatefulWidget {
   static String tag = '/ShSignIn';
@@ -33,8 +35,10 @@ class ShSignInState extends State<ShSignIn> {
     super.initState();
     _checkUserLoginOrNot();
     isInProgress = false;
-    emailCont = TextEditingController(text: "billing@divstrong.com");
-    passwordCont = TextEditingController(text: "andreab1");
+    // emailCont = TextEditingController(text: "billing@divstrong.com");
+    emailCont = TextEditingController(text: "admin@cotton-natural.com");
+    // passwordCont = TextEditingController(text: "andreab1");
+    passwordCont = TextEditingController(text: "secret");
   }
 
 
@@ -59,11 +63,14 @@ class ShSignInState extends State<ShSignIn> {
 
       MyResponse response =  await AuthController.loginUser(email, password);
       if(response.success){
+        Provider.of<OrdersProvider>(context,listen: false).isLoggedIn = true;
         ShHomeScreen().launch(context);
       }else {
         // ApiUtil.checkRedirectNavigation(context, response.responseCode);
         print(response.errorText);
       }
+
+      print(Provider.of<OrdersProvider>(context,listen: false).isLoggedIn );
 
       if(mounted) {
         setState(() {
@@ -77,6 +84,7 @@ class ShSignInState extends State<ShSignIn> {
 
   _checkUserLoginOrNot() async {
     if(await AuthController.isLoginUser()){
+      Provider.of<OrdersProvider>(context,listen: false).isLoggedIn = true;
       ShHomeScreen().launch(context);
     }
   }

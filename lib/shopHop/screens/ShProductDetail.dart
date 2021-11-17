@@ -296,12 +296,16 @@ class ShProductDetailState extends State<ShProductDetail> {
           Expanded(
             child: InkWell(
               onTap: (){
-                if(selectedSize<0){
-                  toasty(context, 'Please Select A Size');
+                if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+                  toasty(context, 'Please Login First');
                 }else{
-                  String? size =  widget.product!.sizes![selectedSize].name;
-                  Provider.of<OrdersProvider>(context, listen: false).addItemToBasket(product: widget.product,size: size);
-                  toasty(context, 'Product Added To Cart');
+                  if(selectedSize<0){
+                    toasty(context, 'Please Select A Size');
+                  }else{
+                    String? size =  widget.product!.sizes![selectedSize].name;
+                    Provider.of<OrdersProvider>(context, listen: false).addItemToBasket(product: widget.product,size: size);
+                    toasty(context, 'Product Added To Cart');
+                  }
                 }
               },
               child: Container(

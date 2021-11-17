@@ -138,14 +138,14 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
                                       Expanded(
                                         child: Row(
                                           children: <Widget>[
-                                            Icon(
-                                              Icons.add_shopping_cart,
-                                              color: sh_textColorPrimary,
-                                              size: 16,
-                                            ),
-                                            text(sh_lbl_move_to_cart,
-                                                textColor: sh_textColorPrimary,
-                                                fontSize: textSizeSMedium)
+                                            // Icon(
+                                            //   Icons.add_shopping_cart,
+                                            //   color: sh_textColorPrimary,
+                                            //   size: 16,
+                                            // ),
+                                            // text(sh_lbl_move_to_cart,
+                                            //     textColor: sh_textColorPrimary,
+                                            //     fontSize: textSizeSMedium)
                                           ],
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,

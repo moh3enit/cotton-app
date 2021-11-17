@@ -21,14 +21,12 @@ class ShAddNewAddress extends StatefulWidget {
 
 class ShAddNewAddressState extends State<ShAddNewAddress> {
   var primaryColor;
-  var firstNameCont = TextEditingController();
-  var lastNameCont = TextEditingController();
-  var pinCodeCont = TextEditingController();
+  var zipCont = TextEditingController();
+  var phoneCont = TextEditingController();
   var cityCont = TextEditingController();
-  var stateCont = TextEditingController();
-  var addressCont = TextEditingController();
-  var phoneNumberCont = TextEditingController();
+  var regionCont = TextEditingController();
   var countryCont = TextEditingController();
+  var companyCont = TextEditingController();
 
   @override
   void initState() {
@@ -38,14 +36,12 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
 
   init() async {
     if (widget.addressModel != null) {
-      pinCodeCont.text = widget.addressModel!.pinCode!;
-      addressCont.text = widget.addressModel!.address!;
-      cityCont.text = widget.addressModel!.city!;
-      stateCont.text = widget.addressModel!.state!;
-      countryCont.text = widget.addressModel!.country!;
-      firstNameCont.text = widget.addressModel!.first_name!;
-      lastNameCont.text = widget.addressModel!.last_name!;
-      phoneNumberCont.text = widget.addressModel!.phone_number!;
+      zipCont.text = widget.addressModel!.zip;
+      phoneCont.text = widget.addressModel!.phone;
+      cityCont.text = widget.addressModel!.city;
+      regionCont.text = widget.addressModel!.region;
+      countryCont.text = widget.addressModel!.country;
+      companyCont.text = widget.addressModel!.company;
     }
   }
 
@@ -101,8 +97,8 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       ),
     );
 
-    final firstName = TextFormField(
-      controller: firstNameCont,
+    final company = TextFormField(
+      controller: companyCont,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
       textCapitalization: TextCapitalization.words,
@@ -111,24 +107,11 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       onFieldSubmitted: (term) {
         FocusScope.of(context).nextFocus();
       },
-      decoration: formFieldDecoration(sh_hint_first_name),
+      decoration: formFieldDecoration('Company'),
     );
 
-    final lastName = TextFormField(
-      controller: lastNameCont,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
-      textCapitalization: TextCapitalization.words,
-      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      autofocus: false,
-      onFieldSubmitted: (term) {
-        FocusScope.of(context).nextFocus();
-      },
-      decoration: formFieldDecoration(sh_hint_phone),
-    );
-
-    final pinCode = TextFormField(
-      controller: pinCodeCont,
+    final zip = TextFormField(
+      controller: zipCont,
       keyboardType: TextInputType.number,
       maxLength: 6,
       autofocus: false,
@@ -137,7 +120,7 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       },
       textInputAction: TextInputAction.next,
       style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      decoration: formFieldDecoration(sh_hint_pin_code),
+      decoration: formFieldDecoration('Zip Code'),
     );
 
     final city = TextFormField(
@@ -153,17 +136,17 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       decoration: formFieldDecoration(sh_hint_city),
     );
 
-    final state = TextFormField(
+    final region = TextFormField(
       onFieldSubmitted: (term) {
         FocusScope.of(context).nextFocus();
       },
-      controller: stateCont,
+      controller: regionCont,
       keyboardType: TextInputType.text,
       textCapitalization: TextCapitalization.words,
       style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
       autofocus: false,
       textInputAction: TextInputAction.next,
-      decoration: formFieldDecoration(sh_hint_state),
+      decoration: formFieldDecoration('Region'),
     );
 
     final country = TextFormField(
@@ -179,20 +162,8 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       decoration: formFieldDecoration("Country"),
     );
 
-    final address = TextFormField(
-      controller: addressCont,
-      keyboardType: TextInputType.multiline,
-      maxLines: 4,
-      onFieldSubmitted: (term) {
-        FocusScope.of(context).nextFocus();
-      },
-      autofocus: false,
-      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      decoration: formFieldDecoration(sh_hint_address),
-    );
-
     final phoneNumber = TextFormField(
-      controller: phoneNumberCont,
+      controller: phoneCont,
       keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.done,
       maxLength: 10,
@@ -205,22 +176,18 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       minWidth: double.infinity,
       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0)),
       onPressed: () {
-        if (firstNameCont.text.isEmpty) {
-          toasty(context, "First name required");
-        } else if (lastNameCont.text.isEmpty) {
-          toasty(context, "Last name required");
-        } else if (phoneNumberCont.text.isEmpty) {
+        if (companyCont.text.isEmpty) {
+          toasty(context, "Company name required");
+        } else if (phoneCont.text.isEmpty) {
           toasty(context, "Phone Number required");
-        } else if (addressCont.text.isEmpty) {
-          toasty(context, "Address required");
         } else if (cityCont.text.isEmpty) {
           toasty(context, "City name required");
-        } else if (stateCont.text.isEmpty) {
-          toasty(context, "State name required");
+        } else if (regionCont.text.isEmpty) {
+          toasty(context, "Region name required");
         } else if (countryCont.text.isEmpty) {
           toasty(context, "Country name required");
-        } else if (pinCodeCont.text.isEmpty) {
-          toasty(context, "Pincode required");
+        } else if (zipCont.text.isEmpty) {
+          toasty(context, "Zip code required");
         } else {
           onSaveClicked();
         }
@@ -234,15 +201,10 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Expanded(child: firstName),
-          SizedBox(
-            width: spacing_standard_new,
-          ),
-          Expanded(child: lastName),
+          Expanded(child: company),
         ],
       ),
       phoneNumber,
-      address,
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -250,7 +212,7 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
           SizedBox(
             width: spacing_standard_new,
           ),
-          Expanded(child: state),
+          Expanded(child: region),
         ],
       ),
       Row(
@@ -259,7 +221,7 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
           SizedBox(
             width: spacing_standard_new,
           ),
-          Expanded(child: pinCode),
+          Expanded(child: zip),
         ],
       ),
       Padding(

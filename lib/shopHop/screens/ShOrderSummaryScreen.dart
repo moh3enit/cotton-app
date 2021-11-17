@@ -1,7 +1,11 @@
 
 import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/OrderController.dart';
+import 'package:cotton_natural/shopHop/models/Order.dart';
 import 'package:cotton_natural/shopHop/models/ShOrder.dart';
 import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
+import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/shopHop/models/ShAddress.dart';
@@ -25,17 +29,40 @@ class ShOrderSummaryScreen extends StatefulWidget {
 
 class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
   List<Item?> list = [];
-  List<ShAddressModel> addressList = [];
+  // List<ShAddressModel> addressList = [];
   var selectedPosition = 0;
   List<String> images = [];
   var currentIndex = 0;
   var isLoaded = false;
   List<ShOrder> orderList=[];
+  // late List<Order> previousOrders;
+
+  //address form vars
+  var primaryColor;
+  var zipCont = TextEditingController();
+  var phoneCont = TextEditingController();
+  var cityCont = TextEditingController();
+  var regionCont = TextEditingController();
+  var countryCont = TextEditingController();
+  var companyCont = TextEditingController();
+
 
   @override
   void initState() {
     super.initState();
     fetchData();
+
+    init();
+  }
+
+  init() async {
+    ShAddressModel providerAddress = Provider.of<OrdersProvider>(context,listen: false).getAddress();
+      companyCont.text = providerAddress.company;
+      phoneCont.text = providerAddress.phone;
+      cityCont.text = providerAddress.city;
+      regionCont.text = providerAddress.region;
+      countryCont.text = providerAddress.country;
+      zipCont.text = providerAddress.zip;
   }
 
   fetchData() async {
@@ -45,10 +72,16 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
     orderList.forEach((element) {list.add(element.item);});
     setState(() { });
 
-    var addresses = await loadAddresses();
+    // MyResponse<List<Order>> myResponse = await OrderController.getOrderList();
+    // if(myResponse.success){
+    //   previousOrders = myResponse.data;
+    //   addressList.clear();
+    //   addressList = Provider.of<OrdersProvider>(context,listen: false).getAddressListFromPreviousOrders(previousOrders)!;
+    // }
+    // var addresses = await loadAddresses();
     setState(() {
-      addressList.clear();
-      addressList.addAll(addresses);
+      // addressList.clear();
+      // addressList.addAll(addresses);
       isLoaded = true;
     });
   }
@@ -62,6 +95,119 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
+
+
+
+    //adding address form
+
+    final company = TextFormField(
+      controller: companyCont,
+      keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.next,
+      textCapitalization: TextCapitalization.words,
+      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
+      autofocus: false,
+      onFieldSubmitted: (term) {
+        FocusScope.of(context).nextFocus();
+      },
+      decoration: formFieldDecoration('Company'),
+    );
+
+    final phoneNumber = TextFormField(
+      controller: phoneCont,
+      keyboardType: TextInputType.phone,
+      textInputAction: TextInputAction.done,
+      maxLength: 10,
+      autofocus: false,
+      onFieldSubmitted: (term) {
+        FocusScope.of(context).nextFocus();
+      },
+      decoration: formFieldDecoration(sh_hint_contact),
+    );
+
+    final city = TextFormField(
+      controller: cityCont,
+      keyboardType: TextInputType.text,
+      textCapitalization: TextCapitalization.words,
+      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
+      onFieldSubmitted: (term) {
+        FocusScope.of(context).nextFocus();
+      },
+      textInputAction: TextInputAction.next,
+      autofocus: false,
+      decoration: formFieldDecoration(sh_hint_city),
+    );
+
+    final region = TextFormField(
+      onFieldSubmitted: (term) {
+        FocusScope.of(context).nextFocus();
+      },
+      controller: regionCont,
+      keyboardType: TextInputType.text,
+      textCapitalization: TextCapitalization.words,
+      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
+      autofocus: false,
+      textInputAction: TextInputAction.next,
+      decoration: formFieldDecoration('Region'),
+    );
+
+    final country = TextFormField(
+      onFieldSubmitted: (term) {
+        FocusScope.of(context).nextFocus();
+      },
+      controller: countryCont,
+      keyboardType: TextInputType.text,
+      textCapitalization: TextCapitalization.words,
+      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
+      autofocus: false,
+      textInputAction: TextInputAction.next,
+      decoration: formFieldDecoration("Country"),
+    );
+
+    final zip = TextFormField(
+      controller: zipCont,
+      keyboardType: TextInputType.number,
+      maxLength: 6,
+      autofocus: false,
+      onFieldSubmitted: (term) {
+        FocusScope.of(context).nextFocus();
+      },
+      textInputAction: TextInputAction.next,
+      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
+      decoration: formFieldDecoration('Zip Code'),
+    );
+
+    final body = Wrap(runSpacing: spacing_standard_new, children: <Widget>[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Expanded(child: company),
+        ],
+      ),
+      phoneNumber,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Expanded(child: city),
+          SizedBox(
+            width: spacing_standard_new,
+          ),
+          Expanded(child: region),
+        ],
+      ),
+      Row(
+        children: <Widget>[
+          Expanded(child: country),
+          SizedBox(
+            width: spacing_standard_new,
+          ),
+          Expanded(child: zip),
+        ],
+      ),
+    ]);
+
+
+
 
     var cartList = isLoaded
         ? ListView.builder(
@@ -206,7 +352,8 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
         ],
       ),
     );
-    var address = Container(
+    var address = isLoaded
+    ?Container(
       width: double.infinity,
       color: sh_item_background,
       padding: EdgeInsets.all(spacing_standard_new),
@@ -214,35 +361,42 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          text(addressList[selectedPosition].first_name! + " " + addressList[selectedPosition].last_name!, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-          text(addressList[selectedPosition].address, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-          text(addressList[selectedPosition].city! + "," + addressList[selectedPosition].state!, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-          text(addressList[selectedPosition].country! + "," + addressList[selectedPosition].pinCode!, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-          SizedBox(
-            height: spacing_standard_new,
-          ),
-          text(addressList[selectedPosition].phone_number, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-          SizedBox(
-            height: spacing_standard_new,
-          ),
-          SizedBox(
+          Container(
             width: double.infinity,
-            child: MaterialButton(
-              padding: EdgeInsets.all(spacing_standard),
-              child: text(sh_lbl_change_address, fontSize: textSizeMedium, fontFamily: fontMedium, textColor: sh_white),
-              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0), side: BorderSide(color: sh_colorPrimary, width: 1)),
-              color: sh_colorPrimary,
-              onPressed: () async {
-                var pos = await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ShAddressManagerScreen())) ?? selectedPosition;
-                setState(() {
-                  selectedPosition = pos;
-                });
-              },
-            ),
-          )
+            child: SingleChildScrollView(child: body),
+            margin: EdgeInsets.all(16),
+          ),
+
+          // text(addressList[selectedPosition].company , textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
+          // text(addressList[selectedPosition].phone, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+          // text(addressList[selectedPosition].city + "," + addressList[selectedPosition].region, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+          // text(addressList[selectedPosition].country + "," + addressList[selectedPosition].zip, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+          // SizedBox(
+          //   height: spacing_standard_new,
+          // ),
+          // text('', textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+          // SizedBox(
+          //   height: spacing_standard_new,
+          // ),
+          // SizedBox(
+          //   width: double.infinity,
+          //   child: MaterialButton(
+          //     padding: EdgeInsets.all(spacing_standard),
+          //     child: text(sh_lbl_change_address, fontSize: textSizeMedium, fontFamily: fontMedium, textColor: sh_white),
+          //     shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0), side: BorderSide(color: sh_colorPrimary, width: 1)),
+          //     color: sh_colorPrimary,
+          //     onPressed: () async {
+          //       var pos = await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ShAddressManagerScreen())) ?? selectedPosition;
+          //       setState(() {
+          //         selectedPosition = pos;
+          //       });
+          //     },
+          //   ),
+          // )
         ],
       ),
-    );
+    )
+    :Container();
     var bottomButtons = Container(
       height: 60,
       decoration: BoxDecoration(boxShadow: [BoxShadow(color: sh_shadow_color, blurRadius: 10, spreadRadius: 2, offset: Offset(0, 3))], color: sh_white),
@@ -267,13 +421,25 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                 height: double.infinity,
               ),
               onTap: () {
-                ShPaymentsScreen().launch(context);
+                if(validateAddress()){
+                  ShAddressModel newAddress = ShAddressModel(
+                      company: companyCont.text,
+                      zip: zipCont.text,
+                      region: regionCont.text,
+                      city: cityCont.text,
+                      phone: phoneCont.text,
+                      country: countryCont.text,
+                  );
+                  Provider.of<OrdersProvider>(context,listen: false).setAddress(newAddress);
+                  ShPaymentsScreen().launch(context);
+                }
               },
             ),
           )
         ],
       ),
     );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: sh_white,
@@ -315,4 +481,30 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
       ),
     );
   }
+
+  bool validateAddress() {
+    if(companyCont.text.trim()==''){
+      toasty(context, 'Company name is require');
+      return false;
+    }else if(phoneCont.text.trim()==''){
+      toasty(context, 'Phone number is require');
+      return false;
+    }else if(cityCont.text.trim()==''){
+      toasty(context, 'City name is require');
+      return false;
+    }else if(regionCont.text.trim()==''){
+      toasty(context, 'Region name is require');
+      return false;
+    }else if(countryCont.text.trim()==''){
+      toasty(context, 'Country name is require');
+      return false;
+    }else if(zipCont.text.trim()==''){
+      toasty(context, 'Zip Code is require');
+      return false;
+    }
+    return true;
+  }
+
+
+
 }

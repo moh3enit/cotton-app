@@ -1,18 +1,68 @@
+import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
+import 'package:cotton_natural/shopHop/models/Order.dart';
+import 'package:cotton_natural/shopHop/models/ShAddress.dart';
 import 'package:cotton_natural/shopHop/models/ShOrder.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:flutter/material.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class OrdersProvider extends ChangeNotifier{
 
   List<ShOrder> _orderList = [];
   double _totalPrice = 0.00 ;
+  bool isLoggedIn = false;
 
   // Standard Delivery $5.99 / Delivery in 5 to 7 business Days
   // Express Delivery $19.99 / Delivery in 1 business Days
-  ShippingMethod? _shippingMethod  ;
+  ShippingMethod? _shippingMethod = ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
 
-  // late ShAddressModel _orderAddress ;
+  // List<ShAddressModel> _orderAddressList = [];
+  ShAddressModel? _orderAddress = ShAddressModel(company: '', zip: '', region: '', city: '', phone: '', country: '') ;
+
+  // List<ShAddressModel>? getAddressListFromPreviousOrders(List<Order> previousOrders){
+  //
+  //   this._orderAddressList = [];
+  //   previousOrders.forEach((singleOrder) {
+  //     ShAddressModel address = ShAddressModel(city: '',company: '',country: '',phone: '',region: '',zip: '');
+  //     address.company = singleOrder.shippingCompany??'';
+  //     address.zip = singleOrder.shippingZip??'';
+  //     address.country = singleOrder.shippingCountry??'';
+  //     address.city = singleOrder.shippingCity??'';
+  //     address.region = singleOrder.shippingRegion??'';
+  //     address.phone = singleOrder.shippingPhone??'';
+  //     if(!isContains(address)){
+  //       this._orderAddressList.add(address);
+  //     }
+  //   });
+  //
+  //   return this._orderAddressList;
+  // }
+
+  // bool isContains(ShAddressModel address) {
+  //   bool res = false;
+  //   this._orderAddressList.forEach((each) {
+  //     if(each.phone==address.phone && each.country==address.country && each.city==address.city && each.region==address.region && each.zip==address.zip && each.company==address.company ){
+  //       res = true;
+  //     }
+  //   });
+  //   if(address.phone == '' && address.country == '' && address.city == '' && address.region == '' && address.zip == '' && address.company == '' ){
+  //     res = true;
+  //   }
+  //   print(res);
+  //   return res;
+  // }
+
+  // saveNewAddress(ShAddressModel newAddress){
+  //   this._orderAddressList.add(newAddress);
+  // }
+
+  setAddress(ShAddressModel newAddress){
+    this._orderAddress = newAddress;
+  }
+  getAddress(){
+    return this._orderAddress;
+  }
 
   setShippingMethod({String shippingMethodName='standard'}){
     this._shippingMethod = (shippingMethodName=='standard')?
@@ -27,7 +77,6 @@ class OrdersProvider extends ChangeNotifier{
   ShippingMethod? getShippingMethod(){
     return this._shippingMethod?? ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
   }
-
 
   List<ShOrder> getOrderList(){
     return _orderList;
@@ -70,6 +119,7 @@ class OrdersProvider extends ChangeNotifier{
   }
 
   void addItemToBasket({required ShProduct? product , int count = 1,String? size}){
+
 
     // print('productId : ${product!.id} size : $size');
     if(this.isProductAlreadyAdded(product!.id,size)){
@@ -120,8 +170,12 @@ class OrdersProvider extends ChangeNotifier{
   resetOrdersProvider(){
     this._orderList = [];
     this._totalPrice = 0.00 ;
+    this.isLoggedIn = false;
     this._shippingMethod =  ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
+    this._orderAddress = ShAddressModel(company: '', zip: '', region: '', city: '', phone: '', country: '') ;
   }
+
+
 
 
 

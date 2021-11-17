@@ -28,7 +28,6 @@ class OrderController {
       MyResponse<List<Order>> myResponse = MyResponse(response.statusCode);
       if (ApiUtil.isResponseSuccess(response.statusCode)) {
         myResponse.success = true;
-        print(json.decode(response.body));
         myResponse.data = Order.getListFromJson(json.decode(response.body));
       } else {
         Map<String, dynamic> data = json.decode(response.body);

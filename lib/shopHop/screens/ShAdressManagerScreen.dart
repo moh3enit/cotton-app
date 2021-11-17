@@ -1,3 +1,7 @@
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/OrderController.dart';
+import 'package:cotton_natural/shopHop/models/Order.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -11,6 +15,7 @@ import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
+import 'package:provider/provider.dart';
 
 class ShAddressManagerScreen extends StatefulWidget {
   static String tag = '/AddressManagerScreen';
@@ -25,6 +30,7 @@ class ShAddressManagerScreenState extends State<ShAddressManagerScreen> {
   var primaryColor;
   var mIsLoading = true;
   var isLoaded = false;
+  late List<Order> previousOrders;
 
   @override
   void initState() {
@@ -36,10 +42,19 @@ class ShAddressManagerScreenState extends State<ShAddressManagerScreen> {
     setState(() {
       mIsLoading = true;
     });
-    var addresses = await loadAddresses();
-    setState(() {
+
+
+    MyResponse<List<Order>> myResponse = await OrderController.getOrderList();
+    if(myResponse.success){
+      previousOrders = myResponse.data;
       addressList.clear();
-      addressList.addAll(addresses);
+      // addressList = Provider.of<OrdersProvider>(context,listen: false).getAddressListFromPreviousOrders(previousOrders)!;
+    }
+
+    // var addresses = await loadAddresses();
+    setState(() {
+      // addressList.clear();
+      // addressList.addAll(addresses);
       isLoaded = true;
       mIsLoading = false;
     });
@@ -119,14 +134,14 @@ class ShAddressManagerScreenState extends State<ShAddressManagerScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          text(addressList[index].first_name! + " " + addressList[index].last_name!, textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-                          text(addressList[index].address, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-                          text(addressList[index].city! + "," + addressList[index].state!, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-                          text(addressList[index].country! + "," + addressList[index].pinCode!, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+                          text(addressList[index].company , textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
+                          text(addressList[index].phone, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+                          text(addressList[index].city + "," + addressList[index].region, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+                          text(addressList[index].country + "," + addressList[index].zip, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
                           SizedBox(
                             height: spacing_standard_new,
                           ),
-                          text(addressList[index].phone_number, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
+                          // text(addressList[index].phone_number, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
                         ],
                       ),
                     )
