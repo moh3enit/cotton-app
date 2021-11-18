@@ -1,12 +1,9 @@
-import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
-import 'package:cotton_natural/shopHop/models/Order.dart';
 import 'package:cotton_natural/shopHop/models/ShAddress.dart';
 import 'package:cotton_natural/shopHop/models/ShOrder.dart';
 import 'package:cotton_natural/shopHop/models/ShPaymentCard.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 class OrdersProvider extends ChangeNotifier{
 

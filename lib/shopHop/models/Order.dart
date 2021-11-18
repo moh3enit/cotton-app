@@ -1,3 +1,4 @@
+
 class Order {
   Order({
     int? id,
@@ -137,7 +138,7 @@ class Order {
 }
 
 class Order_data {
-  Items? items;
+  ItemsList1? itemsList;
   String? subTotalPrice;
   String? totalPrice;
   int? totalQty;
@@ -147,10 +148,12 @@ class Order_data {
   int? discountAmount;
   int? frameAmount;
 
-  Order_data({this.items, this.subTotalPrice, this.totalPrice, this.totalQty, this.originalPrice, this.hasOrder, this.couponApplied, this.discountAmount, this.frameAmount});
+  Order_data({this.itemsList, this.subTotalPrice, this.totalPrice, this.totalQty, this.originalPrice, this.hasOrder, this.couponApplied, this.discountAmount, this.frameAmount});
 
   Order_data.fromJson(Map<String, dynamic> json) {
-    items = json['items'] != null ? new Items.fromJson(json['items']) : null;
+
+    // print( json["order_data"]['items']);
+    itemsList = (json["order_data"] != null) ? ItemsList1.fromJson(json["order_data"]['items']) : ItemsList1(items: []);
     subTotalPrice = json['subTotalPrice'];
     totalPrice = json['totalPrice'];
     totalQty = json['totalQty'];
@@ -163,9 +166,9 @@ class Order_data {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.items != null) {
-      data['items'] = this.items!.toJson();
-    }
+    // if (this.items != null) {
+    //   data['items'] = this.items!.toJson();
+    // }
     data['subTotalPrice'] = this.subTotalPrice;
     data['totalPrice'] = this.totalPrice;
     data['totalQty'] = this.totalQty;
@@ -178,39 +181,73 @@ class Order_data {
   }
 }
 
-class Items {
-  Items({
-    NumberItem? numberItem,}){
-    _numberItem = numberItem;
+class ItemsList1 {
+  List<Item1>? items;
+  ItemsList1({required List<Item1> this.items,});
+
+  //json =  {
+  //             "188": {
+  //                 "product_id": "188",
+  //                 "count": "2",
+  //                 "image_url": "https://www.cottonnatural.com/wp-content/uploads/2016/09/DSC_8351-scaled.jpg",
+  //                 "name": "St. Lucia Pants",
+  //                 "price": "75.00",
+  //                 "slug": "st-lucia-pants",
+  //                 "size": "X-Large"
+  //             },
+  //             "189": {
+  //                 "product_id": "189",
+  //                 "count": "3",
+  //                 "image_url": "https://www.cottonnatural.com/wp-content/uploads/2016/09/DSC_8351-scaled.jpg",
+  //                 "name": "St. Lucia Pants",
+  //                 "price": "75.00",
+  //                 "slug": "st-lucia-pants",
+  //                 "size": "Large"
+  //             }
+  //         },
+  ItemsList1.fromJson(dynamic mapJson) {
+    // print('****************************************');
+    // mapJson.forEach((key, value) {
+    //   print('key : $key');
+    //   print('value  : $value');
+    // });
+
+    List<Item1> itemsListX = [];
+    mapJson.forEach((key, value) {
+      itemsListX.add(Item1.fromJson(value));
+      this.items = itemsListX;
+    });
   }
 
-  Items.fromJson(dynamic json) {
-    _numberItem = json['numberItem'] != null ? NumberItem.fromJson(json['numberItem']) : null;
-  }
-  NumberItem? _numberItem;
+  // Map<String, dynamic> toJson() {
+  //   final map = <String, dynamic>{};
+  //   if (items != null) {
+  //     map['Item'] = items?.toJson();
+  //   }
+  //   return map;
+  // }
 
-  NumberItem? get numberItem => _numberItem;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (_numberItem != null) {
-      map['numberItem'] = _numberItem?.toJson();
-    }
-    return map;
-  }
-
-  static List<Items> getListFromJson(List<dynamic> jsonArray) {
-    List<Items> list = [];
+  static List<ItemsList1> getListFromJson(List<dynamic> jsonArray) {
+    List<ItemsList1> list = [];
     for (int i = 0; i < jsonArray.length; i++) {
-      list.add(Items.fromJson(jsonArray[i]));
+      list.add(ItemsList1.fromJson(jsonArray[i]));
     }
     return list;
   }
 
 }
 
-class NumberItem {
-  NumberItem({
+class Item1 {
+
+  String? _productId;
+  String? _count;
+  String? _imageUrl;
+  String? _name;
+  String? _price;
+  String? _slug;
+  String? _size;
+
+  Item1({
     String? productId,
     String? count,
     String? imageUrl,
@@ -227,7 +264,7 @@ class NumberItem {
     _size = size;
   }
 
-  NumberItem.fromJson(dynamic json) {
+  Item1.fromJson(dynamic json) {
     _productId = json['product_id'];
     _count = json['count'];
     _imageUrl = json['image_url'];
@@ -236,13 +273,6 @@ class NumberItem {
     _slug = json['slug'];
     _size = json['size'];
   }
-  String? _productId;
-  String? _count;
-  String? _imageUrl;
-  String? _name;
-  String? _price;
-  String? _slug;
-  String? _size;
 
   String? get productId => _productId;
   String? get count => _count;

@@ -1,17 +1,14 @@
-import 'package:cotton_natural/main/utils/common.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/api/api_util.dart';
 import 'package:cotton_natural/shopHop/controllers/OrderController.dart';
 import 'package:cotton_natural/shopHop/models/Order.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cotton_natural/shopHop/models/ShOrder.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
-import 'package:lottie/lottie.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 // ignore: must_be_immutable
@@ -28,6 +25,7 @@ class ShOrderDetailScreen extends StatefulWidget {
 class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
   Order_data? orders;
   bool isLoadingMoreData = true;
+  List<Item1> itemsList = [];
 
   @override
   void initState() {
@@ -41,10 +39,11 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
     });
 
     MyResponse<Order_data> myResponse = await OrderController.getSingleOrder(widget.order!.id);
-    print(myResponse.success);
+
     if (myResponse.success) {
       orders = myResponse.data;
-      print(orders!.items);
+      itemsList.clear();
+      itemsList = orders!.itemsList!.items!;
     } else {
       ApiUtil.checkRedirectNavigation(context, myResponse.responseCode);
       toasty(context, myResponse.errorText);
@@ -57,89 +56,96 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    var item = Container(
-      color: sh_itemText_background,
-      margin: EdgeInsets.only(left: spacing_standard_new, right: spacing_standard_new, top: spacing_standard_new),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            // Image.network(
-            //   orders!.orderData!.items!.numberItem!.imageUrl.toString(),
-            //   width: width * 0.3,
-            //   height: width * 0.35,
-            //   fit: BoxFit.fill,
-            // ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          height: spacing_standard,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          // child: text(orders!.orderData!.items!.numberItem!.name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: spacing_control),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black),
-                                padding: EdgeInsets.all(spacing_control_half),
-                                child: Icon(
-                                  Icons.done,
-                                  color: sh_white,
-                                  size: 16,
+    var item = (itemsList.length>0)
+        ? ListView.builder(
+        itemCount: itemsList.length,
+        scrollDirection: Axis.vertical,
+        itemBuilder:(context,index){
+          return Container(
+              color: sh_itemText_background,
+              margin: EdgeInsets.only(left: spacing_standard_new, right: spacing_standard_new, top: spacing_standard_new),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    // Image.network(
+                    //   orders!.orderData!.items!.numberItem!.imageUrl.toString(),
+                    //   width: width * 0.3,
+                    //   height: width * 0.35,
+                    //   fit: BoxFit.fill,
+                    // ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(
+                                  height: spacing_standard,
                                 ),
-                              ),
-                              SizedBox(
-                                width: spacing_standard_new,
-                              ),
-                              text("M", textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 4.0, bottom: 4.0),
-                          child: text("Total item- 1"),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              // text(orders!.orderData!.items!.numberItem!.price.toString().toCurrencyFormat(), textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
-                              SizedBox(
-                                width: spacing_control,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 3.0),
-                                child: Text(
-                                  "0".toString().toCurrencyFormat()!,
-                                  style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeSMedium, decoration: TextDecoration.lineThrough),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  // child: text(orders!.orderData!.items!.numberItem!.name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16.0, top: spacing_control),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Container(
+                                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+                                        padding: EdgeInsets.all(spacing_control_half),
+                                        child: Icon(
+                                          Icons.done,
+                                          color: sh_white,
+                                          size: 16,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: spacing_standard_new,
+                                      ),
+                                      text(itemsList[index].size, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16.0, top: 4.0, bottom: 4.0),
+                                  child: text(itemsList[index].name),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      // text(orders!.orderData!.items!.numberItem!.price.toString().toCurrencyFormat(), textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
+                                      SizedBox(
+                                        width: spacing_control,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 3.0),
+                                        child: Text(
+                                          itemsList[index].price.toString().toCurrencyFormat()!,
+                                          style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeSMedium, decoration: TextDecoration.lineThrough),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            );
+        })
+        : Center(child: text('No Product Found', textColor: sh_tomato, fontSize: textSizeMedium ));
     var orderStatus = Container(
       height: width * 0.32,
       margin: EdgeInsets.all(16.0),
@@ -226,7 +232,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 ),
                 Row(
                   children: <Widget>[
-                    text(sh_lbl_total_amount),
+                    text(sh_lbl_shipping_charge),
                     text("\$"+widget.order!.shipping!, textColor: sh_colorPrimary, fontFamily: fontBold, fontSize: textSizeLargeMedium),
                   ],
                 ),
@@ -263,12 +269,12 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 // SizedBox(
                 //   height: spacing_standard,
                 // ),
-                Row(
-                  children: <Widget>[
-                    text(sh_lbl_shipping_charge),
-                    text(widget.order!.shippingMethod!, textColor: Colors.green, fontFamily: fontMedium),
-                  ],
-                ),
+                // Row(
+                //   children: <Widget>[
+                //     text(sh_lbl_shipping_charge),
+                //     text(widget.order!.shippingMethod!, textColor: Colors.green, fontFamily: fontMedium),
+                //   ],
+                // ),
                 SizedBox(
                   height: spacing_standard,
                 ),
@@ -295,7 +301,10 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
         physics: BouncingScrollPhysics(),
         child: Column(
           children: <Widget>[
-            item,
+            Container(
+              height: 150,
+              child: item,
+            ),
             orderStatus,
             shippingDetail,
             paymentDetail,

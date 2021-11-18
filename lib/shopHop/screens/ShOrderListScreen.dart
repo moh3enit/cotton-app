@@ -32,10 +32,10 @@ class ShOrderListScreenState extends State<ShOrderListScreen> {
   fetchData() async {
     List<Order> OrderList = [];
     MyResponse<List<Order>> myResponse = await OrderController.getOrderList();
-    print(myResponse.success);
 
     if (myResponse.success) {
       OrderList = myResponse.data;
+
     } else {
       ApiUtil.checkRedirectNavigation(context, myResponse.responseCode);
       toasty(context, myResponse.errorText);
