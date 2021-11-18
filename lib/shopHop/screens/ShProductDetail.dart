@@ -268,17 +268,18 @@ class ShProductDetailState extends State<ShProductDetail> {
         children: <Widget>[
           Expanded(
             child: InkWell(
-              onTap: (){
+              onTap: ()async{
+                if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+                  Provider.of<OrdersProvider>(context, listen: false).isLoggedIn = await AuthController.isLoginUser();
+                }
                 if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
                   toasty(context, 'Please Login First');
+                }else if(selectedSize<0){
+                  toasty(context, 'Please Select A Size');
                 }else{
-                  if(selectedSize<0){
-                    toasty(context, 'Please Select A Size');
-                  }else{
-                    String? size =  widget.product!.sizes![selectedSize].name;
-                    Provider.of<OrdersProvider>(context, listen: false).addItemToBasket(product: widget.product,size: size);
-                    toasty(context, 'Product Added To Cart');
-                  }
+                  String? size =  widget.product!.sizes![selectedSize].name;
+                  Provider.of<OrdersProvider>(context, listen: false).addItemToBasket(product: widget.product,size: size);
+                  toasty(context, 'Product Added To Cart');
                 }
               },
               child: Container(
@@ -294,13 +295,14 @@ class ShProductDetailState extends State<ShProductDetail> {
           ),
           Expanded(
             child: InkWell(
-              onTap: () {
-                if (Provider.of<OrdersProvider>(context, listen: false)
-                        .getOrderCount() >
-                    0) {
-                  ShHomeScreen(
-                    goToTabIndex: 2,
-                  ).launch(context);
+              onTap: () async{
+                if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+                  Provider.of<OrdersProvider>(context, listen: false).isLoggedIn = await AuthController.isLoginUser();
+                }
+                if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+                  toasty(context, 'Please Login First');
+                }else if (Provider.of<OrdersProvider>(context, listen: false).getOrderCount() > 0) {
+                  ShHomeScreen( goToTabIndex: 2, ).launch(context);
                 } else {
                   toasty(context, 'Your Cart Is Empty');
                 }

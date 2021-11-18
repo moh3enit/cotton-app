@@ -1,3 +1,5 @@
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
+import 'package:cotton_natural/shopHop/screens/ShPaymentsScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,6 +9,8 @@ import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class ShAddCardScreen extends StatefulWidget {
@@ -31,15 +35,15 @@ class ShAddCardScreenState extends State<ShAddCardScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.paymentCard != null) {
-      setState(() {
-        cvvCont.text = widget.paymentCard!.cvv;
-        nameCont.text = widget.paymentCard!.holderName;
-        cardNumberCont.text = widget.paymentCard!.cardNo;
-        selectedMonth = widget.paymentCard!.month;
-        selectedYear = widget.paymentCard!.year;
-      });
-    }
+    ShPaymentCard providerCard = Provider.of<OrdersProvider>(context,listen: false).getCard();
+    setState(() {
+      cvvCont.text = providerCard.cvv;
+      nameCont.text = providerCard.holderName;
+      cardNumberCont.text = providerCard.cardNo;
+      selectedMonth = providerCard.month;
+      selectedYear = providerCard.year;
+    });
+
   }
 
   @override
@@ -199,11 +203,23 @@ class ShAddCardScreenState extends State<ShAddCardScreen> {
                 // height: double.infinity,
                 child: MaterialButton(
                   padding: EdgeInsets.all(spacing_standard),
-                  child: text(sh_lbl_add_card, fontSize: textSizeNormal, fontFamily: fontMedium, textColor: sh_white),
+                  child: text('Save', fontSize: textSizeNormal, fontFamily: fontMedium, textColor: sh_white),
                   textColor: sh_white,
                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0)),
                   color: sh_colorPrimary,
-                  onPressed: () => {},
+                  onPressed: () {
+                    if(validateCard()){
+                      ShPaymentCard newCard = ShPaymentCard(
+                        cardNo: cardNumberCont.text,
+                        month: selectedMonth??'',
+                        year: selectedYear??'',
+                        cvv: cvvCont.text,
+                        holderName: nameCont.text
+                      );
+                      Provider.of<OrdersProvider>(context,listen: false).setCard(newCard);
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
               ),
             ],
@@ -211,5 +227,27 @@ class ShAddCardScreenState extends State<ShAddCardScreen> {
         ),
       ),
     );
+  }
+
+  bool validateCard() {
+    if(cardNumberCont.text.trim() == ''){
+      toasty(context, 'Card Number Is Empty');
+      return false;
+    }else if(selectedMonth!.trim() == ''){
+      toasty(context, 'Month Field Is Empty');
+      return false;
+    }else if(selectedYear!.trim() == ''){
+      toasty(context, 'Year Field Is Empty');
+      return false;
+    }else if(cvvCont.text.trim() == ''){
+      toasty(context, 'CVV Number Is Empty');
+      return false;
+    }else if(nameCont.text.trim() == ''){
+      toasty(context, 'Card Holder Name Is Empty');
+      return false;
+    }
+
+
+    return true;
   }
 }

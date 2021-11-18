@@ -108,6 +108,9 @@ class ApiUtil {
   static const String ORDER = "orders/";
   static const String ORDER_DETAIL = "order/";
 
+  //Payment
+  static const String SEND_ORDER_INFO = "send_order_info/";
+
   //----------------- Redirects ----------------------------------//
   static checkRedirectNavigation(BuildContext context, int statusCode) async {
     switch (statusCode) {

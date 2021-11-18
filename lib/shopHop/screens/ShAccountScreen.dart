@@ -100,9 +100,9 @@ class ShAccountScreenState extends State<ShAccountScreen> {
               padding: EdgeInsets.only(left: spacing_standard_new, bottom: spacing_standard_new, right: spacing_standard_new),
               child: Column(
                 children: <Widget>[
-                  getRowItem(sh_lbl_address_manager, callback: () {
-                    ShAddressManagerScreen().launch(context);
-                  }),
+                  // getRowItem(sh_lbl_address_manager, callback: () {
+                  //   ShAddressManagerScreen().launch(context);
+                  // }),
                   SizedBox(height: spacing_standard_new),
                   getRowItem(sh_lbl_my_order, callback: () {
                     ShOrderListScreen().launch(context);

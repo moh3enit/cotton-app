@@ -334,7 +334,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_shipping_charge),
-                    text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod()!.price.toCurrencyFormat(), textColor: Colors.green, fontFamily: fontMedium),
+                    text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().price.toCurrencyFormat(), textColor: Colors.green, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(

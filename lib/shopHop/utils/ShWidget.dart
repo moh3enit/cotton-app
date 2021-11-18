@@ -1,4 +1,5 @@
 import 'package:cotton_natural/main/utils/common.dart';
+import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -568,8 +569,13 @@ Widget cartIcon(context, cartCount) {
             : Container()
       ],
     ),
-    onTap: () {
-      if(Provider.of<OrdersProvider>(context, listen: false).getOrderCount() > 0){
+    onTap: () async{
+      if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+        Provider.of<OrdersProvider>(context, listen: false).isLoggedIn = await AuthController.isLoginUser();
+      }
+      if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+        toasty(context, 'Please Login First');
+      }else if(Provider.of<OrdersProvider>(context, listen: false).getOrderCount() > 0){
         ShCartScreen().launch(context);
       }else{
         toasty(context, 'Your Cart Is Empty');

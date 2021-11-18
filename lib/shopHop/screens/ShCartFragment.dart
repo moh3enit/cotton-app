@@ -33,7 +33,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
   }
 
   fetchData()  {
-    dropDownValue = Provider.of<OrdersProvider>(context,listen: false).getShippingMethod()!.id??'notset';
+    dropDownValue = Provider.of<OrdersProvider>(context,listen: false).getShippingMethod().id??'notset';
 
     orderList = Provider.of<OrdersProvider>(context,listen: false).getOrderList();
 
@@ -296,13 +296,13 @@ class ShCartFragmentState extends State<ShCartFragment> {
                 ),
                 Row(
                   children: <Widget>[
-                      text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod()!.description, textColor: Colors.black54, fontFamily: fontRegular),
+                      text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().description, textColor: Colors.black54, fontFamily: fontRegular),
                     ],
                 ),
                 Row(
                   children: <Widget>[
                       text(sh_lbl_shipping_charge),
-                      text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod()!.price.toCurrencyFormat(), textColor: Colors.green, fontFamily: fontMedium),
+                      text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().price.toCurrencyFormat(), textColor: Colors.green, fontFamily: fontMedium),
                     ],
                 ),
                 SizedBox(
@@ -347,7 +347,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
               ),
               onTap: () {
                 if(Provider.of<OrdersProvider>(context, listen: false).getOrderCount() > 0){
-                  if(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod()!.id == 'notset'){
+                  if(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().id == 'notset'){
                     toasty(context, 'Please Select A Shipping Method');
                   }else{
                     ShOrderSummaryScreen().launch(context);

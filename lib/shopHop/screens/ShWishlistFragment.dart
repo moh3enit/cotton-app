@@ -35,8 +35,9 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
   }
 
   fetchData() async {
+    isLoadingMoreData = true;
     if(await AuthController.isLoginUser()) {
-      isLoadingMoreData = true;
+
       List<ShProduct>? products;
       MyResponse<List<ShProduct>> myResponse = await WishController
           .getWishProducts();

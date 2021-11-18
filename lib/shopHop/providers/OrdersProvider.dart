@@ -2,6 +2,7 @@ import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/models/Order.dart';
 import 'package:cotton_natural/shopHop/models/ShAddress.dart';
 import 'package:cotton_natural/shopHop/models/ShOrder.dart';
+import 'package:cotton_natural/shopHop/models/ShPaymentCard.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,13 @@ class OrdersProvider extends ChangeNotifier{
 
   // Standard Delivery $5.99 / Delivery in 5 to 7 business Days
   // Express Delivery $19.99 / Delivery in 1 business Days
-  ShippingMethod? _shippingMethod = ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
+  ShippingMethod _shippingMethod = ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
 
   // List<ShAddressModel> _orderAddressList = [];
-  ShAddressModel? _orderAddress = ShAddressModel(company: '', zip: '', region: '', city: '', phone: '', country: '') ;
+
+  ShAddressModel _orderAddress = ShAddressModel(company: '', zip: '', region: '', city: '', phone: '', country: '') ;
+
+  ShPaymentCard _paymentCard = ShPaymentCard(cardNo: '',month: '',year: '',cvv: '',holderName: '');
 
   // List<ShAddressModel>? getAddressListFromPreviousOrders(List<Order> previousOrders){
   //
@@ -57,10 +61,21 @@ class OrdersProvider extends ChangeNotifier{
   //   this._orderAddressList.add(newAddress);
   // }
 
+  setCard(ShPaymentCard newCard){
+    this._paymentCard = newCard;
+    notifyListeners();
+  }
+
+  ShPaymentCard getCard(){
+    return this._paymentCard;
+  }
+
   setAddress(ShAddressModel newAddress){
     this._orderAddress = newAddress;
+    notifyListeners();
   }
-  getAddress(){
+
+  ShAddressModel getAddress(){
     return this._orderAddress;
   }
 
@@ -74,8 +89,8 @@ class OrdersProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  ShippingMethod? getShippingMethod(){
-    return this._shippingMethod?? ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
+  ShippingMethod getShippingMethod(){
+    return this._shippingMethod ;
   }
 
   List<ShOrder> getOrderList(){
@@ -108,11 +123,11 @@ class OrdersProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  int? getItemQty(int? productId, String? size){
-    int? itemCount=0;
+  int getItemQty(int? productId, String? size){
+    int itemCount=0;
     _orderList.forEach((element) {
       if(element.item!.id == productId && element.item!.size == size){
-        itemCount = element.item!.count ;
+        itemCount = element.item!.count! ;
       }
     });
     return itemCount;
@@ -158,13 +173,27 @@ class OrdersProvider extends ChangeNotifier{
     _orderList.forEach((element) {
       _totalPrice = _totalPrice + double.parse(element.item!.price??'0') * element.item!.count!;
     });
-    _totalPrice = _totalPrice + double.parse(_shippingMethod!.price??'0');
+    _totalPrice = _totalPrice + double.parse(_shippingMethod.price??'0');
 
     return _totalPrice.toStringAsFixed(2).toCurrencyFormat();
   }
 
+  double getTotalPriceSimple(){
+    _totalPrice = 0.00;
+    _orderList.forEach((element) {
+      _totalPrice = _totalPrice + double.parse(element.item!.price??'0') * element.item!.count!;
+    });
+    _totalPrice = _totalPrice + double.parse(_shippingMethod.price??'0');
+
+    return _totalPrice;
+  }
+
   int getOrderCount(){
-    return _orderList.length;
+    int count = 0;
+    _orderList.forEach((element) {
+      count = count + this.getItemQty(element.item!.id,element.item!.size);
+    });
+    return count;
   }
 
   resetOrdersProvider(){
@@ -173,6 +202,7 @@ class OrdersProvider extends ChangeNotifier{
     this.isLoggedIn = false;
     this._shippingMethod =  ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
     this._orderAddress = ShAddressModel(company: '', zip: '', region: '', city: '', phone: '', country: '') ;
+    this._paymentCard = ShPaymentCard(cardNo: '',month: '',year: '',cvv: '',holderName: '');
   }
 
 
