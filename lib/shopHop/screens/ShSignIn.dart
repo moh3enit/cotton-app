@@ -48,11 +48,11 @@ class ShSignInState extends State<ShSignIn> {
 
 
     if (email.isEmpty) {
-      print( "Please fill email");
+      toasty(context,'Please fill email');
     } else if (Validator.isEmail(email)) {
-      print( "Please fill email proper");
+      toasty(context,'Please fill email proper');
     } else if (password.isEmpty) {
-      print( "Please fill password");
+      toasty(context,'Please fill password');
     } else {
 
       if(mounted) {
@@ -67,10 +67,9 @@ class ShSignInState extends State<ShSignIn> {
         ShHomeScreen().launch(context);
       }else {
         // ApiUtil.checkRedirectNavigation(context, response.responseCode);
-        print(response.errorText);
+        toasty(context,'${response.errorText}');
       }
 
-      print(Provider.of<OrdersProvider>(context,listen: false).isLoggedIn );
 
       if(mounted) {
         setState(() {

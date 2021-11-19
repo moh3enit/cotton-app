@@ -1,4 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cotton_natural/shopHop/api/MyResponse.dart';
+import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
+import 'package:cotton_natural/shopHop/utils/Validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -16,17 +19,64 @@ class ShSignUp extends StatefulWidget {
 }
 
 class ShSignUpState extends State<ShSignUp> {
+  var nameCont = TextEditingController();
   var emailCont = TextEditingController();
   var passwordCont = TextEditingController();
   var confirmPasswordCont = TextEditingController();
-  var firstNameCont = TextEditingController();
-  var lastNameCont = TextEditingController();
+  bool isInProgress = false;
+
+  bool validateInputs() {
+    if(nameCont.text.trim()==''){
+      toasty(context, 'name is empty');
+      return false;
+    }else if(emailCont.text.trim()==''){
+      toasty(context, 'email is empty');
+      return false;
+    }else if(passwordCont.text.trim()==''){
+      toasty(context, 'password is empty');
+      return false;
+    }else if(passwordCont.text.trim().length < 4){
+      toasty(context, 'password must be more than 4 character');
+      return false;
+    }else if(passwordCont.text.trim() != confirmPasswordCont.text.trim()){
+      toasty(context, 'Password and confirm password are not match');
+      return false;
+    }else if(Validator.isEmail(emailCont.text.trim())){
+      toasty(context, 'wrong email format');
+      return false;
+    }
+    return true;
+  }
+
+  registerUser() async{
+
+    setState(() {
+      isInProgress = true;
+    });
+
+    MyResponse myResponse = await AuthController.registerUser(nameCont.text.trim(), emailCont.text.trim(), passwordCont.text.trim());
+
+    setState(() {
+      isInProgress = false;
+    });
+
+    if(myResponse.success){
+      toasty(context,'user successfully created');
+      toasty(context,' please check your email');
+    }else{
+      myResponse.errors.forEach((element) {
+        toasty(context, element);
+      });
+    }
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    return Scaffold(
+    return  Scaffold(
       body: SingleChildScrollView(
         child: Container(
           width: width,
@@ -73,7 +123,7 @@ class ShSignUpState extends State<ShSignUp> {
                             child: TextFormField(
                               keyboardType: TextInputType.emailAddress,
                               autofocus: false,
-                              controller: firstNameCont,
+                              controller: nameCont,
                               textCapitalization: TextCapitalization.words,
                               style: TextStyle(color: sh_textColorPrimary, fontFamily: fontRegular, fontSize: textSizeMedium),
                               decoration: InputDecoration(
@@ -81,27 +131,6 @@ class ShSignUpState extends State<ShSignUp> {
                                   fillColor: sh_editText_background,
                                   focusColor: sh_editText_background_active,
                                   hintText: sh_hint_first_name,
-                                  hintStyle: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium),
-                                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: sh_colorPrimary, width: 0.5)),
-                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: Colors.transparent, style: BorderStyle.none, width: 0))),
-                            ),
-                          ),
-                          SizedBox(
-                            width: spacing_standard_new,
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              keyboardType: TextInputType.emailAddress,
-                              autofocus: false,
-                              controller: lastNameCont,
-                              textCapitalization: TextCapitalization.words,
-                              style: TextStyle(color: sh_textColorPrimary, fontFamily: fontRegular, fontSize: textSizeMedium),
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: sh_editText_background,
-                                  focusColor: sh_editText_background_active,
-                                  hintText: sh_hint_phone,
                                   hintStyle: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeMedium),
                                   contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0), borderSide: BorderSide(color: sh_colorPrimary, width: 0.5)),
@@ -183,7 +212,11 @@ class ShSignUpState extends State<ShSignUp> {
                         textColor: sh_white,
                         shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0)),
                         color: sh_colorPrimary,
-                        onPressed: () => {},
+                        onPressed: () async{
+                          if(validateInputs()){
+                            await registerUser();
+                          }
+                        },
                       ),
                     ),
                     SizedBox(
@@ -204,11 +237,15 @@ class ShSignUpState extends State<ShSignUp> {
                     )
                   ],
                 ),
-              )
+              ),
+              isInProgress
+                  ? Center(child: CircularProgressIndicator()) //loading widget goes here
+                  :Container(),
             ],
           ),
         ),
       ),
     );
   }
+
 }

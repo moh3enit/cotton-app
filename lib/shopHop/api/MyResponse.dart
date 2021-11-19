@@ -14,13 +14,13 @@ class MyResponse<T>{
   MyResponse(this.responseCode);
 
   setError(Map<String,dynamic> jsonObject){
-    String error = jsonObject['error'];
+    String? error = jsonObject['error'];
     if(error!=null){
       this.errors = [error];
       this.errorText = getFormattedError(this.errors);
       return;
     }
-    List<dynamic> errors = jsonObject['errors'];
+    List<dynamic>? errors = jsonObject['errors'];
     if(errors!=null){
       this.errors = errors;
       this.errorText = getFormattedError(errors);
