@@ -21,21 +21,38 @@ class PaymentController {
   }) async {
 
     String token = await AuthController.getApiToken() ?? '';
-    String url = ApiUtil.MAIN_API_URL + ApiUtil.SEND_ORDER_INFO;
+    String url = ApiUtil.MAIN_API_URL + ApiUtil.ORDER_DETAIL + ApiUtil.PAYMENT;
     Map<String, String> headers = ApiUtil.getHeader(requestType: RequestType.PostWithAuth, token: token);
 
     List<Object> itemsJson = [];
-    items.forEach((element) { itemsJson.add(element.toJson());});
-    Map data = {
+    int totalQty=0;
+    for (var i=0;i<items.length;i++){
+      totalQty += int.parse(items[i].count.toString());
+      Map data = {
+        items[i].id.toString():items[i],
+      };
+      itemsJson.add(data);
+    }
+    Map itemData = {
       'items':itemsJson,
-      'shipping_method':shipping_method.toJson(),
+      'subTotalPrice':totalAmount.toStringAsFixed(2),
+      'totalPrice':totalAmount.toStringAsFixed(2),
+      'totalQty':totalQty,
+      'originalPrice':totalAmount.toStringAsFixed(2),
+      'hasOrder':true,
+      "couponApplied": false,
+      "discountAmount": "0.00",
+      "frameAmount": 0
+    };
+    double total=double.parse(shipping_method.price!)+totalAmount;
+    Map data = {
+      'items':itemData,
+      'shipping_method':shipping_method.id,
       'address':address.toJson(),
       'card':card.toJson(),
-      'totalAmount':totalAmount.toStringAsFixed(2),
+      'totalAmount':total.toStringAsFixed(2),
     };
-    print(data);
     Object body = jsonEncode(data);
-    print(body);
 
     //Check Internet
     bool isConnected = await InternetUtils.checkConnection();
@@ -48,6 +65,7 @@ class PaymentController {
       MyResponse myResponse = MyResponse(response.statusCode);
       if (ApiUtil.isResponseSuccess(response.statusCode)) {
         myResponse.success = true;
+        print(response.body);
         myResponse.data = json.decode(response.body);
       } else {
         Map<String, dynamic> data = json.decode(response.body);

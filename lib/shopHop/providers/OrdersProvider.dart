@@ -143,6 +143,7 @@ class OrdersProvider extends ChangeNotifier{
           name: product.name,
           price: product.price,
           count: count,
+          slug: product.slug,
           size: size
       );
       ShOrder order = ShOrder(

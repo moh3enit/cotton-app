@@ -8,7 +8,7 @@ enum RequestType { Post, Get, PostWithAuth, GetWithAuth }
 class ApiUtil {
 
   /*----------------- Fpr development server -----------------*/
-  static const String IP_ADDRESS = "192.168.1.105/cotton/public";/*192.168.1.105 10.0.2.2*/
+  static const String IP_ADDRESS = "192.168.1.100/cotton/public";/*192.168.1.105 10.0.2.2*/
 
   static const String PORT = "80";
   static const String API_VERSION = "v1";
@@ -109,7 +109,7 @@ class ApiUtil {
   static const String ORDER_DETAIL = "order/";
 
   //Payment
-  static const String SEND_ORDER_INFO = "send_order_info/";
+  static const String PAYMENT = "payment/";
 
   //----------------- Redirects ----------------------------------//
   static checkRedirectNavigation(BuildContext context, int statusCode) async {

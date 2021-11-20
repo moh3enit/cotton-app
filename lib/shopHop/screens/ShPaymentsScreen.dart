@@ -268,18 +268,13 @@ class ShPaymentsScreenState extends State<ShPaymentsScreen> {
     List<ShOrder> orderList =  Provider.of<OrdersProvider>(context,listen: false).getOrderList();
     ShPaymentCard card = Provider.of<OrdersProvider>(context,listen: false).getCard();
     orderList.forEach((element) {
-      items.add(element.item??Item(price: '0',name: '',id: 0,size: '',count: 0,image: ''));
+      items.add(element.item??Item(price: '0',name: '',id: 0,size: '',count: 0,slug: '',image: ''));
     });
 
-    print('items ${items.length}');
-    print('shipping_method ${shipping_method.name}');
-    print('totalAmount ${totalAmount}');
-    print('orderList ${orderList.length}');
-    print('card ${card.holderName}');
     MyResponse myResponse = await PaymentController.sendOrderInfo(items: items, shipping_method: shipping_method, card: card, address: address, totalAmount: totalAmount);
 
     if (myResponse.success) {
-      toasty(context, myResponse.data);
+      toasty(context, myResponse.data[0].toString());
     } else {
       toasty(context, myResponse.errorText);
     }

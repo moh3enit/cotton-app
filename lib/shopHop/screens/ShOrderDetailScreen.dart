@@ -39,11 +39,12 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
     });
 
     MyResponse<Order_data> myResponse = await OrderController.getSingleOrder(widget.order!.id);
-
+print('myResponse.data=' + myResponse.data.toString());
     if (myResponse.success) {
       orders = myResponse.data;
       itemsList.clear();
       itemsList = orders!.itemsList!.items!;
+      print(itemsList);
     } else {
       ApiUtil.checkRedirectNavigation(context, myResponse.responseCode);
       toasty(context, myResponse.errorText);
@@ -68,12 +69,12 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    // Image.network(
-                    //   orders!.orderData!.items!.numberItem!.imageUrl.toString(),
-                    //   width: width * 0.3,
-                    //   height: width * 0.35,
-                    //   fit: BoxFit.fill,
-                    // ),
+                    Image.network(
+                      itemsList[index].imageUrl.toString(),
+                      width: width * 0.3,
+                      height: width * 0.35,
+                      fit: BoxFit.fill,
+                    ),
                     Expanded(
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
@@ -89,7 +90,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 16.0),
-                                  // child: text(orders!.orderData!.items!.numberItem!.name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
+                                  child: text(itemsList[index].name, textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 16.0, top: spacing_control),
@@ -120,17 +121,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
-                                      // text(orders!.orderData!.items!.numberItem!.price.toString().toCurrencyFormat(), textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
-                                      SizedBox(
-                                        width: spacing_control,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(bottom: 3.0),
-                                        child: Text(
-                                          itemsList[index].price.toString().toCurrencyFormat()!,
-                                          style: TextStyle(color: sh_textColorSecondary, fontFamily: fontRegular, fontSize: textSizeSMedium, decoration: TextDecoration.lineThrough),
-                                        ),
-                                      ),
+                                      text(itemsList[index].price.toString().toCurrencyFormat()!, textColor: sh_colorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
                                     ],
                                   ),
                                 ),
@@ -302,7 +293,7 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
         child: Column(
           children: <Widget>[
             Container(
-              height: 150,
+              height: itemsList.length > 0 ? itemsList.length * 100 : 150,
               child: item,
             ),
             orderStatus,

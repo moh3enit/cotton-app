@@ -41,9 +41,10 @@ class Item {
   String? price;
   String? image;
   int? count;
+  String? slug;
   String? size;
 
-  Item({this.id, this.name, this.price, this.image,this.count,this.size});
+  Item({this.id, this.name, this.price, this.image,this.count,this.slug,this.size});
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
@@ -52,17 +53,19 @@ class Item {
       price: json['price'],
       image: json['image'],
       count: json['count'],
+      slug: json['slug'],
       size: json['size'],
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    data['product_id'] = this.id;
+    data['count'] = this.count;
+    data['image_url'] = this.image;
     data['name'] = this.name;
     data['price'] = this.price;
-    data['image'] = this.image;
-    data['count'] = this.count;
+    data['slug'] = this.slug;
     data['size'] = this.size;
     return data;
   }
