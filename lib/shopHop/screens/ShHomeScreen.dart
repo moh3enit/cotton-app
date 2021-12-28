@@ -21,6 +21,7 @@ import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'ShSubCategory.dart';
 
@@ -83,11 +84,11 @@ class ShHomeScreenState extends State<ShHomeScreen> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    var title = "Home";
+    var title = "Shop";
     switch (selectedTab) {
-      case 0: title = "Home"; break;
-      case 1: title = "Favorite"; break;
-      case 2: title = "CheckOut"; break;
+      case 0: title = "Shop"; break;
+      case 1: title = "Wishlist"; break;
+      case 2: title = "Shopping Cart"; break;
       case 3: title = "Profile"; break;
       case 4: title = "SignIn"; break;
     }
@@ -148,7 +149,7 @@ class ShHomeScreenState extends State<ShHomeScreen> {
         )
       ]),
       drawer: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.85,
+        width: MediaQuery.of(context).size.width * 0.80,
         height: MediaQuery.of(context).size.height,
         child: Drawer(
           elevation: 8,
@@ -168,24 +169,18 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                             child: Column(
                               children: <Widget>[
                                 SizedBox(height: spacing_middle),
-                                text(userAccount.name,
+                                text('Menu',
                                     textColor: sh_textColorPrimary,
                                     fontFamily: fontBold,
                                     fontSize: textSizeNormal)
                               ],
                             )),
                       ),
-                      Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: spacing_standard_new, top: 30),
-                              child: Icon(Icons.clear)))
                     ],
                   ),
                   login
                       ? SizedBox(height: 30)
-                      : SizedBox(),
+                      : SizedBox(height: 0,),
                   login
                       ? Container(
                           color: sh_editText_background,
@@ -201,7 +196,6 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                                   },
                                   child: Column(
                                     children: <Widget>[
-                                      // text("08", textColor: sh_colorPrimary, fontFamily: fontMedium),
                                       SizedBox(height: spacing_control),
                                       text("My Order",
                                           textColor: sh_textColorPrimary,
@@ -221,7 +215,6 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                                   },
                                   child: Column(
                                     children: <Widget>[
-                                      // text("07", textColor: sh_colorPrimary, fontFamily: fontMedium),
                                       SizedBox(height: spacing_control),
                                       text("Wishlist",
                                           textColor: sh_textColorPrimary,
@@ -234,8 +227,9 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                             ],
                           ),
                         )
-                      : SizedBox(),
+                      : SizedBox(height: 0,),
                   ListView.builder(
+                    padding: EdgeInsets.all(0.0),
                     scrollDirection: Axis.vertical,
                     itemCount: list.length,
                     shrinkWrap: true,
@@ -260,40 +254,67 @@ class ShHomeScreenState extends State<ShHomeScreen> {
                   getDrawerItem(sh_lbl_settings, callback: () {
                     ShSettingsScreen().launch(context);
                   }),
+                  // SizedBox(height: 10),
+                  // getDrawerItem('Company', callback: () {}),
                   SizedBox(height: 10),
-                  getDrawerItem('Company', callback: () {}),
+                  getDrawerItem('Payment Methods', callback: () async{
+                    const String url = 'https://cottonlaravel-o7458.ondigitalocean.app/payment-methods';
+                    await launch(
+                        url,
+                        forceSafariVC: true,
+                        forceWebView: false,
+                        enableJavaScript: true,
+                    );
+                  }),
                   SizedBox(height: 10),
-                  getDrawerItem('Payment Methods', callback: () {}),
+                  getDrawerItem('Shipping & Handling', callback: () async{
+                    const String url = 'https://cottonlaravel-o7458.ondigitalocean.app/shipping';
+                    await launch(
+                      url,
+                      forceSafariVC: true,
+                      forceWebView: false,
+                      enableJavaScript: true,
+                    );
+                  }),
                   SizedBox(height: 10),
-                  getDrawerItem('Shipping & Handling', callback: () {}),
+                  getDrawerItem('Warranty & Returns', callback: () async{
+                    const String url = 'https://cottonlaravel-o7458.ondigitalocean.app/warranty';
+                    await launch(
+                      url,
+                      forceSafariVC: true,
+                      forceWebView: false,
+                      enableJavaScript: true,
+                    );
+                  }),
                   SizedBox(height: 10),
-                  getDrawerItem('Warranty & Returns', callback: () {}),
+                  getDrawerItem('Wholesale', callback: () async{
+                    const String url = 'https://cottonlaravel-o7458.ondigitalocean.app/wholesale';
+                    await launch(
+                      url,
+                      forceSafariVC: true,
+                      forceWebView: false,
+                      enableJavaScript: true,
+                    );
+                  }),
                   SizedBox(height: 10),
-                  getDrawerItem('Wholesale', callback: () {}),
-                  SizedBox(height: 10),
-                  getDrawerItem('Retail Locations', callback: () {}),
+                  getDrawerItem('Retail Locations', callback: () async {
+                    const String url = 'https://cottonlaravel-o7458.ondigitalocean.app/retail';
+                    await launch(
+                        url,
+                        forceSafariVC: true,
+                        forceWebView: false,
+                        enableJavaScript: true,
+                    );
+                  }),
                   SizedBox(height: 30),
                   Container(
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: sh_colorPrimary.withOpacity(0.2)),
-                    padding: EdgeInsets.all(24),
+                    ),
+                    padding: EdgeInsets.all(34),
                     child: Column(
                       children: <Widget>[
-                        Image.asset(ic_app_icon, width: 60),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            text("Cotton",
-                                textColor: sh_textColorPrimary,
-                                fontSize: textSizeMedium,
-                                fontFamily: fontBold),
-                            text("Natural",
-                                textColor: sh_colorPrimary,
-                                fontSize: textSizeMedium,
-                                fontFamily: fontBold),
-                          ],
-                        ),
+                        Image.asset(ic_app_icon, width: 80),
                         text("v 1.0",
                             textColor: sh_textColorPrimary,
                             fontSize: textSizeSmall)

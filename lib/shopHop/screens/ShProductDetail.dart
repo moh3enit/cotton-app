@@ -3,8 +3,6 @@ import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
 import 'package:cotton_natural/shopHop/controllers/WishController.dart';
 import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
-import 'package:cotton_natural/shopHop/screens/ShCartFragment.dart';
-import 'package:cotton_natural/shopHop/screens/ShCartScreen.dart';
 import 'package:cotton_natural/shopHop/screens/ShHomeScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +17,7 @@ import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
-import 'package:html/parser.dart' show parse;
-import 'package:html/dom.dart';
+
 
 // ignore: must_be_immutable
 class ShProductDetail extends StatefulWidget {
@@ -266,15 +263,43 @@ class ShProductDetailState extends State<ShProductDetail> {
       ], color: sh_white),
       child: Row(
         children: <Widget>[
+          // Expanded(
+          //   child: SizedBox(),
+          //   // child: InkWell(
+          //   //   onTap: () async{
+          //   //     if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+          //   //       Provider.of<OrdersProvider>(context, listen: false).isLoggedIn = await AuthController.isLoginUser();
+          //   //     }
+          //   //     // if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+          //   //     //   toasty(context, 'Please Login First');
+          //   //     // }else
+          //   //     if (Provider.of<OrdersProvider>(context, listen: false).getOrderCount() > 0) {
+          //   //       ShHomeScreen( goToTabIndex: 2, ).launch(context);
+          //   //     } else {
+          //   //       toasty(context, 'Your Cart Is Empty');
+          //   //     }
+          //   //   },
+          //   //   child: Container(
+          //   //     child: text(sh_lbl_buy_now,
+          //   //         textColor: sh_white,
+          //   //         fontSize: textSizeLargeMedium,
+          //   //         fontFamily: fontMedium),
+          //   //     color: sh_colorPrimary,
+          //   //     alignment: Alignment.center,
+          //   //     height: double.infinity,
+          //   //   ),
+          //   // ),
+          // ),
           Expanded(
             child: InkWell(
               onTap: ()async{
                 if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
                   Provider.of<OrdersProvider>(context, listen: false).isLoggedIn = await AuthController.isLoginUser();
                 }
-                if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
-                  toasty(context, 'Please Login First');
-                }else if(selectedSize<0){
+                // if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
+                //   toasty(context, 'Please Login First');
+                // }else
+                if(selectedSize<0){
                   toasty(context, 'Please Select A Size');
                 }else{
                   String? size =  widget.product!.sizes![selectedSize].name;
@@ -284,31 +309,6 @@ class ShProductDetailState extends State<ShProductDetail> {
               },
               child: Container(
                 child: text(sh_lbl_add_to_cart,
-                    textColor: sh_textColorPrimary,
-                    fontSize: textSizeLargeMedium,
-                    fontFamily: fontMedium),
-                color: sh_white,
-                alignment: Alignment.center,
-                height: double.infinity,
-              ),
-            ),
-          ),
-          Expanded(
-            child: InkWell(
-              onTap: () async{
-                if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
-                  Provider.of<OrdersProvider>(context, listen: false).isLoggedIn = await AuthController.isLoginUser();
-                }
-                if(Provider.of<OrdersProvider>(context, listen: false).isLoggedIn == false){
-                  toasty(context, 'Please Login First');
-                }else if (Provider.of<OrdersProvider>(context, listen: false).getOrderCount() > 0) {
-                  ShHomeScreen( goToTabIndex: 2, ).launch(context);
-                } else {
-                  toasty(context, 'Your Cart Is Empty');
-                }
-              },
-              child: Container(
-                child: text(sh_lbl_buy_now,
                     textColor: sh_white,
                     fontSize: textSizeLargeMedium,
                     fontFamily: fontMedium),
@@ -317,7 +317,7 @@ class ShProductDetailState extends State<ShProductDetail> {
                 height: double.infinity,
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -361,8 +361,8 @@ class ShProductDetailState extends State<ShProductDetail> {
                       ),
                       cartIcon(
                           context,
-                          Provider.of<OrdersProvider>(context, listen: true)
-                              .getOrderCount())
+                          Provider.of<OrdersProvider>(context, listen: true).getOrderCount(),
+                      ),
                     ],
                     title: text(innerBoxIsScrolled ? widget.product!.name : "",
                         textColor: sh_textColorPrimary,

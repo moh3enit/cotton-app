@@ -2,14 +2,16 @@ class ShCategory {
   int? id;
   String? name;
   String? slug;
+  String? colorCode;
 
   // ignore: non_constant_identifier_names
-  ShCategory({ this.id, this.name,this.slug});
+  ShCategory({ this.id, this.name,this.slug,this.colorCode});
 
   ShCategory.fromJson(Map<String, dynamic> json) {
         id= json['id'];
         name= json['name'];
         slug= json['slug'];
+        colorCode= json['colorCode'];
   }
 
   static List<ShCategory> getCategoryList(List<dynamic> jsonArray){
@@ -25,6 +27,7 @@ class ShCategory {
     data['id'] = this.id;
     data['name'] = this.name;
     data['slug'] = this.slug;
+    data['colorCode'] = this.colorCode;
     return data;
   }
 }

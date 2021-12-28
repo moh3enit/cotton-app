@@ -17,7 +17,7 @@ String intToHex(int i) {
   }
 }
 
-Widget networkImage(String? image, {String aPlaceholder = "assets/app-icon.png", double? aWidth, double? aHeight, var fit = BoxFit.fill}) {
+Widget networkImage(String? image, {String aPlaceholder = "assets/app-icon1.jpg", double? aWidth, double? aHeight, var fit = BoxFit.fill}) {
   return image != null && image.isNotEmpty
       ? FadeInImage(
           placeholder: AssetImage(aPlaceholder),
@@ -34,7 +34,7 @@ Widget networkImage(String? image, {String aPlaceholder = "assets/app-icon.png",
         );
 }
 
-Widget networkCachedImage(String? image, {String aPlaceholder = "assets/app-icon.png", double? aWidth, double? aHeight, var fit = BoxFit.fill}) {
+Widget networkCachedImage(String? image, {String aPlaceholder = "assets/app-icon1.jpg", double? aWidth, double? aHeight, var fit = BoxFit.fill}) {
   return image != null && image.isNotEmpty
       ? CachedNetworkImage(
           placeholder: placeholderWidgetFn() as Widget Function(BuildContext, String)?,
@@ -47,7 +47,7 @@ Widget networkCachedImage(String? image, {String aPlaceholder = "assets/app-icon
               aPlaceholder,
               width: aWidth,
               height: aHeight,
-              fit: BoxFit.fill,
+              fit: BoxFit.contain,
             );
           },
         )
@@ -61,7 +61,7 @@ Widget networkCachedImage(String? image, {String aPlaceholder = "assets/app-icon
 
 Widget? Function(BuildContext, String) placeholderWidgetFn() => (_, s) => placeholderWidget();
 
-Widget placeholderWidget() => Image.asset('assets/app-icon.png', fit: BoxFit.cover);
+Widget placeholderWidget() => Image.asset('assets/app-icon1.jpg', fit: BoxFit.contain);
 
 Widget loadingWidgetMaker() {
   return Container(

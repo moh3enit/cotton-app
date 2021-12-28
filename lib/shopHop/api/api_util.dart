@@ -8,12 +8,12 @@ enum RequestType { Post, Get, PostWithAuth, GetWithAuth }
 class ApiUtil {
 
   /*----------------- Fpr development server -----------------*/
-  static const String IP_ADDRESS = "192.168.1.100/cotton/public";/*192.168.1.105 10.0.2.2*/
+  static const String IP_ADDRESS = "cottonlaravel-o7458.ondigitalocean.app";/*192.168.1.105 10.0.2.2/cottonlaravel/public cottonlaravel-o7458.ondigitalocean.app*/
 
   static const String PORT = "80";
   static const String API_VERSION = "v1";
   static const String USER_MODE = "user/";
-  static const String BASE_URL = "http://" + IP_ADDRESS + "/";
+  static const String BASE_URL = "https://" + IP_ADDRESS + "/";
 
 
   static const String MAIN_API_URL_DEV = BASE_URL + "api/" + API_VERSION + "/" + USER_MODE;

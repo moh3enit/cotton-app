@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
+import 'package:cotton_natural/shopHop/screens/ShSignIn.dart';
 import 'package:cotton_natural/shopHop/utils/Validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +62,12 @@ class ShSignUpState extends State<ShSignUp> {
 
     if(myResponse.success){
       toasty(context,'user successfully created');
-      toasty(context,' please check your email');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>  ShSignIn(),
+        ),
+      );
     }else{
       myResponse.errors.forEach((element) {
         toasty(context, element);
@@ -81,19 +86,10 @@ class ShSignUpState extends State<ShSignUp> {
         child: Container(
           width: width,
           height: height,
+          color: sh_background_color,
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              Positioned(
-                top: height - (width + width * 0.05),
-                child: CachedNetworkImage(
-                  placeholder: placeholderWidgetFn() as Widget Function(BuildContext, String)?,
-                  imageUrl: ic_app_background,
-                  height: width + width * 0.05,
-                  width: width,
-                  fit: BoxFit.fill,
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -102,14 +98,6 @@ class ShSignUpState extends State<ShSignUp> {
                     Image.asset(
                       ic_app_icon,
                       width: width * 0.22,
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        text("Cotton", textColor: sh_textColorPrimary, fontSize: spacing_xlarge, fontFamily: fontBold),
-                        text("Natural", textColor: sh_colorPrimary, fontSize: spacing_xlarge, fontFamily: fontBold),
-                      ],
                     ),
                     SizedBox(
                       height: spacing_xlarge,

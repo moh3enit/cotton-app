@@ -209,7 +209,7 @@ class CustomTheme extends StatelessWidget {
 
 Widget? Function(BuildContext, String) placeholderWidgetFn() => (_, s) => placeholderWidget();
 
-Widget placeholderWidget() => Image.asset('assets/app-icon.png', fit: BoxFit.cover);
+Widget placeholderWidget() => Image.asset('assets/app-icon1.jpg', fit: BoxFit.cover);
 
 BoxConstraints dynamicBoxConstraints({double? maxWidth}) {
   return BoxConstraints(maxWidth: maxWidth ?? applicationMaxWidth);

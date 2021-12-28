@@ -78,16 +78,6 @@ class AuthController {
       MyResponse myResponse = MyResponse(response.statusCode);
 
       if (response.statusCode == 200) {
-        // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
-        // Map<String, dynamic> data = json.decode(response.body);
-        // Map<String, dynamic> user = data['user'];
-        // String token = data['token'];
-
-        // await sharedPreferences.setString('name', user['name']);
-        // await sharedPreferences.setString('email', user['email']);
-        // await sharedPreferences.setString('token', token);
-
         myResponse.success = true;
       } else {
         Map<String, dynamic> data = json.decode(response.body);

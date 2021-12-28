@@ -36,22 +36,22 @@ class ShOrder {
 }
 
 class Item {
-  int? id;
+  String? id;
   String? name;
   String? price;
-  String? image;
-  int? count;
+  String? image_url;
+  String? count;
   String? slug;
   String? size;
 
-  Item({this.id, this.name, this.price, this.image,this.count,this.slug,this.size});
+  Item({this.id, this.name, this.price, this.image_url,this.count,this.slug,this.size});
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       id: json['id'],
       name: json['name'],
       price: json['price'],
-      image: json['image'],
+      image_url: json['image_url'],
       count: json['count'],
       slug: json['slug'],
       size: json['size'],
@@ -62,7 +62,7 @@ class Item {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['product_id'] = this.id;
     data['count'] = this.count;
-    data['image_url'] = this.image;
+    data['image_url'] = this.image_url;
     data['name'] = this.name;
     data['price'] = this.price;
     data['slug'] = this.slug;

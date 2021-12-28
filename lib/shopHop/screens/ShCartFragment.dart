@@ -105,7 +105,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   networkCachedImage(
-                    list[index]!.image!,
+                    list[index]!.image_url!,
                     aWidth: width * 0.32,
                     aHeight: width * 0.37,
                     fit: BoxFit.fill,
@@ -156,7 +156,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                                         children: <Widget>[
                                           IconButton(
                                             onPressed: (){
-                                              Provider.of<OrdersProvider>(context, listen: false).increaseProductCount(list[index]!.id,list[index]!.size);
+                                              Provider.of<OrdersProvider>(context, listen: false).increaseProductCount(list[index]!.id.toInt(),list[index]!.size);
                                             },
                                             icon: Icon(
                                               Icons.add,
@@ -164,10 +164,10 @@ class ShCartFragmentState extends State<ShCartFragment> {
                                               size: 16,
                                             ),
                                           ),
-                                          text("Qty: ${Provider.of<OrdersProvider>(context, listen: true).getItemQty(list[index]!.id,list[index]!.size)}", textColor: sh_textColorPrimary, fontSize: textSizeSMedium),
+                                          text("Qty: ${Provider.of<OrdersProvider>(context, listen: true).getItemQty(list[index]!.id.toInt(),list[index]!.size)}", textColor: sh_textColorPrimary, fontSize: textSizeSMedium),
                                           IconButton(
                                             onPressed: (){
-                                              Provider.of<OrdersProvider>(context, listen: false).decreaseProductCount(list[index]!.id,list[index]!.size);
+                                              Provider.of<OrdersProvider>(context, listen: false).decreaseProductCount(list[index]!.id.toInt(),list[index]!.size);
                                               fetchData();
                                             },
                                             icon: Icon(
@@ -216,7 +216,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                             Expanded(
                               child: InkWell(
                                 onTap: (){
-                                  Provider.of<OrdersProvider>(context,listen: false).removeItemFromBasket(productId: list[index]!.id,size: list[index]!.size);
+                                  Provider.of<OrdersProvider>(context,listen: false).removeItemFromBasket(productId: list[index]!.id.toInt(),size: list[index]!.size);
                                   fetchData();
                                 },
                                 child: Row(
@@ -252,14 +252,13 @@ class ShCartFragmentState extends State<ShCartFragment> {
             Text(
               'Your Cart Is Empty',
               style: TextStyle(
-                color: sh_cat_4,
+                color: sh_textColorPrimary,
                 fontFamily: fontSemibold,
                 fontSize: textSizeNormal,
               ),
             ),
             Container(
               height: 200,
-              child: Lottie.asset('assets/lottie/not-found.json',fit: BoxFit.fitWidth),
             ),
           ],
         ),
@@ -302,7 +301,7 @@ class ShCartFragmentState extends State<ShCartFragment> {
                 Row(
                   children: <Widget>[
                       text(sh_lbl_shipping_charge),
-                      text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().price.toCurrencyFormat(), textColor: Colors.green, fontFamily: fontMedium),
+                      text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().price.toCurrencyFormat(), textColor: sh_colorPrimary, fontFamily: fontMedium),
                     ],
                 ),
                 SizedBox(
@@ -350,6 +349,12 @@ class ShCartFragmentState extends State<ShCartFragment> {
                   if(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().id == 'notset'){
                     toasty(context, 'Please Select A Shipping Method');
                   }else{
+                    // Navigator.pushReplacement(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (BuildContext context) =>  ShOrderSummaryScreen(),
+                    //   ),
+                    // );
                     ShOrderSummaryScreen().launch(context);
                   }
                 }else{

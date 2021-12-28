@@ -34,11 +34,8 @@ class ShSignInState extends State<ShSignIn> {
   void initState() {
     super.initState();
     _checkUserLoginOrNot();
-    isInProgress = false;
-    // emailCont = TextEditingController(text: "billing@divstrong.com");
-    emailCont = TextEditingController(text: "admin@cotton-natural.com");
-    // passwordCont = TextEditingController(text: "andreab1");
-    passwordCont = TextEditingController(text: "secret");
+    emailCont = TextEditingController();
+    passwordCont = TextEditingController();
   }
 
 
@@ -55,13 +52,16 @@ class ShSignInState extends State<ShSignIn> {
       toasty(context,'Please fill password');
     } else {
 
-      if(mounted) {
-        setState(() {
-          isInProgress = true;
-        });
-      }
+      setState(() {
+        isInProgress = true;
+      });
 
       MyResponse response =  await AuthController.loginUser(email, password);
+
+      setState(() {
+        isInProgress = false;
+      });
+
       if(response.success){
         Provider.of<OrdersProvider>(context,listen: false).isLoggedIn = true;
         ShHomeScreen().launch(context);
@@ -70,22 +70,23 @@ class ShSignInState extends State<ShSignIn> {
         toasty(context,'${response.errorText}');
       }
 
-
-      if(mounted) {
-        setState(() {
-          isInProgress = false;
-        });
-      }
-
     }
   }
 
 
   _checkUserLoginOrNot() async {
+
+    setState(() {
+      isInProgress = true;
+    });
     if(await AuthController.isLoginUser()){
       Provider.of<OrdersProvider>(context,listen: false).isLoggedIn = true;
       ShHomeScreen().launch(context);
     }
+
+    setState(() {
+      isInProgress = false;
+    });
   }
 
   @override
@@ -100,22 +101,15 @@ class ShSignInState extends State<ShSignIn> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Container(
-        height: height,
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            Positioned(
-              top: height - (width + width * 0.05),
-              child: CachedNetworkImage(
-                placeholder: placeholderWidgetFn() as Widget Function(BuildContext, String)?,
-                imageUrl: ic_app_background,
-                height: width + width * 0.05,
-                width: width,
-                fit: BoxFit.fill,
-              ),
-            ),
-            SingleChildScrollView(
+      body: isInProgress
+          ? Center(child: CircularProgressIndicator()) //loading widget goes here
+          :Container(
+            height: height,
+            color: sh_background_color,
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+              SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -124,13 +118,6 @@ class ShSignInState extends State<ShSignIn> {
                     Image.asset(
                       ic_app_icon,
                       width: width * 0.22,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        text("Cotton", textColor: sh_textColorPrimary, fontSize: spacing_xlarge, fontFamily: fontBold),
-                        text("Natural", textColor: sh_colorPrimary, fontSize: spacing_xlarge, fontFamily: fontBold),
-                      ],
                     ),
                     SizedBox(
                       height: spacing_xlarge,

@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:cotton_natural/shopHop/screens/ShHomeScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
-import 'package:cotton_natural/shopHop/screens/ShWalkThroughScreen.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShImages.dart';
 
@@ -29,7 +29,7 @@ class ShSplashScreenState extends State<ShSplashScreen> {
 
   void navigationPage() {
     finish(context);
-    ShWalkThroughScreen().launch(context);
+    ShHomeScreen().launch(context);
   }
 
   @override
@@ -41,7 +41,6 @@ class ShSplashScreenState extends State<ShSplashScreen> {
         width: width + width * 0.4,
         child: Stack(
           children: <Widget>[
-            Image.asset(splash_bg, width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height, fit: BoxFit.cover),
             Positioned(
               top: -width * 0.2,
               left: -width * 0.2,
@@ -56,14 +55,7 @@ class ShSplashScreenState extends State<ShSplashScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(ic_app_icon, width: width * 0.3),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text("Cotton", style: boldTextStyle(color: sh_textColorPrimary, size: 35, fontFamily: 'Bold')),
-                      Text("Natural", style: boldTextStyle(color: sh_colorPrimary, size: 35, fontFamily: 'Bold')),
-                    ],
-                  )
+                  Image.asset(ic_app_icon, width: width * 0.5),
                 ],
               ),
             ),
@@ -83,7 +75,6 @@ class ShSplashScreenState extends State<ShSplashScreen> {
                 ],
               ),
             ),
-            Align(alignment: Alignment.bottomRight, child: Image.asset(splash_img, width: width * 0.5, height: width * 0.5))
           ],
         ),
       ),

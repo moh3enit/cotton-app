@@ -35,7 +35,6 @@ const appOpenCount = 'appOpenCount';
 /// Linux - for linux, you have to change default window width in linux/my_application.cc
 const applicationMaxWidth = 500.0;
 
-const profileImage = 'images/widgets/Checkbox/profile.png';
 const isDarkModeOnPref = 'isDarkModeOnPref';
 const dateFormat = 'MMM dd, yyyy';
 

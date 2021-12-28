@@ -10,7 +10,7 @@ class AppThemeData {
   AppThemeData._();
 
   static final ThemeData lightTheme = ThemeData(
-    scaffoldBackgroundColor: scaffoldLightColor,
+    scaffoldBackgroundColor: Colors.white,
     primaryColor: appColorPrimary,
     primaryColorDark: appColorPrimary,
     errorColor: Colors.red,

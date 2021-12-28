@@ -4,59 +4,18 @@ import 'package:cotton_natural/shopHop/models/ShPaymentCard.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:flutter/material.dart';
+import 'package:nb_utils/src/extensions/string_extensions.dart';
 
 class OrdersProvider extends ChangeNotifier{
 
   List<ShOrder> _orderList = [];
   double _totalPrice = 0.00 ;
   bool isLoggedIn = false;
-
   // Standard Delivery $5.99 / Delivery in 5 to 7 business Days
   // Express Delivery $19.99 / Delivery in 1 business Days
   ShippingMethod _shippingMethod = ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
-
-  // List<ShAddressModel> _orderAddressList = [];
-
-  ShAddressModel _orderAddress = ShAddressModel(company: '', zip: '', region: '', city: '', phone: '', country: '') ;
-
+  ShAddressModel _orderAddress = ShAddressModel(name: '', zip: '', region: '', city: '', address: '', country: '',email: '') ;
   ShPaymentCard _paymentCard = ShPaymentCard(cardNo: '',month: '',year: '',cvv: '',holderName: '');
-
-  // List<ShAddressModel>? getAddressListFromPreviousOrders(List<Order> previousOrders){
-  //
-  //   this._orderAddressList = [];
-  //   previousOrders.forEach((singleOrder) {
-  //     ShAddressModel address = ShAddressModel(city: '',company: '',country: '',phone: '',region: '',zip: '');
-  //     address.company = singleOrder.shippingCompany??'';
-  //     address.zip = singleOrder.shippingZip??'';
-  //     address.country = singleOrder.shippingCountry??'';
-  //     address.city = singleOrder.shippingCity??'';
-  //     address.region = singleOrder.shippingRegion??'';
-  //     address.phone = singleOrder.shippingPhone??'';
-  //     if(!isContains(address)){
-  //       this._orderAddressList.add(address);
-  //     }
-  //   });
-  //
-  //   return this._orderAddressList;
-  // }
-
-  // bool isContains(ShAddressModel address) {
-  //   bool res = false;
-  //   this._orderAddressList.forEach((each) {
-  //     if(each.phone==address.phone && each.country==address.country && each.city==address.city && each.region==address.region && each.zip==address.zip && each.company==address.company ){
-  //       res = true;
-  //     }
-  //   });
-  //   if(address.phone == '' && address.country == '' && address.city == '' && address.region == '' && address.zip == '' && address.company == '' ){
-  //     res = true;
-  //   }
-  //   print(res);
-  //   return res;
-  // }
-
-  // saveNewAddress(ShAddressModel newAddress){
-  //   this._orderAddressList.add(newAddress);
-  // }
 
   setCard(ShPaymentCard newCard){
     this._paymentCard = newCard;
@@ -96,14 +55,15 @@ class OrdersProvider extends ChangeNotifier{
 
   bool isProductAlreadyAdded(int? productId,String? size){
     bool res = false;
-    _orderList.forEach((element) { if(element.item!.id == productId && element.item!.size == size)  res = true; });
+    _orderList.forEach((element) { if(element.item!.id.toInt() == productId && element.item!.size == size)  res = true; });
+
     return res;
   }
 
   void increaseProductCount(int? productId , String? size) {
     _orderList.forEach((element) {
-      if(element.item!.id == productId  && element.item!.size == size){
-        element.item!.count = (element.item!.count!+1) ;
+      if(element.item!.id.toInt() == productId  && element.item!.size == size){
+        element.item!.count= ((element.item!.count!.toInt())+1).toString() ;
       }
     });
 
@@ -112,8 +72,8 @@ class OrdersProvider extends ChangeNotifier{
 
   void decreaseProductCount(int? productId, String? size) {
     _orderList.forEach((element) {
-      if(element.item!.id == productId  && element.item!.size == size){
-        element.item!.count = (element.item!.count!-1) ;
+      if(element.item!.id.toInt() == productId  && element.item!.size == size){
+        element.item!.count = (element.item!.count!.toInt()-1).toString() ;
       }
     });
     _orderList.removeWhere((element) => (element.item!.count == 0 && element.item!.size == size));
@@ -123,8 +83,8 @@ class OrdersProvider extends ChangeNotifier{
   int getItemQty(int? productId, String? size){
     int itemCount=0;
     _orderList.forEach((element) {
-      if(element.item!.id == productId && element.item!.size == size){
-        itemCount = element.item!.count! ;
+      if(element.item!.id.toInt() == productId && element.item!.size == size){
+        itemCount = element.item!.count!.toInt() ;
       }
     });
     return itemCount;
@@ -132,17 +92,15 @@ class OrdersProvider extends ChangeNotifier{
 
   void addItemToBasket({required ShProduct? product , int count = 1,String? size}){
 
-
-    // print('productId : ${product!.id} size : $size');
     if(this.isProductAlreadyAdded(product!.id,size)){
       increaseProductCount(product.id,size);
     }else{
       Item item = Item(
-          id: product.id,
-          image: product.images![0],
+          id: product.id.toString(),
+          image_url: product.images![0],
           name: product.name,
           price: product.price,
-          count: count,
+          count: count.toString(),
           slug: product.slug,
           size: size
       );
@@ -156,12 +114,11 @@ class OrdersProvider extends ChangeNotifier{
       _orderList.add(order);
     }
 
-
     notifyListeners();
   }
 
   void removeItemFromBasket({required int? productId ,String? size}){
-    _orderList.removeWhere((element) => element.item!.id==productId && element.item!.size == size);
+    _orderList.removeWhere((element) => element.item!.id.toInt() == productId && element.item!.size == size);
 
     notifyListeners();
   }
@@ -169,7 +126,7 @@ class OrdersProvider extends ChangeNotifier{
   String? getTotalPrice(){
     _totalPrice = 0.00;
     _orderList.forEach((element) {
-      _totalPrice = _totalPrice + double.parse(element.item!.price??'0') * element.item!.count!;
+      _totalPrice = _totalPrice + double.parse(element.item!.price??'0') * element.item!.count!.toInt();
     });
     _totalPrice = _totalPrice + double.parse(_shippingMethod.price??'0');
 
@@ -179,7 +136,7 @@ class OrdersProvider extends ChangeNotifier{
   double getTotalPriceSimple(){
     _totalPrice = 0.00;
     _orderList.forEach((element) {
-      _totalPrice = _totalPrice + double.parse(element.item!.price??'0') * element.item!.count!;
+      _totalPrice = _totalPrice + double.parse(element.item!.price??'0') * element.item!.count!.toInt();
     });
     _totalPrice = _totalPrice + double.parse(_shippingMethod.price??'0');
 
@@ -189,7 +146,7 @@ class OrdersProvider extends ChangeNotifier{
   int getOrderCount(){
     int count = 0;
     _orderList.forEach((element) {
-      count = count + this.getItemQty(element.item!.id,element.item!.size);
+      count = count + this.getItemQty(element.item!.id!.toInt(),element.item!.size);
     });
     return count;
   }
@@ -199,8 +156,9 @@ class OrdersProvider extends ChangeNotifier{
     this._totalPrice = 0.00 ;
     this.isLoggedIn = false;
     this._shippingMethod =  ShippingMethod(id: 'notset',name: 'Not Set',price: '0',description: '') ;
-    this._orderAddress = ShAddressModel(company: '', zip: '', region: '', city: '', phone: '', country: '') ;
+    this._orderAddress = ShAddressModel(name: '', zip: '', region: '', city: '', address: '', country: '',email: '') ;
     this._paymentCard = ShPaymentCard(cardNo: '',month: '',year: '',cvv: '',holderName: '');
+    notifyListeners();
   }
 
 

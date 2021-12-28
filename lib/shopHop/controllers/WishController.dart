@@ -4,7 +4,6 @@ import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/api/Network.dart';
 import 'package:cotton_natural/shopHop/api/api_util.dart';
 import 'package:cotton_natural/shopHop/controllers/AuthController.dart';
-import 'package:cotton_natural/shopHop/models/Account.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/InternetUtils.dart';
 

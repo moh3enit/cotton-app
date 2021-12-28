@@ -1,32 +1,35 @@
 class ShAddressModel {
-  String company;
+  String name;
   String zip;
   String country;
   String city;
   String region;
-  String phone;
+  String address;
+  String email;
 
-  ShAddressModel({ required this.company, required this.zip, required this.region, required this.city, required this.phone, required this.country});
+  ShAddressModel({ required this.name, required this.zip, required this.region, required this.city, required this.address, required this.country,required this.email});
 
   factory ShAddressModel.fromJson(Map<String, dynamic> json) {
     return ShAddressModel(
-      company: json['company']??'',
+      name: json['company']??'',
       zip: json['zip']??'',
       city: json['city']??'',
       region: json['region']??'',
-      phone: json['phone']??'',
+      address: json['phone']??'',
       country: json['country']??'',
+      email: json['email']??'',
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['company'] = this.company;
+    data['company'] = this.name;
     data['zip'] = this.zip;
     data['country'] = this.country;
     data['city'] = this.city;
     data['region'] = this.region;
-    data['phone'] = this.phone;
+    data['phone'] = this.address;
+    data['email'] = this.email;
     return data;
   }
 }

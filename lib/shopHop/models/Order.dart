@@ -17,7 +17,7 @@ class Order {
     String? shippingZip,
     String? paymentMethod,
     String? shippingMethod,
-    Order_data? orderData,
+    required Order_data orderData,
     String? createdAt,
     String? updatedAt,}){
     _id = id;
@@ -36,32 +36,50 @@ class Order {
     _shippingZip = shippingZip;
     _paymentMethod = paymentMethod;
     _shippingMethod = shippingMethod;
-    // _orderData = orderData;
+    _orderData = orderData;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
   }
 
   Order.fromJson(dynamic json) {
-    _id = json['id'];
-    _customerId = json['customer_id'];
-    _status = json['status'];
-    _shipping = json['shipping'];
-    _tax = json['tax'];
-    _discount = json['discount'];
-    _total = json['total'];
-    _currency = json['currency'];
-    _shippingCompany = json['shipping_company'];
-    _shippingPhone = json['shipping_phone'];
-    _shippingCountry = json['shipping_country'];
-    _shippingCity = json['shipping_city'];
-    _shippingRegion = json['shipping_region'];
-    _shippingZip = json['shipping_zip'];
-    _paymentMethod = json['payment_method'];
-    _shippingMethod = json['shipping_method'];
-    // _orderData = json['order_data'] != null ? Order_data.fromJson(json['orderData']) : null;
-    _createdAt = json['created_at'];
-    _updatedAt = json['updated_at'];
+    try{
+      _id = json['id'];
+      _customerId = json['customer_id'];
+      _status = json['status'];
+      _shipping = json['shipping'];
+      _tax = json['tax'];
+      _discount = json['discount'];
+      _total = json['total'];
+      _currency = json['currency'];
+      _shippingCompany = json['shipping_company'];
+      _shippingPhone = json['shipping_phone'];
+      _shippingCountry = json['shipping_country'];
+      _shippingCity = json['shipping_city'];
+      _shippingRegion = json['shipping_region'];
+      _shippingZip = json['shipping_zip'];
+      _paymentMethod = json['payment_method'];
+      _shippingMethod = json['shipping_method'];
+      _orderData =
+          (json['order_data'] != null)?
+          Order_data.fromJson(json['order_data']) :
+          Order_data(
+            itemsList:ItemsList1(items: [Item1(name: '',count: '0',size: '0',price: '0',imageUrl: '',productId: '0',slug: '')]),
+            originalPrice: '0.00',
+            subTotalPrice: '0.00',
+            discountAmount: '0.00',
+            totalPrice: '0.00',
+            couponApplied: false,
+            hasOrder: true,
+            frameAmount: 0,
+            totalQty: 0,
+          );
+      _createdAt = json['created_at'];
+      _updatedAt = json['updated_at'];
+    }catch(e){
+      print('efghijk 6: ${e.toString()}');
+    }
   }
+
   int? _id;
   int? _customerId;
   String? _status;
@@ -78,7 +96,16 @@ class Order {
   String? _shippingZip;
   String? _paymentMethod;
   String? _shippingMethod;
-  // Order_data? _orderData;
+  Order_data _orderData = Order_data(
+      itemsList:ItemsList1(items: [Item1(name: '',count: '0',size: '0',price: '0',imageUrl: '',productId: '0',slug: '')]),
+      originalPrice: '0.00',
+      subTotalPrice: '0.00',
+      discountAmount: '0.00',
+      totalPrice: '0.00',
+      couponApplied: false,
+      hasOrder: false,
+      frameAmount: 0,
+      totalQty: 0);
   String? _createdAt;
   String? _updatedAt;
 
@@ -98,7 +125,7 @@ class Order {
   String? get shippingZip => _shippingZip;
   String? get paymentMethod => _paymentMethod;
   String? get shippingMethod => _shippingMethod;
-  // Order_data? get orderData => _orderData;
+  Order_data get orderData => _orderData;
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
 
@@ -120,9 +147,9 @@ class Order {
     map['shipping_zip'] = _shippingZip;
     map['payment_method'] = _paymentMethod;
     map['shipping_method'] = _shippingMethod;
-    // if (_orderData != null) {
-    //   map['order_data'] = _orderData?.toJson();
-    // }
+
+    map['order_data'] = _orderData;
+
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;
     return map;
@@ -145,73 +172,56 @@ class Order_data {
   String? originalPrice;
   bool? hasOrder;
   bool? couponApplied;
-  int? discountAmount;
+  String? discountAmount;
   int? frameAmount;
 
   Order_data({this.itemsList, this.subTotalPrice, this.totalPrice, this.totalQty, this.originalPrice, this.hasOrder, this.couponApplied, this.discountAmount, this.frameAmount});
 
-  Order_data.fromJson(Map<String, dynamic> json) {
+  Order_data.fromJson(dynamic json) {
 
-    // print( json["order_data"]['items']);
-    itemsList = (json["order_data"] != null) ? ItemsList1.fromJson(json["order_data"]['items']) : ItemsList1(items: []);
-    subTotalPrice = json['subTotalPrice'];
-    totalPrice = json['totalPrice'];
-    totalQty = json['totalQty'];
-    originalPrice = json['originalPrice'];
-    hasOrder = json['hasOrder'];
-    couponApplied = json['couponApplied'];
-    discountAmount = json['discountAmount'];
-    frameAmount = json['frameAmount'];
+    try{
+      itemsList =  ItemsList1.fromJson(json["items"]);
+      subTotalPrice = json['subTotalPrice'];
+      totalPrice = json['totalPrice'];
+      totalQty = json['totalQty'];
+      originalPrice = json['originalPrice'];
+      hasOrder = json['hasOrder'];
+      couponApplied = json['couponApplied'];
+      discountAmount = json['discountAmount'];
+      frameAmount = json['frameAmount'];
+    }catch(e){
+      print('efghi1 : ${e.toString()}');
+    }
   }
 
-  Map<String, dynamic> toJson() {
+  static Map<String, dynamic> toJson(Order_data orderData) {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    // if (this.items != null) {
-    //   data['items'] = this.items!.toJson();
-    // }
-    data['subTotalPrice'] = this.subTotalPrice;
-    data['totalPrice'] = this.totalPrice;
-    data['totalQty'] = this.totalQty;
-    data['originalPrice'] = this.originalPrice;
-    data['hasOrder'] = this.hasOrder;
-    data['couponApplied'] = this.couponApplied;
-    data['discountAmount'] = this.discountAmount;
-    data['frameAmount'] = this.frameAmount;
-    return data;
+    try{
+      data['itemsList'] = orderData.itemsList!.toJson();
+      data['subTotalPrice'] = orderData.subTotalPrice;
+      data['totalPrice'] = orderData.totalPrice;
+      data['totalQty'] = orderData.totalQty;
+      data['originalPrice'] = orderData.originalPrice;
+      data['hasOrder'] = orderData.hasOrder;
+      data['couponApplied'] = orderData.couponApplied;
+      data['discountAmount'] = orderData.discountAmount;
+      data['frameAmount'] = orderData.frameAmount;
+      return data;
+    }catch(e){
+      print('efghi2 : ${e.toString()}');
+
+      return {'error' : e.toString()};
+    }
+
   }
+
 }
 
 class ItemsList1 {
   List<Item1>? items;
   ItemsList1({required List<Item1> this.items,});
 
-  //json =  {
-  //             "188": {
-  //                 "product_id": "188",
-  //                 "count": "2",
-  //                 "image_url": "https://www.cottonnatural.com/wp-content/uploads/2016/09/DSC_8351-scaled.jpg",
-  //                 "name": "St. Lucia Pants",
-  //                 "price": "75.00",
-  //                 "slug": "st-lucia-pants",
-  //                 "size": "X-Large"
-  //             },
-  //             "189": {
-  //                 "product_id": "189",
-  //                 "count": "3",
-  //                 "image_url": "https://www.cottonnatural.com/wp-content/uploads/2016/09/DSC_8351-scaled.jpg",
-  //                 "name": "St. Lucia Pants",
-  //                 "price": "75.00",
-  //                 "slug": "st-lucia-pants",
-  //                 "size": "Large"
-  //             }
-  //         },
-  ItemsList1.fromJson(dynamic mapJson) {
-    // print('****************************************');
-    // mapJson.forEach((key, value) {
-    //   print('key : $key');
-    //   print('value  : $value');
-    // });
-
+  ItemsList1.fromJson(Map<String,dynamic> mapJson) {
     List<Item1> itemsListX = [];
     mapJson.forEach((key, value) {
       itemsListX.add(Item1.fromJson(value));
@@ -219,13 +229,23 @@ class ItemsList1 {
     });
   }
 
-  // Map<String, dynamic> toJson() {
-  //   final map = <String, dynamic>{};
-  //   if (items != null) {
-  //     map['Item'] = items?.toJson();
-  //   }
-  //   return map;
-  // }
+  List<Map<String, dynamic>> toJson() {
+
+    try{
+      final List<Map<String, dynamic>> mapList = [];
+      if (this.items != null) {
+        this.items!.forEach((Item1 item) {
+          mapList.add(item.toJson());
+        });
+      }
+      return mapList;
+    }catch(e){
+      print('efghi3 : ${e.toString()}');
+      return [
+        {'error': e.toString()}
+      ];
+    }
+  }
 
   static List<ItemsList1> getListFromJson(List<dynamic> jsonArray) {
     List<ItemsList1> list = [];
@@ -283,14 +303,21 @@ class Item1 {
   String? get size => _size;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['product_id'] = _productId;
-    map['count'] = _count;
-    map['image_url'] = _imageUrl;
-    map['name'] = _name;
-    map['price'] = _price;
-    map['slug'] = _slug;
-    map['size'] = _size;
-    return map;
+
+    try{
+      final map = <String, dynamic>{};
+      map['product_id'] = _productId;
+      map['count'] = _count;
+      map['image_url'] = _imageUrl;
+      map['name'] = _name;
+      map['price'] = _price;
+      map['slug'] = _slug;
+      map['size'] = _size;
+      return map;
+    }catch(e){
+      print('efghi4 : ${e.toString()}');
+      return {'error' : e.toString()};
+    }
+
   }
 }

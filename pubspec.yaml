@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.1+1
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -48,7 +48,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/app-icon.png"
+  image_path: "assets/app-icon1.jpg"
 
   flutter_lints: ^1.0.0
 
@@ -56,16 +56,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
-    - assets/lottie/
     - images/
-    - images/widgets/
-    - images/widgets/Checkbox/
-    - images/integrations/
-    - images/integrations/img/
-    - images/integrations/icons/
-    - images/LikeButton/image/
     - images/shophop/
-    - images/shophop/img/
     - images/shophop/cat/
     - images/shophop/sub_cat/
     - images/shophop/sub_cat/women/
@@ -75,15 +67,7 @@ flutter:
     - images/shophop/sub_cat/family/
     - images/shophop/sub_cat/big-tall/
     - images/shophop/sub_cat/accessories/
-    - images/shophop/img/products/
-    - images/shophop/img/products/shoes/
-    - images/shophop/img/products/dress/
-    - images/shophop/img/products/banners/
-    - images/shophop/img/products/decor/
     - assets/shophop_data/
-    - images/defaultTheme/
-    - images/defaultTheme/banner/
-    - images/defaultTheme/category/
 
   fonts:
     - family: Andina

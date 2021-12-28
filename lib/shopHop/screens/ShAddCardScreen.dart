@@ -1,3 +1,4 @@
+import 'package:cotton_natural/shopHop/controllers/OrderController.dart';
 import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
 import 'package:cotton_natural/shopHop/screens/ShPaymentsScreen.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,7 +36,15 @@ class ShAddCardScreenState extends State<ShAddCardScreen> {
   @override
   void initState() {
     super.initState();
+    init();
+  }
+
+  init() async{
     ShPaymentCard providerCard = Provider.of<OrdersProvider>(context,listen: false).getCard();
+    if(providerCard.cardNo == '' && providerCard.cvv == '' && providerCard.month == ''){
+      providerCard = await OrderController.getCardFromSharePreferences();
+      Provider.of<OrdersProvider>(context,listen: false).setCard(providerCard);
+    }
     setState(() {
       cvvCont.text = providerCard.cvv;
       nameCont.text = providerCard.holderName;
@@ -43,7 +52,6 @@ class ShAddCardScreenState extends State<ShAddCardScreen> {
       selectedMonth = providerCard.month;
       selectedYear = providerCard.year;
     });
-
   }
 
   @override
@@ -207,7 +215,7 @@ class ShAddCardScreenState extends State<ShAddCardScreen> {
                   textColor: sh_white,
                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0)),
                   color: sh_colorPrimary,
-                  onPressed: () {
+                  onPressed: () async{
                     if(validateCard()){
                       ShPaymentCard newCard = ShPaymentCard(
                         cardNo: cardNumberCont.text,
@@ -217,7 +225,13 @@ class ShAddCardScreenState extends State<ShAddCardScreen> {
                         holderName: nameCont.text
                       );
                       Provider.of<OrdersProvider>(context,listen: false).setCard(newCard);
-                      Navigator.pop(context);
+                      await OrderController.saveCardToSharePreferences(newCard);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>  ShPaymentsScreen(),
+                        ),
+                      );
                     }
                   },
                 ),

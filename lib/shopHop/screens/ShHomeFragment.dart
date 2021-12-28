@@ -1,16 +1,16 @@
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/controllers/CategoryController.dart';
+import 'package:cotton_natural/shopHop/utils/ColorUtils.dart';
+import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:cotton_natural/main/utils/AppWidget.dart';
-import 'package:cotton_natural/main/utils/dots_indicator/dots_indicator.dart';
 import 'package:cotton_natural/shopHop/models/ShCategory.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/screens/ShSubCategory.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
-import 'package:cotton_natural/shopHop/utils/ShExtension.dart';
 
 class ShHomeFragment extends StatefulWidget {
   static String tag = '/ShHomeFragment';
@@ -21,7 +21,6 @@ class ShHomeFragment extends StatefulWidget {
 
 class ShHomeFragmentState extends State<ShHomeFragment> {
   List<ShCategory> list = [];
-  List<String> banners = [];
   List<ShProduct> newestProducts = [];
   List<ShProduct> featuredProducts = [];
   var position = 0;
@@ -53,19 +52,11 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
     if (myResponse.success) {
       list.clear();
       list = myResponse.data;
+
     } else {
       toasty(context, myResponse.errorText);
     }
     setState(() { });
-
-    // loadCategory().then((categories) {
-    //   setState(() {
-    //     list.clear();
-    //     list.addAll(categories);
-    //   });
-    // }).catchError((error) {
-    //   toasty(context, error);
-    // });
 
     List<ShProduct> products = await loadProducts();
     List<ShProduct> featured = [];
@@ -75,15 +66,10 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
       }
     });
 
-    List<String> banner = [];
-    for (var i = 1; i < 7; i++) {
-      banner.add("images/shophop/img/products/banners/b" + i.toString() + ".jpg");
-    }
+
     setState(() {
       newestProducts.clear();
       featuredProducts.clear();
-      banners.clear();
-      banners.addAll(banner);
       newestProducts.addAll(products);
       featuredProducts.addAll(featured);
     });
@@ -96,7 +82,6 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -111,31 +96,7 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
                       child: Stack(
                         alignment: Alignment.bottomCenter,
                         children: <Widget>[
-                          PageView.builder(
-                            itemCount: banners.length,
-                            itemBuilder: (context, index) {
-                              return Image.asset(banners[index], width: width, height: height * 0.55, fit: BoxFit.cover);
-                            },
-                            onPageChanged: (index) {
-                              setState(() {
-                                position = index;
-                              });
-                            },
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: DotsIndicator(
-                              dotsCount: banners.length,
-                              position: position,
-                              decorator: DotsDecorator(
-                                color: sh_view_color,
-                                activeColor: sh_colorPrimary,
-                                size: const Size.square(7.0),
-                                activeSize: const Size.square(10.0),
-                                spacing: EdgeInsets.all(3),
-                              ),
-                            ),
-                          ),
+                          Image.asset('images/shophop/bg-home.jpg',fit: BoxFit.fitWidth,)
                         ],
                       ),
                     ),
@@ -159,11 +120,11 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
                                 children: <Widget>[
                                   Container(
                                     padding: EdgeInsets.all(spacing_middle),
-                                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black87),
+                                    decoration: BoxDecoration(shape: BoxShape.circle, color: sh_textColorPrimary),
                                     child: Image.asset('images/shophop/cat/${list[index].slug}.png', width: 25, color: sh_white),
                                   ),
                                   SizedBox(height: spacing_control),
-                                  text(list[index].name, textColor: Colors.black87, fontFamily: fontMedium)
+                                  text(list[index].name, textColor:  sh_textColorPrimary, fontFamily: fontMedium)
                                 ],
                               ),
                             ),
@@ -179,9 +140,18 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
                         onTap: (){
                           ShSubCategory(category: womenCategory).launch(context);
                         },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(9),
-                          child: Image.asset('images/shophop/for-her.jpg',fit: BoxFit.fitWidth,),
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(9),
+                              child: Image.asset('images/shophop/for-her.jpg',fit: BoxFit.fitWidth,),
+                            ),
+                            Positioned(
+                              child: text('Hers', textColor:  sh_textColorPrimary, fontFamily: fontMedium),
+                              bottom: 10,
+                              left: 10,
+                            )
+                          ]
                         ),
                       ),
                     ),
@@ -193,9 +163,18 @@ class ShHomeFragmentState extends State<ShHomeFragment> {
                         onTap: (){
                           ShSubCategory(category: menCategory).launch(context);
                         },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(9),
-                          child: Image.asset('images/shophop/for-him.jpg',fit: BoxFit.fitWidth,),
+                        child: Stack(
+                          children:[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(9),
+                              child: Image.asset('images/shophop/for-him.jpg',fit: BoxFit.fitWidth,),
+                            ),
+                            Positioned(
+                              child: text('His', textColor:  sh_textColorPrimary, fontFamily: fontMedium),
+                              bottom: 10,
+                              left: 10,
+                            )
+                          ] ,
                         ),
                       ),
                     ),

@@ -1,32 +1,33 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
+import 'package:cotton_natural/main/utils/AppWidget.dart';
+import 'package:cotton_natural/shopHop/controllers/AddressController.dart';
 import 'package:cotton_natural/shopHop/models/ShAddress.dart';
+import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
+import 'package:cotton_natural/shopHop/screens/ShOrderSummaryScreen.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
 import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
-import 'package:cotton_natural/main/utils/AppWidget.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:provider/provider.dart';
 
-// ignore: must_be_immutable
 class ShAddNewAddress extends StatefulWidget {
   static String tag = '/AddNewAddress';
-  ShAddressModel? addressModel;
-
-  ShAddNewAddress({this.addressModel});
-
   @override
   ShAddNewAddressState createState() => ShAddNewAddressState();
 }
 
 class ShAddNewAddressState extends State<ShAddNewAddress> {
   var primaryColor;
+  late ShAddressModel providerAddress;
   var zipCont = TextEditingController();
-  var phoneCont = TextEditingController();
+  var addressCont = TextEditingController();
   var cityCont = TextEditingController();
   var regionCont = TextEditingController();
   var countryCont = TextEditingController();
-  var companyCont = TextEditingController();
+  var nameCont = TextEditingController();
+  var emailCont = TextEditingController();
 
   @override
   void initState() {
@@ -35,70 +36,64 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
   }
 
   init() async {
-    if (widget.addressModel != null) {
-      zipCont.text = widget.addressModel!.zip;
-      phoneCont.text = widget.addressModel!.phone;
-      cityCont.text = widget.addressModel!.city;
-      regionCont.text = widget.addressModel!.region;
-      countryCont.text = widget.addressModel!.country;
-      companyCont.text = widget.addressModel!.company;
+    providerAddress = Provider.of<OrdersProvider>(context,listen: false).getAddress();
+    if(isAddressProviderEmpty()){
+      providerAddress = await AddressController.getAddressFromSharePreferences();
+      // print('loaded from shp ${providerAddress.name} ${providerAddress.email}');
+      Provider.of<OrdersProvider>(context,listen: false).setAddress(providerAddress);
     }
+
+    // print('${isAddressProviderEmpty()} loaded from provider ${providerAddress.name} ${providerAddress.email}');
+
+    nameCont.text = providerAddress.name;
+    addressCont.text = providerAddress.address;
+    cityCont.text = providerAddress.city;
+    regionCont.text = providerAddress.region;
+    countryCont.text = providerAddress.country;
+    zipCont.text = providerAddress.zip;
+    emailCont.text = providerAddress.email;
   }
+
+  bool isAddressProviderEmpty(){
+    return (
+        providerAddress.name == ''
+        || providerAddress.address == ''
+        || providerAddress.city == ''
+        || providerAddress.email == ''
+        || providerAddress.country == ''
+        || providerAddress.region == ''
+        || providerAddress.zip == ''
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
     void onSaveClicked() async {
-      Navigator.pop(context, true);
-    }
-   // TODO Without NullSafety Geo coder
-/*    getLocation() async {
-      Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((position) {
-        var coordinates = Coordinates(position.latitude, position.longitude);
-        Geocoder.local.findAddressesFromCoordinates(coordinates).then((addresses) {
-          var first = addresses.first;
-          print("${addresses} : ${first.addressLine}");
-          setState(() {
-            pinCodeCont.text = first.postalCode;
-            addressCont.text = first.addressLine;
-            cityCont.text = first.locality;
-            stateCont.text = first.adminArea;
-            countryCont.text = first.countryName;
-          });
-        }).catchError((error) {
-          print(error);
-        });
-      }).catchError((error) {
-        print(error);
-      });
-    }*/
-
-    final useCurrentLocation = Container(
-      alignment: Alignment.center,
-      child: MaterialButton(
-        color: sh_light_gray,
-        elevation: 0,
-        padding: EdgeInsets.only(top: spacing_middle, bottom: spacing_middle),
-        onPressed: () => {
-          // TODO Without NullSafety Geo coder
-          //getLocation()
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.my_location,
-              color: primaryColor,
-              size: 16,
-            ),
-            SizedBox(width: 10),
-            text('Use Current Location', textColor: sh_textColorPrimary, fontFamily: fontMedium)
-          ],
+      ShAddressModel newAddress = ShAddressModel(
+        name: nameCont.text,
+        zip: zipCont.text,
+        region: regionCont.text,
+        city: cityCont.text,
+        address: addressCont.text,
+        country: countryCont.text,
+        email: emailCont.text,
+      );
+      await AddressController.saveAddressToSharePreferences(newAddress);
+      Provider.of<OrdersProvider>(context,listen: false).setAddress(newAddress);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>  ShOrderSummaryScreen(),
         ),
-      ),
-    );
+      );
+    }
 
-    final company = TextFormField(
-      controller: companyCont,
+    //adding address form
+
+    final name = TextFormField(
+      controller: nameCont,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
       textCapitalization: TextCapitalization.words,
@@ -107,20 +102,18 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       onFieldSubmitted: (term) {
         FocusScope.of(context).nextFocus();
       },
-      decoration: formFieldDecoration('Company'),
+      decoration: formFieldDecoration('Name'),
     );
 
-    final zip = TextFormField(
-      controller: zipCont,
-      keyboardType: TextInputType.number,
-      maxLength: 6,
+    final address = TextFormField(
+      controller: addressCont,
+      keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.done,
       autofocus: false,
       onFieldSubmitted: (term) {
         FocusScope.of(context).nextFocus();
       },
-      textInputAction: TextInputAction.next,
-      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      decoration: formFieldDecoration('Zip Code'),
+      decoration: formFieldDecoration('Address'),
     );
 
     final city = TextFormField(
@@ -146,7 +139,7 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
       autofocus: false,
       textInputAction: TextInputAction.next,
-      decoration: formFieldDecoration('Region'),
+      decoration: formFieldDecoration('State/Province'),
     );
 
     final country = TextFormField(
@@ -162,13 +155,28 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       decoration: formFieldDecoration("Country"),
     );
 
-    final phoneNumber = TextFormField(
-      controller: phoneCont,
-      keyboardType: TextInputType.phone,
-      textInputAction: TextInputAction.done,
-      maxLength: 10,
+    final zip = TextFormField(
+      controller: zipCont,
+      keyboardType: TextInputType.number,
+      maxLength: 6,
       autofocus: false,
-      decoration: formFieldDecoration(sh_hint_contact),
+      onFieldSubmitted: (term) {
+        FocusScope.of(context).nextFocus();
+      },
+      textInputAction: TextInputAction.next,
+      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
+      decoration: formFieldDecoration('Zip Code'),
+    );
+
+    final email = TextFormField(
+      controller: emailCont,
+      autofocus: false,
+      onFieldSubmitted: (term) {
+        FocusScope.of(context).nextFocus();
+      },
+      textInputAction: TextInputAction.next,
+      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
+      decoration: formFieldDecoration('Email'),
     );
 
     final saveButton = MaterialButton(
@@ -176,19 +184,7 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       minWidth: double.infinity,
       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0)),
       onPressed: () {
-        if (companyCont.text.isEmpty) {
-          toasty(context, "Company name required");
-        } else if (phoneCont.text.isEmpty) {
-          toasty(context, "Phone Number required");
-        } else if (cityCont.text.isEmpty) {
-          toasty(context, "City name required");
-        } else if (regionCont.text.isEmpty) {
-          toasty(context, "Region name required");
-        } else if (countryCont.text.isEmpty) {
-          toasty(context, "Country name required");
-        } else if (zipCont.text.isEmpty) {
-          toasty(context, "Zip code required");
-        } else {
+        if (validateAddress()) {
           onSaveClicked();
         }
       },
@@ -196,15 +192,15 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
       child: text(sh_lbl_save_address, fontFamily: fontMedium, fontSize: textSizeLargeMedium, textColor: sh_white),
     );
 
+
     final body = Wrap(runSpacing: spacing_standard_new, children: <Widget>[
-      useCurrentLocation,
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Expanded(child: company),
+          Expanded(child: name),
         ],
       ),
-      phoneNumber,
+      address,
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -224,21 +220,43 @@ class ShAddNewAddressState extends State<ShAddNewAddress> {
           Expanded(child: zip),
         ],
       ),
-      Padding(
-        padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
-        child: saveButton,
-      ),
+      email,
+      saveButton,
     ]);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: sh_white,
-        title: text(widget.addressModel == null ? sh_lbl_add_new_address : sh_lbl_edit_address, textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
+        title: text((providerAddress.name == '' && providerAddress.address == '' && providerAddress.city == '') ? sh_lbl_add_new_address : sh_lbl_edit_address, textColor: sh_textColorPrimary, fontSize: textSizeNormal, fontFamily: fontMedium),
         iconTheme: IconThemeData(color: sh_textColorPrimary),
         actionsIconTheme: IconThemeData(color: sh_colorPrimary),
-        actions: <Widget>[cartIcon(context, 3)],
+        // actions: <Widget>[cartIcon(context, 3)],
       ),
       body: Container(width: double.infinity, child: SingleChildScrollView(child: body), margin: EdgeInsets.all(16)),
     );
   }
+
+  bool validateAddress() {
+    if(nameCont.text.trim()==''){
+      toasty(context, 'Name is require');
+      return false;
+    }else if(addressCont.text.trim()==''){
+      toasty(context, 'Address is require');
+      return false;
+    }else if(cityCont.text.trim()==''){
+      toasty(context, 'City name is require');
+      return false;
+    }else if(regionCont.text.trim()==''){
+      toasty(context, 'State name required');
+      return false;
+    }else if(countryCont.text.trim()==''){
+      toasty(context, 'Country name is require');
+      return false;
+    }else if(zipCont.text.trim()==''){
+      toasty(context, 'Zip Code is require');
+      return false;
+    }
+    return true;
+  }
+
 }

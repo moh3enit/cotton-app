@@ -1,5 +1,5 @@
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
-import 'package:cotton_natural/shopHop/api/api_util.dart';
 import 'package:cotton_natural/shopHop/controllers/OrderController.dart';
 import 'package:cotton_natural/shopHop/models/Order.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,15 +29,15 @@ class ShOrderListScreenState extends State<ShOrderListScreen> {
     fetchData();
   }
 
+
   fetchData() async {
     List<Order> OrderList = [];
     MyResponse<List<Order>> myResponse = await OrderController.getOrderList();
 
     if (myResponse.success) {
       OrderList = myResponse.data;
-
     } else {
-      ApiUtil.checkRedirectNavigation(context, myResponse.responseCode);
+      // ApiUtil.checkRedirectNavigation(context, myResponse.responseCode);
       toasty(context, myResponse.errorText);
     }
 
@@ -67,7 +67,11 @@ class ShOrderListScreenState extends State<ShOrderListScreen> {
                   Container(
                     padding: EdgeInsets.all(1),
                     decoration: BoxDecoration(border: Border.all(color: sh_view_color, width: 1)),
-                    child: Image.asset("assets/app-icon.png", fit: BoxFit.cover, height: width * 0.35, width: width * 0.29),
+                    child:
+                    (list[index].orderData.itemsList!.items!.first.imageUrl != '' )?
+                    networkCachedImage(list[index].orderData.itemsList!.items!.first.imageUrl,
+                        aWidth: width * 0.29, aHeight: width * 0.29, fit: BoxFit.contain)
+                    : Image.asset("assets/app-icon1.jpg", fit: BoxFit.contain, height: width * 0.29, width: width * 0.29),
                   ),
                   SizedBox(width: 10),
                   Expanded(

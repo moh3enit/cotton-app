@@ -1,16 +1,13 @@
 
 import 'package:cotton_natural/main/utils/common.dart';
-import 'package:cotton_natural/shopHop/api/MyResponse.dart';
-import 'package:cotton_natural/shopHop/controllers/OrderController.dart';
-import 'package:cotton_natural/shopHop/models/Order.dart';
+import 'package:cotton_natural/shopHop/controllers/AddressController.dart';
 import 'package:cotton_natural/shopHop/models/ShOrder.dart';
 import 'package:cotton_natural/shopHop/providers/OrdersProvider.dart';
-import 'package:cotton_natural/shopHop/utils/ShWidget.dart';
+import 'package:cotton_natural/shopHop/screens/ShAddNewAddress.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotton_natural/shopHop/models/ShAddress.dart';
 import 'package:cotton_natural/shopHop/models/ShProduct.dart';
-import 'package:cotton_natural/shopHop/screens/ShAdressManagerScreen.dart';
 import 'package:cotton_natural/shopHop/screens/ShPaymentsScreen.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
@@ -29,59 +26,34 @@ class ShOrderSummaryScreen extends StatefulWidget {
 
 class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
   List<Item?> list = [];
-  // List<ShAddressModel> addressList = [];
   var selectedPosition = 0;
   List<String> images = [];
   var currentIndex = 0;
   var isLoaded = false;
   List<ShOrder> orderList=[];
-  // late List<Order> previousOrders;
-
-  //address form vars
+  late ShAddressModel addressModel;
   var primaryColor;
-  var zipCont = TextEditingController();
-  var phoneCont = TextEditingController();
-  var cityCont = TextEditingController();
-  var regionCont = TextEditingController();
-  var countryCont = TextEditingController();
-  var companyCont = TextEditingController();
-
 
   @override
   void initState() {
     super.initState();
     fetchData();
-
-    init();
-  }
-
-  init() async {
-    ShAddressModel providerAddress = Provider.of<OrdersProvider>(context,listen: false).getAddress();
-      companyCont.text = providerAddress.company;
-      phoneCont.text = providerAddress.phone;
-      cityCont.text = providerAddress.city;
-      regionCont.text = providerAddress.region;
-      countryCont.text = providerAddress.country;
-      zipCont.text = providerAddress.zip;
   }
 
   fetchData() async {
+    addressModel = Provider.of<OrdersProvider>(context,listen: false).getAddress();
+    if(isAddressEmpty()){
+      addressModel = await AddressController.getAddressFromSharePreferences();
+      Provider.of<OrdersProvider>(context,listen: false).setAddress(addressModel);
+    }
+
     orderList = Provider.of<OrdersProvider>(context,listen: false).getOrderList();
 
     list.clear();
     orderList.forEach((element) {list.add(element.item);});
     setState(() { });
 
-    // MyResponse<List<Order>> myResponse = await OrderController.getOrderList();
-    // if(myResponse.success){
-    //   previousOrders = myResponse.data;
-    //   addressList.clear();
-    //   addressList = Provider.of<OrdersProvider>(context,listen: false).getAddressListFromPreviousOrders(previousOrders)!;
-    // }
-    // var addresses = await loadAddresses();
     setState(() {
-      // addressList.clear();
-      // addressList.addAll(addresses);
       isLoaded = true;
     });
   }
@@ -91,120 +63,159 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
     super.dispose();
   }
 
+  bool isAddressEmpty(){
+    return (addressModel.name == '' && addressModel.address == '' && addressModel.city == '');
+  }
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
 
-
-
-    //adding address form
-
-    final company = TextFormField(
-      controller: companyCont,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
-      textCapitalization: TextCapitalization.words,
+    // address
+    final name = Text(
+      addressModel.name,
+      style: TextStyle(fontFamily: fontBold, fontSize: textSizeXNormal),
+    );
+    final address = Text(
+      addressModel.address,
       style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      autofocus: false,
-      onFieldSubmitted: (term) {
-        FocusScope.of(context).nextFocus();
-      },
-      decoration: formFieldDecoration('Company'),
     );
-
-    final phoneNumber = TextFormField(
-      controller: phoneCont,
-      keyboardType: TextInputType.phone,
-      textInputAction: TextInputAction.done,
-      maxLength: 10,
-      autofocus: false,
-      onFieldSubmitted: (term) {
-        FocusScope.of(context).nextFocus();
-      },
-      decoration: formFieldDecoration(sh_hint_contact),
-    );
-
-    final city = TextFormField(
-      controller: cityCont,
-      keyboardType: TextInputType.text,
-      textCapitalization: TextCapitalization.words,
+    final city = Text(
+      addressModel.city,
       style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      onFieldSubmitted: (term) {
-        FocusScope.of(context).nextFocus();
-      },
-      textInputAction: TextInputAction.next,
-      autofocus: false,
-      decoration: formFieldDecoration(sh_hint_city),
     );
-
-    final region = TextFormField(
-      onFieldSubmitted: (term) {
-        FocusScope.of(context).nextFocus();
-      },
-      controller: regionCont,
-      keyboardType: TextInputType.text,
-      textCapitalization: TextCapitalization.words,
+    final region = Text(
+      addressModel.region,
       style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      autofocus: false,
-      textInputAction: TextInputAction.next,
-      decoration: formFieldDecoration('Region'),
     );
-
-    final country = TextFormField(
-      onFieldSubmitted: (term) {
-        FocusScope.of(context).nextFocus();
-      },
-      controller: countryCont,
-      keyboardType: TextInputType.text,
-      textCapitalization: TextCapitalization.words,
+    final country = Text(
+      addressModel.country,
       style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      autofocus: false,
-      textInputAction: TextInputAction.next,
-      decoration: formFieldDecoration("Country"),
     );
-
-    final zip = TextFormField(
-      controller: zipCont,
-      keyboardType: TextInputType.number,
-      maxLength: 6,
-      autofocus: false,
-      onFieldSubmitted: (term) {
-        FocusScope.of(context).nextFocus();
-      },
-      textInputAction: TextInputAction.next,
+    final zip = Text(
+      addressModel.zip,
       style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
-      decoration: formFieldDecoration('Zip Code'),
+    );
+    final email = Text(
+      addressModel.email,
+      style: TextStyle(fontFamily: fontRegular, fontSize: textSizeMedium),
     );
 
-    final body = Wrap(runSpacing: spacing_standard_new, children: <Widget>[
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Expanded(child: company),
-        ],
-      ),
-      phoneNumber,
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Expanded(child: city),
-          SizedBox(
-            width: spacing_standard_new,
-          ),
-          Expanded(child: region),
-        ],
-      ),
-      Row(
-        children: <Widget>[
-          Expanded(child: country),
-          SizedBox(
-            width: spacing_standard_new,
-          ),
-          Expanded(child: zip),
-        ],
-      ),
-    ]);
+
+
+    final body = Container(
+      child: Wrap(
+          runSpacing: spacing_standard_new,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(child:  text('Shipping Address', textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(child: name),
+              ],
+            ),
+            isAddressEmpty()
+              ? Center(child: text('Address Is Empty', textColor: sh_textColorPrimary, fontSize: textSizeLargeMedium, fontFamily: fontMedium),)
+              :address,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(child: city),
+                SizedBox(
+                  width: spacing_standard_new,
+                ),
+                Expanded(child: region),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(child: country),
+                SizedBox(
+                  width: spacing_standard_new,
+                ),
+                Expanded(child: zip),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(child:  email),
+              ],
+            ),
+
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child:InkWell(
+                    onTap: (){
+                      ShAddNewAddress().launch(context);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(top: spacing_standard_new,),
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: sh_colorPrimary.withOpacity(0.9),
+                      ),
+                      child:  Center(child: text(isAddressEmpty()? 'Add Address' : 'Edit Address', textColor: sh_white, fontSize: textSizeLargeMedium, fontFamily: fontRegular)),
+                    ),
+                  ),
+
+                ),
+              ],
+            ),
+            // Row(
+            //   children: <Widget>[
+            //     Expanded(
+            //       child:InkWell(
+            //         onTap: (){
+            //           Provider.of<OrdersProvider>(context,listen: false).
+            //           setAddress(ShAddressModel(name: '', zip: '', region: '', city: '', address: '', country: ''));
+            //           print('address provider cleaned');
+            //         },
+            //         child: Container(
+            //           margin: const EdgeInsets.only(top: spacing_standard_new,),
+            //           padding: const EdgeInsets.only(top: spacing_standard_new, bottom: spacing_standard_new),
+            //           decoration: BoxDecoration(
+            //             borderRadius: BorderRadius.circular(30),
+            //             color: sh_colorPrimary.withOpacity(0.9),
+            //           ),
+            //           child:  Center(child: text( 'Empty Address Provider' , textColor: sh_white, fontSize: textSizeLargeMedium, fontFamily: fontRegular)),
+            //         ),
+            //       ),
+            //
+            //     ),
+            //   ],
+            // ),
+            // Row(
+            //   children: <Widget>[
+            //     Expanded(
+            //       child:InkWell(
+            //         onTap: () async{
+            //           await AddressController.saveAddressToSharePreferences(ShAddressModel(name: '', zip: '', region: '', city: '', address: '', country: ''));
+            //           print('address SHP cleaned');
+            //         },
+            //         child: Container(
+            //           margin: const EdgeInsets.only(top: spacing_standard_new,),
+            //           padding: const EdgeInsets.only(top: spacing_standard_new, bottom: spacing_standard_new),
+            //           decoration: BoxDecoration(
+            //             borderRadius: BorderRadius.circular(30),
+            //             color: sh_colorPrimary.withOpacity(0.9),
+            //           ),
+            //           child:  Center(child: text( 'Empty Address ShP' , textColor: sh_white, fontSize: textSizeLargeMedium, fontFamily: fontRegular)),
+            //         ),
+            //       ),
+            //
+            //     ),
+            //   ],
+            // ),
+          ]),
+    );
 
 
 
@@ -225,7 +236,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       networkCachedImage(
-                        list[index]!.image!,
+                        list[index]!.image_url!,
                         aWidth: width * 0.25,
                         aHeight: width * 0.3,
                         fit: BoxFit.fill,
@@ -274,7 +285,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: <Widget>[
-                                              text("Qty: ${Provider.of<OrdersProvider>(context, listen: true).getItemQty(list[index]!.id,list[index]!.size)}", textColor: sh_textColorPrimary, fontSize: textSizeSMedium),
+                                              text("Qty: ${Provider.of<OrdersProvider>(context, listen: true).getItemQty(list[index]!.id.toInt(),list[index]!.size)}", textColor: sh_textColorPrimary, fontSize: textSizeSMedium),
                                               // Icon(
                                               //   Icons.arrow_drop_down,
                                               //   color: sh_textColorPrimary,
@@ -334,7 +345,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                 Row(
                   children: <Widget>[
                     text(sh_lbl_shipping_charge),
-                    text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().price.toCurrencyFormat(), textColor: Colors.green, fontFamily: fontMedium),
+                    text(Provider.of<OrdersProvider>(context, listen: false).getShippingMethod().price.toCurrencyFormat(), textColor: sh_colorPrimary, fontFamily: fontMedium),
                   ],
                 ),
                 SizedBox(
@@ -352,7 +363,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
         ],
       ),
     );
-    var address = isLoaded
+    var addressContainer = isLoaded
     ?Container(
       width: double.infinity,
       color: sh_item_background,
@@ -366,33 +377,6 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
             child: SingleChildScrollView(child: body),
             margin: EdgeInsets.all(16),
           ),
-
-          // text(addressList[selectedPosition].company , textColor: sh_textColorPrimary, fontFamily: fontMedium, fontSize: textSizeLargeMedium),
-          // text(addressList[selectedPosition].phone, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-          // text(addressList[selectedPosition].city + "," + addressList[selectedPosition].region, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-          // text(addressList[selectedPosition].country + "," + addressList[selectedPosition].zip, textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-          // SizedBox(
-          //   height: spacing_standard_new,
-          // ),
-          // text('', textColor: sh_textColorPrimary, fontSize: textSizeMedium),
-          // SizedBox(
-          //   height: spacing_standard_new,
-          // ),
-          // SizedBox(
-          //   width: double.infinity,
-          //   child: MaterialButton(
-          //     padding: EdgeInsets.all(spacing_standard),
-          //     child: text(sh_lbl_change_address, fontSize: textSizeMedium, fontFamily: fontMedium, textColor: sh_white),
-          //     shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(40.0), side: BorderSide(color: sh_colorPrimary, width: 1)),
-          //     color: sh_colorPrimary,
-          //     onPressed: () async {
-          //       var pos = await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ShAddressManagerScreen())) ?? selectedPosition;
-          //       setState(() {
-          //         selectedPosition = pos;
-          //       });
-          //     },
-          //   ),
-          // )
         ],
       ),
     )
@@ -421,17 +405,14 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
                 height: double.infinity,
               ),
               onTap: () {
-                if(validateAddress()){
-                  ShAddressModel newAddress = ShAddressModel(
-                      company: companyCont.text,
-                      zip: zipCont.text,
-                      region: regionCont.text,
-                      city: cityCont.text,
-                      phone: phoneCont.text,
-                      country: countryCont.text,
+                if(validateAddress(context)){
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) =>  ShPaymentsScreen(),
+                    ),
                   );
-                  Provider.of<OrdersProvider>(context,listen: false).setAddress(newAddress);
-                  ShPaymentsScreen().launch(context);
+                  // ShPaymentsScreen().launch(context);
                 }
               },
             ),
@@ -454,7 +435,7 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
               padding: const EdgeInsets.only(bottom: 70.0),
               child: Column(
                 children: <Widget>[
-                  isLoaded ? address : Container(),
+                  isLoaded ? addressContainer : Container(),
                   cartList,
                   paymentDetail,
                   images.isNotEmpty
@@ -482,24 +463,9 @@ class ShOrderSummaryScreenState extends State<ShOrderSummaryScreen> {
     );
   }
 
-  bool validateAddress() {
-    if(companyCont.text.trim()==''){
-      toasty(context, 'Company name is require');
-      return false;
-    }else if(phoneCont.text.trim()==''){
-      toasty(context, 'Phone number is require');
-      return false;
-    }else if(cityCont.text.trim()==''){
-      toasty(context, 'City name is require');
-      return false;
-    }else if(regionCont.text.trim()==''){
-      toasty(context, 'Region name is require');
-      return false;
-    }else if(countryCont.text.trim()==''){
-      toasty(context, 'Country name is require');
-      return false;
-    }else if(zipCont.text.trim()==''){
-      toasty(context, 'Zip Code is require');
+  bool validateAddress(BuildContext myContext) {
+    if(isAddressEmpty()){
+      toasty(myContext, 'Address is empty');
       return false;
     }
     return true;

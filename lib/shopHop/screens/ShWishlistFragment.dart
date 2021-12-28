@@ -11,7 +11,6 @@ import 'package:cotton_natural/shopHop/models/ShProduct.dart';
 import 'package:cotton_natural/shopHop/utils/ShColors.dart';
 import 'package:cotton_natural/shopHop/utils/ShConstant.dart';
 import 'package:cotton_natural/shopHop/utils/ShStrings.dart';
-import 'package:lottie/lottie.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import 'ShProductDetail.dart';
@@ -51,6 +50,11 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
       setState(() {
         list.clear();
         list.addAll(products!);
+        isLoadingMoreData = false;
+      });
+    }
+    else{
+      setState(() {
         isLoadingMoreData = false;
       });
     }
@@ -196,14 +200,13 @@ class ShWishlistFragmentState extends State<ShWishlistFragment> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      'There is no product in wish list',
+                      'Your wishlist is empty',
                       style: TextStyle(
-                          color: sh_cat_4,
+                          color: sh_textColorPrimary,
                           fontFamily: fontSemibold,
                           fontSize: textSizeNormal),
                     ),
-                    Lottie.asset('assets/lottie/not-found.json',
-                        fit: BoxFit.fitWidth),
+
                     SizedBox(
                       height: 80,
                     ),

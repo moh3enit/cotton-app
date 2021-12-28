@@ -1,3 +1,4 @@
+import 'package:cotton_natural/main/utils/common.dart';
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/api/api_util.dart';
 import 'package:cotton_natural/shopHop/controllers/OrderController.dart';
@@ -39,12 +40,10 @@ class ShOrderDetailScreenState extends State<ShOrderDetailScreen> {
     });
 
     MyResponse<Order_data> myResponse = await OrderController.getSingleOrder(widget.order!.id);
-print('myResponse.data=' + myResponse.data.toString());
     if (myResponse.success) {
       orders = myResponse.data;
       itemsList.clear();
       itemsList = orders!.itemsList!.items!;
-      print(itemsList);
     } else {
       ApiUtil.checkRedirectNavigation(context, myResponse.responseCode);
       toasty(context, myResponse.errorText);
@@ -69,11 +68,11 @@ print('myResponse.data=' + myResponse.data.toString());
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Image.network(
+                    networkCachedImage(
                       itemsList[index].imageUrl.toString(),
-                      width: width * 0.3,
-                      height: width * 0.35,
-                      fit: BoxFit.fill,
+                      aWidth: width * 0.3,
+                      aHeight: width * 0.3,
+                      fit: BoxFit.contain,
                     ),
                     Expanded(
                       child: Column(
@@ -293,7 +292,7 @@ print('myResponse.data=' + myResponse.data.toString());
         child: Column(
           children: <Widget>[
             Container(
-              height: itemsList.length > 0 ? itemsList.length * 100 : 150,
+              height: itemsList.length > 0 ? itemsList.length * 150 : 150,
               child: item,
             ),
             orderStatus,

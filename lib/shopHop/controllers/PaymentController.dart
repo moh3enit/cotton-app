@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:cotton_natural/shopHop/api/MyResponse.dart';
 import 'package:cotton_natural/shopHop/api/Network.dart';
@@ -24,15 +25,14 @@ class PaymentController {
     String url = ApiUtil.MAIN_API_URL + ApiUtil.ORDER_DETAIL + ApiUtil.PAYMENT;
     Map<String, String> headers = ApiUtil.getHeader(requestType: RequestType.PostWithAuth, token: token);
 
-    List<Object> itemsJson = [];
+    Map itemsJson = {};
     int totalQty=0;
+
     for (var i=0;i<items.length;i++){
       totalQty += int.parse(items[i].count.toString());
-      Map data = {
-        items[i].id.toString():items[i],
-      };
-      itemsJson.add(data);
+      itemsJson[items[i].id.toString()]=items[i];
     }
+
     Map itemData = {
       'items':itemsJson,
       'subTotalPrice':totalAmount.toStringAsFixed(2),
@@ -42,18 +42,17 @@ class PaymentController {
       'hasOrder':true,
       "couponApplied": false,
       "discountAmount": "0.00",
-      "frameAmount": 0
+      "frameAmount": 0,
     };
-    double total=double.parse(shipping_method.price!)+totalAmount;
     Map data = {
       'items':itemData,
       'shipping_method':shipping_method.id,
       'address':address.toJson(),
       'card':card.toJson(),
-      'totalAmount':total.toStringAsFixed(2),
+      'totalAmount':totalAmount.toStringAsFixed(2),
     };
     Object body = jsonEncode(data);
-
+    // log('body : $body');
     //Check Internet
     bool isConnected = await InternetUtils.checkConnection();
     if (!isConnected) {
@@ -62,10 +61,12 @@ class PaymentController {
 
     try {
       NetworkResponse response = await Network.post(url, headers: headers,body: body);
+      // print('res statusCode : ${response.statusCode}');
+      // log('res body: ${response.body}');
+
       MyResponse myResponse = MyResponse(response.statusCode);
       if (ApiUtil.isResponseSuccess(response.statusCode)) {
         myResponse.success = true;
-        print(response.body);
         myResponse.data = json.decode(response.body);
       } else {
         Map<String, dynamic> data = json.decode(response.body);
@@ -78,5 +79,6 @@ class PaymentController {
       return MyResponse.makeServerProblemError();
     }
   }
+
 
 }
